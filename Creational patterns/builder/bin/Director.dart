@@ -8,6 +8,13 @@ class Director {
     pieBuilder.eggCount = 4;
     pieBuilder.fillingType = FillingType.apple;
     pieBuilder.flourType = FlourType.corn;
-    pieBuilder.cookingDuration = Duration(seconds: 10);
+    pieBuilder.cookingDuration = Duration(minutes: 30);
+  }
+
+  void constructMeatPie(PieBuilder pieBuilder) {
+    pieBuilder.eggCount = 1;
+    pieBuilder.fillingType = FillingType.meat;
+    pieBuilder.flourType = FlourType.buckwheat;
+    pieBuilder.cookingDuration = Duration(minutes: 50);
   }
 }

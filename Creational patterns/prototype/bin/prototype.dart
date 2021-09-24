@@ -1,35 +1,48 @@
-abstract class Account {
-  Object clone();
-}
+class Human {
+  String? _genes;
+  String? _name;
+  int? _age;
 
-class GoogleAccount implements Account {
-  String? fullName;
-  String? password;
+  set genes(String value) => _genes = value;
+  set name(String value) => _name = value;
+  set age(int value) => _age = value;
 
-  GoogleAccount(this.fullName, this.password);
+  bool isClone = false;
 
-  // GoogleAccount _fromSource(GoogleAccount? account) {
-  //   if (account != null) {
-  //     return GoogleAccount(account.fullName, account.password);
-  //   } else {
-  //     throw Exception("No data to copy");
-  //   }
-  // }
+  Human(age, genes, name) {
+    _genes = genes;
+    _name = name;
+    _age = age;
+    isClone = true;
+  }
+  Human._clone(Human source) {
+    _genes = source._genes;
+    _name = source._name;
+    _age = 0;
+  }
 
-  // @override
-  // GoogleAccount clone() {
-  //   return _fromSource(this);
-  // }
+  Human clone() {
+    return Human._clone(this);
+  }
 
   @override
-  GoogleAccount clone() {
-    return this;
+  String toString() {
+    return '''Name: $_name, 
+              Age: $_age, 
+              Genetic algorithm: $_genes ''';
   }
 }
 
 void main() {
-  GoogleAccount account = new GoogleAccount('Timur', '12345eQ');
-  var accountBackup = account.clone();
+  Human father = Human(20, '01001001110...', 'Stas');
+  Human son = father.clone();
+  son._name = 'Max';
 
-  print('Original: ${account.fullName}, Backup: ${accountBackup.fullName}');
+  Human son2 = father.clone();
+  son._name = 'Timur';
+
+  print(father.toString());
+  print(son.toString());
+  print(son2.toString());
+  print(father.toString());
 }

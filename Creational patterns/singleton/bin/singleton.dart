@@ -1,28 +1,27 @@
 class DBConnection {
   static DBConnection? dbConnect;
-  final String? _connectionID = 'mongodb+srv://12Timur21:***@20Compassssl=true';
-  bool isConnected = false;
+  bool _isConnected = false;
 
   factory DBConnection() {
     return dbConnect ??= DBConnection._internal();
   }
 
+  DBConnection._internal();
+
   void emulateConnection() {
-    if (_connectionID != null) {
-      isConnected = true;
-    }
+    print('Подключение установлено');
+    if (_isConnected == false) _isConnected = true;
   }
 
   void checkConnection() {
-    print(isConnected);
+    print(_isConnected);
   }
-
-  DBConnection._internal();
 }
 
 void main() {
-  var s1 = DBConnection();
-  var s2 = DBConnection();
+  // ignore: omit_local_variable_types
+  DBConnection s1 = DBConnection();
+  DBConnection s2 = DBConnection();
 
   s1.checkConnection();
   s2.emulateConnection();

@@ -59,9 +59,9 @@ enum HeroClassList { warrior, wizzard }
 abstract class HeroFactory {
   static HeroClass selectHeroClass(HeroClassList heroClassList) {
     if (HeroClassList.warrior == heroClassList) {
-      return new Warrior();
+      return Warrior();
     } else if (HeroClassList.wizzard == heroClassList) {
-      return new Wizzard();
+      return Wizzard();
     } else {
       throw Exception('Hero class is not defined!');
     }

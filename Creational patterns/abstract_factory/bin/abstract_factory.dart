@@ -94,9 +94,9 @@ class Application {
   }
 
   void startGame() {
-    classHero.attackTarget("chicken");
+    classHero.attackTarget('chicken');
     race.activatePassiveRaceSkill(classHero);
-    classHero.attackTarget("chicken");
+    classHero.attackTarget('chicken');
   }
 }
 

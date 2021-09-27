@@ -1,20 +1,18 @@
+import 'CookingBuilder.dart';
 import 'Products/FillingType.dart';
 import 'Products/FlourType.dart';
-// ignore_for_file: file_names
-import 'PieBuilder.dart';
 
 class Director {
-  void constructApplePie(PieBuilder pieBuilder) {
-    pieBuilder.eggCount = 4;
-    pieBuilder.fillingType = FillingType.apple;
-    pieBuilder.flourType = FlourType.corn;
-    pieBuilder.cookingDuration = Duration(minutes: 30);
+  void constructChickenPie(CookingBuilder builder) {
+    builder.eggCount = 4;
+    builder.fillingType = FillingType.apple;
+    builder.flourType = FlourType.corn;
+    builder.cookingDuration = Duration(minutes: 30);
   }
 
-  void constructMeatPie(PieBuilder pieBuilder) {
-    pieBuilder.eggCount = 1;
-    pieBuilder.fillingType = FillingType.meat;
-    pieBuilder.flourType = FlourType.buckwheat;
-    pieBuilder.cookingDuration = Duration(minutes: 50);
+  void constructAppleCake(CookingBuilder builder) {
+    builder.fillingType = FillingType.chicken;
+    builder.flourType = FlourType.buckwheat;
+    builder.cookingDuration = Duration(minutes: 50);
   }
 }

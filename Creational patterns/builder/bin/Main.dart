@@ -1,14 +1,15 @@
-// ignore_for_file: file_names
+import 'Builders/CakeBuilder.dart';
+import 'Cake.dart';
 import 'Director.dart';
 import 'Pie.dart';
-import 'PieBuilder.dart';
+import 'Builders/PieBuilder.dart';
 
 main() {
   Director director = new Director();
-  PieBuilder builder = new PieBuilder();
+  CakeBuilder builder = new CakeBuilder();
 
-  director.constructApplePie(builder);
+  director.constructChickenPie(builder);
 
-  Pie pie = builder.getResult();
-  print('${pie.flourType}, ${pie.eggCount}');
+  Cake apppleCake = builder.getResult();
+  print('Торт из ${apppleCake.flourType} и ${apppleCake.fillingType}');
 }

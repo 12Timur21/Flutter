@@ -1,11 +1,9 @@
-// ignore_for_file: file_names
+import '../Cake.dart';
+import '../CookingBuilder.dart';
+import '../Products/FillingType.dart';
+import '../Products/FlourType.dart';
 
-import 'CookingBuilder.dart';
-import 'Products/FillingType.dart';
-import 'Products/FlourType.dart';
-import 'Pie.dart';
-
-class PieBuilder implements CookingBuilder {
+class CakeBuilder implements CookingBuilder {
   FlourType _flourType = FlourType.wheat;
   int _eggCount = 0;
   FillingType _fillingType = FillingType.apple;
@@ -31,7 +29,7 @@ class PieBuilder implements CookingBuilder {
     _flourType = type;
   }
 
-  Pie getResult() {
-    return Pie(_flourType, _eggCount, _fillingType, _cookingDuration);
+  Cake getResult() {
+    return Cake(_flourType, _eggCount, _fillingType, _cookingDuration);
   }
 }

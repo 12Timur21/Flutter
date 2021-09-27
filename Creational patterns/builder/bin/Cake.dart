@@ -1,13 +1,13 @@
 import 'Products/FillingType.dart';
 import 'Products/FlourType.dart';
 
-class Pie {
+class Cake {
   FlourType _flourType;
   int _eggCount;
   FillingType _fillingType;
   Duration _cookingDuration;
 
-  Pie(this._flourType, this._eggCount, this._fillingType,
+  Cake(this._flourType, this._eggCount, this._fillingType,
       this._cookingDuration);
 
   FlourType get flourType => _flourType;

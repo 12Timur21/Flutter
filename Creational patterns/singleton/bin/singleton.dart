@@ -1,9 +1,9 @@
 class DBConnection {
-  static DBConnection? dbConnect;
+  static DBConnection? _dbConnection;
   bool _isConnected = false;
 
   factory DBConnection() {
-    return dbConnect ??= DBConnection._internal();
+    return _dbConnection ??= DBConnection._internal();
   }
 
   DBConnection._internal();

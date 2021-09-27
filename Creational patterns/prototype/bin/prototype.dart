@@ -1,24 +1,22 @@
 class Human {
-  String? _genes;
-  String? _name;
-  int? _age;
+  late String _genes;
+  late String _name;
+  late int _age;
 
   set genes(String value) => _genes = value;
   set name(String value) => _name = value;
   set age(int value) => _age = value;
 
-  bool isClone = false;
-
   Human(age, genes, name) {
     _genes = genes;
     _name = name;
     _age = age;
-    isClone = true;
   }
+
   Human._clone(Human source) {
     _genes = source._genes;
     _name = source._name;
-    _age = 0;
+    _age = source._age;
   }
 
   Human clone() {
@@ -36,10 +34,12 @@ class Human {
 void main() {
   Human father = Human(20, '01001001110...', 'Stas');
   Human son = father.clone();
-  son._name = 'Max';
+  son.name = 'Max';
+  son.age = 0;
 
   Human son2 = father.clone();
-  son._name = 'Timur';
+  son2.name = 'Timur';
+  son2.age = 0;
 
   print(father.toString());
   print(son.toString());

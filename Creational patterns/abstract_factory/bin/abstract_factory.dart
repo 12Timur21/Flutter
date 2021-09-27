@@ -1,14 +1,14 @@
 import 'package:abstract_factory/abstract_factory.dart' as abstract_factory;
 
 abstract class Race {
-  String? raceName;
+  late String raceName;
 
   void activatePassiveRaceSkill(ClassHero classHero);
 }
 
 class Human implements Race {
   @override
-  String? raceName = 'Human';
+  String raceName = 'Human';
 
   @override
   void activatePassiveRaceSkill(ClassHero classHero) {
@@ -19,7 +19,7 @@ class Human implements Race {
 
 class Elf implements Race {
   @override
-  String? raceName = 'Elf';
+  String raceName = 'Elf';
 
   @override
   void activatePassiveRaceSkill(ClassHero classHero) {
@@ -29,8 +29,8 @@ class Elf implements Race {
 }
 
 abstract class ClassHero {
-  String className = '';
-  int damage = 0;
+  late String className;
+  late int damage;
 
   void attackTarget(String target);
 }
@@ -84,11 +84,11 @@ class ElfWizzard implements PersonageFactory {
   }
 }
 
-class Application {
+class SelectHeroScreen {
   late Race race;
   late ClassHero classHero;
 
-  Application(PersonageFactory personageFactory) {
+  SelectHeroScreen(PersonageFactory personageFactory) {
     race = personageFactory.selectRace();
     classHero = personageFactory.selectHeroClass();
   }
@@ -101,6 +101,6 @@ class Application {
 }
 
 void main() {
-  Application application = new Application(ElfWizzard());
+  SelectHeroScreen application = new SelectHeroScreen(ElfWizzard());
   application.startGame();
 }

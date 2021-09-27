@@ -7,7 +7,7 @@ class Package implements Subject {
   String _name;
   static double totalPackageSum = 0;
 
-  Set<Subject> _childSubject = Set();
+  List<Subject> _childSubject = [];
 
   Package(this._name);
 
@@ -18,7 +18,7 @@ class Package implements Subject {
   @override
   void doAction() {
     _childSubject.isEmpty ? print(_name) : print('Внутри $_name лежит:');
-    _childSubject.forEach((thing) => thing.doAction());
+    _childSubject.forEach((child) => child.doAction());
   }
 }
 

@@ -1,5 +1,5 @@
 abstract class HeroClass {
-  String? _className;
+  late String _className;
   String? _weapon;
 
   void activateSkill();
@@ -7,13 +7,10 @@ abstract class HeroClass {
 }
 
 class Warrior implements HeroClass {
-  Warrior({weapon}) : _weapon = weapon;
+  Warrior([this._weapon]);
 
-  @override
-  String? _className = 'Warrior';
-
-  @override
-  String? _weapon = '';
+  String _className = 'Warrior';
+  String? _weapon;
 
   @override
   void activateSkill() {
@@ -31,10 +28,10 @@ class Warrior implements HeroClass {
 }
 
 class Wizzard implements HeroClass {
-  Wizzard({weapon}) : _weapon = weapon;
+  Wizzard([this._weapon]);
 
   @override
-  String? _className = 'Wizzard';
+  String _className = 'Wizzard';
 
   @override
   String? _weapon;
@@ -59,7 +56,7 @@ enum HeroClassList { warrior, wizzard }
 abstract class HeroFactory {
   static HeroClass selectHeroClass(HeroClassList heroClassList) {
     if (HeroClassList.warrior == heroClassList) {
-      return Warrior();
+      return Warrior('broken sword');
     } else if (HeroClassList.wizzard == heroClassList) {
       return Wizzard();
     } else {

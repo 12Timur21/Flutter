@@ -4,10 +4,11 @@ import 'Products/FlourType.dart';
 
 class Director {
   void constructChickenPie(CookingBuilder builder) {
-    builder.eggCount = 4;
-    builder.fillingType = FillingType.apple;
-    builder.flourType = FlourType.corn;
-    builder.cookingDuration = Duration(minutes: 30);
+    builder
+      ..eggCount = 4
+      ..fillingType = FillingType.apple
+      ..flourType = FlourType.corn
+      ..cookingDuration = Duration(minutes: 30);
   }
 
   void constructAppleCake(CookingBuilder builder) {

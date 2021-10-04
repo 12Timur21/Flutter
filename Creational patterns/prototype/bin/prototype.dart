@@ -4,8 +4,12 @@ class Human {
   late int _age;
 
   set genes(String value) => _genes = value;
+
   set name(String value) => _name = value;
+  String get name => _name;
+
   set age(int value) => _age = value;
+  int get age => _age;
 
   Human(age, genes, name) {
     _genes = genes;

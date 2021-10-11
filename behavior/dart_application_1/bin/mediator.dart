@@ -51,7 +51,7 @@ abstract class Mediator {
   void send(String item, Company company);
 }
 
-class Storage extends Mediator {
+class Storage implements Mediator {
   Producer? _producer;
   Shop? _shop;
   GarbageCollector? _garbageCollector;

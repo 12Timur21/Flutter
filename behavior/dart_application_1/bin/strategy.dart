@@ -24,19 +24,19 @@ class WithdrawalStrategy implements Strategy {
 }
 
 class Context {
-  Strategy? _strategy;
+  Strategy _strategy;
+
+  Context(this._strategy);
 
   set strategy(Strategy strategy) => _strategy = strategy;
 
   void executeStrategy() {
-    _strategy?.execute();
+    _strategy.execute();
   }
 }
 
 void main() {
-  Context context = Context();
-
-  context.strategy = AttackStrategy();
+  Context context = Context(AttackStrategy());
   context.executeStrategy();
 
   context.strategy = DefenceStrategy();

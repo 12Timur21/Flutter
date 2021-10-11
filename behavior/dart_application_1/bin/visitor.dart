@@ -19,25 +19,25 @@ class GordonRamsey implements Visitor {
 }
 
 class Restauran {
-  List<Chef> chefs = [];
+  List<Chef> _chefs = [];
 
-  void Add(Chef element) {
-    chefs.add(element);
+  void addChef(Chef chef) {
+    _chefs.add(chef);
   }
 
-  void Accept(Visitor visitor) {
-    chefs.forEach((element) {
-      element.Accept(visitor);
+  void accept(Visitor visitor) {
+    _chefs.forEach((chef) {
+      chef.accept(visitor);
     });
   }
 }
 
 abstract class Chef {
-  void Accept(Visitor visitor);
+  void accept(Visitor visitor);
 }
 
 class ChefTimur implements Chef {
-  void Accept(Visitor visitor) {
+  void accept(Visitor visitor) {
     visitor.tasteTimurDish(this);
   }
 
@@ -47,7 +47,7 @@ class ChefTimur implements Chef {
 }
 
 class ChefLeo implements Chef {
-  void Accept(Visitor visitor) {
+  void accept(Visitor visitor) {
     visitor.tasteLeoDish(this);
   }
 
@@ -57,7 +57,7 @@ class ChefLeo implements Chef {
 }
 
 class ChefMax implements Chef {
-  void Accept(Visitor visitor) {
+  void accept(Visitor visitor) {
     visitor.testeMaxDish(this);
   }
 
@@ -68,9 +68,9 @@ class ChefMax implements Chef {
 
 void main() {
   Restauran restauran = Restauran();
-  restauran.Add(ChefTimur());
-  restauran.Add(ChefLeo());
-  restauran.Add(ChefMax());
+  restauran.addChef(ChefTimur());
+  restauran.addChef(ChefLeo());
+  restauran.addChef(ChefMax());
 
-  restauran.Accept(GordonRamsey());
+  restauran.accept(GordonRamsey());
 }

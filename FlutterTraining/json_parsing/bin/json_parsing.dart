@@ -14,10 +14,11 @@ Future<String> createRequest() async {
 
 Future<void> main() async {
   String jsonString = await createRequest();
-  var userMap = jsonDecode(jsonString);
+  final userMap = jsonDecode(jsonString);
   User user = User.fromJson(userMap[0]);
 
-  print('''
+  print(
+      '''
     ID: ${user.id} 
     UserID: ${user.userId}
     Title: ${user.title}
@@ -26,5 +27,5 @@ Future<void> main() async {
 
   print('------------------');
 
-  print(user.toJson());
+  print(jsonEncode(user));
 }

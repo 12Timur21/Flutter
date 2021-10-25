@@ -4,7 +4,12 @@ class User {
   late String title;
   late String body;
 
-  User({required userId, required id, required title, required body});
+  User({
+    required userId,
+    required id,
+    required title,
+    required body,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];

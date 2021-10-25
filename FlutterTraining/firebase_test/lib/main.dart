@@ -1,8 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_test/models/userData.dart';
 import 'package:firebase_test/screens/wrapper.dart';
 import 'package:firebase_test/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       initialData: null,
       catchError: (_, __) => null,
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Firebase',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

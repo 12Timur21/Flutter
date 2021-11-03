@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-import 'package:memory_box/screens/MainScreen.dart';
+import 'package:memory_box/screens/mainScreen.dart';
 import 'package:memory_box/shared/backgoundPattern.dart';
 import 'package:memory_box/shared/continueButton.dart';
 import 'package:memory_box/shared/hintPlate.dart';

@@ -1,11 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:memory_box/screens/mainScreen.dart';
 import 'screens/wrapper.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Color.fromRGBO(246, 246, 246, 1),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,11 +24,12 @@ class MyApp extends StatelessWidget {
       title: 'Memory Box',
       initialRoute: '/wrapper',
       routes: <String, WidgetBuilder>{
-        '/wrapper': (BuildContext context) => Wrapper()
+        '/wrapper': (BuildContext context) => Wrapper(),
+        '/mainScreen': (BuildContext context) => MainScreen(),
       },
-      home: Scaffold(
-        backgroundColor: Color.fromRGBO(246, 246, 246, 100),
-        body: Wrapper(),
+      home: Container(
+        color: const Color.fromRGBO(246, 246, 246, 1),
+        child: Wrapper(),
       ),
     );
   }

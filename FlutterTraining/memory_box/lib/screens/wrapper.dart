@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memory_box/screens/mainScreen.dart';
 import 'package:memory_box/screens/newUserScreen.dart';
 import 'package:memory_box/screens/permanentUserScreen.dart';
 import 'package:memory_box/screens/registration.dart';
@@ -9,6 +10,6 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Registration();
+    return MainScreen();
   }
 }

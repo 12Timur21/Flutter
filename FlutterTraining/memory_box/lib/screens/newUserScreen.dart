@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:memory_box/shared/backgoundPattern.dart';
-import 'package:memory_box/shared/continueButton.dart';
+import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/continueButton.dart';
 
 class NewUserScreen extends StatelessWidget {
   NewUserScreen({Key? key}) : super(key: key);

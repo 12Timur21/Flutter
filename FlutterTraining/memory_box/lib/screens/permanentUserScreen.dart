@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:memory_box/shared/backgoundPattern.dart';
-import 'package:memory_box/shared/hintPlate.dart';
+import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/hintPlate.dart';
 
 class PermanentsUserScreen extends StatelessWidget {
   PermanentsUserScreen({Key? key}) : super(key: key);

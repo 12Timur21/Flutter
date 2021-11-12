@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
+import 'package:memory_box/blocks/mainPageNavigation/navigation_event.dart';
+import 'package:memory_box/screens/audioListPage.dart';
+import 'package:memory_box/screens/homePage.dart';
+import 'package:memory_box/screens/mainPage.dart';
+import 'package:memory_box/screens/profilePage.dart';
+import 'package:memory_box/screens/recordingPage.dart';
+import 'package:memory_box/screens/selectionsPage.dart';
 
 class BottomNavBar extends StatefulWidget {
   BottomNavBar({Key? key}) : super(key: key);
@@ -9,13 +18,7 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  int _selectedIndex = 1;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  int _selectedIndex = 0;
 
   TextStyle bottomNavigationBarTextStyle = const TextStyle(
     fontFamily: 'TTNorms',
@@ -23,8 +26,37 @@ class _BottomNavBarState extends State<BottomNavBar> {
     fontSize: 11,
   );
 
+  String convertIndexToRouteName(int index) {
+    switch (index) {
+      case 0:
+        return HomePage.routeName;
+      case 1:
+        return SelectionsPage.routeName;
+      case 2:
+        return RecordingPage.routeName;
+      case 3:
+        return AudioListPage.routeName;
+      case 4:
+        return ProfilePage.routeName;
+      default:
+        throw Exception("Can't convert index to routeName");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final counterBloc = BlocProvider.of<NavigationBloc>(context);
+    void _onItemTapped(int index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+      counterBloc.add(
+        NavigateTo(
+          convertIndexToRouteName(index),
+        ),
+      );
+    }
+
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(

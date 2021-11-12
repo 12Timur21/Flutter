@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:memory_box/screens/mainScreen.dart';
-import 'package:memory_box/screens/newUserScreen.dart';
-import 'package:memory_box/screens/permanentUserScreen.dart';
+import 'package:memory_box/models/userModel.dart';
+import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/registration.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +9,12 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MainScreen();
+    final UserModel? user = Provider.of<UserModel?>(context);
+
+    if (user == null) {
+      return Registration();
+    } else {
+      return MainPage();
+    }
   }
 }

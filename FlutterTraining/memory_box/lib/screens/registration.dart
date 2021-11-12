@@ -1,13 +1,18 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-import 'package:memory_box/screens/mainScreen.dart';
-import 'package:memory_box/shared/backgoundPattern.dart';
-import 'package:memory_box/shared/continueButton.dart';
-import 'package:memory_box/shared/hintPlate.dart';
+import 'package:memory_box/models/userModel.dart';
+import 'package:memory_box/screens/MainPage.dart';
+import 'package:memory_box/services/authService.dart';
+import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/circleTextField.dart';
+import 'package:memory_box/widgets/continueButton.dart';
+import 'package:memory_box/widgets/hintPlate.dart';
 
 enum MobileVerificationState {
   SHOW_MOBILE_FORM_STATE,
@@ -15,6 +20,8 @@ enum MobileVerificationState {
 }
 
 class Registration extends StatefulWidget {
+  static const routeName = 'Registration';
+
   Registration({Key? key}) : super(key: key);
 
   @override
@@ -48,10 +55,10 @@ class _RegistrationState extends State<Registration> {
     await _auth.verifyPhoneNumber(
       phoneNumber: '+${toNumericString(_textFieldController.text)}',
       verificationCompleted: (_) {
-        print('success');
+        print('success verfication phone number');
       },
       verificationFailed: (error) {
-        print('error');
+        print('error verfication phone number');
         print(error);
       },
       codeSent: (verficationIds, resendingToken) async {
@@ -66,26 +73,48 @@ class _RegistrationState extends State<Registration> {
   }
 
   void verifySMSCode() async {
-    print(_textFieldController.text);
     PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
         verificationId: verifictionId, smsCode: _textFieldController.text);
 
-    signInWithPhoneAuthCredential(phoneAuthCredential);
+    AuthService.instance.signInWithPhoneAuthCredential(phoneAuthCredential);
+    // .then(
+    //   (value) => {
+    //     if (value)
+    //       {
+    //         Navigator.pushNamed(
+    //           context,
+    //           '/mainPage',
+    //         )
+    //         // Navigator.push(
+    //         //   context,
+    //         //   MaterialPageRoute(
+    //         //     builder: (context) => MainPage(),
+    //         //   ),
+    //         // ),
+    //       },
+    //   },
+    // );
   }
 
-  void signInWithPhoneAuthCredential(
-      PhoneAuthCredential phoneAuthCredential) async {
-    try {
-      final authCredential =
-          await _auth.signInWithCredential(phoneAuthCredential);
-
-      if (authCredential.user != null) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MainScreen()));
-      }
-    } on FirebaseAuthException catch (e) {
-      print(e);
-    }
+  void anonAuth() async {
+    AuthService.instance.signInAnon();
+    // .then(
+    //       (value) => {
+    //         if (value)
+    //           {
+    //             Navigator.pushNamed(
+    //               context,
+    //               '/mainPage',
+    //             )
+    //             // Navigator.push(
+    //             //   context,
+    //             //   MaterialPageRoute(
+    //             //     builder: (context) => MainScreen(),
+    //             //   ),
+    //             // ),
+    //           },
+    //       },
+    //     );
   }
 
   @override
@@ -145,43 +174,12 @@ class _RegistrationState extends State<Registration> {
                 const SizedBox(
                   height: 15,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 0,
-                    vertical: 10,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(41),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.11),
-                        blurRadius: 7,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _textFieldController,
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: currentState ==
-                            MobileVerificationState.SHOW_MOBILE_FORM_STATE
-                        ? [PhoneInputFormatter()]
-                        : [],
-                    //: TextInputType.number,
-                    style: const TextStyle(
-                      fontFamily: 'TTNorms',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                    ),
-                  ),
+                CircleTextField(
+                  controller: _textFieldController,
+                  inputFormatters: currentState ==
+                          MobileVerificationState.SHOW_MOBILE_FORM_STATE
+                      ? [PhoneInputFormatter()]
+                      : [],
                 ),
                 const SizedBox(
                   height: 45,
@@ -198,7 +196,10 @@ class _RegistrationState extends State<Registration> {
                   height: 15,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    log('auth byn pressed');
+                    AuthService.instance.signInAnon();
+                  },
                   child: const Text(
                     'Позже',
                     style: TextStyle(

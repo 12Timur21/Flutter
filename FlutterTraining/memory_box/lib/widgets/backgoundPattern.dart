@@ -13,9 +13,9 @@ class BackgroundPattern extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Container(
-      color: Color.fromRGBO(246, 246, 246, 1),
-      child: Stack(
+    return Scaffold(
+      // color: Color.fromRGBO(246, 246, 246, 1),
+      body: Stack(
         children: [
           CustomPaint(
             size: Size(size.width, 300),

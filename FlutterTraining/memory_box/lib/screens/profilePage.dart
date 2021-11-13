@@ -282,7 +282,9 @@ class _ProfileState extends State<ProfilePage> {
                         child: Text('Выйти из приложения'),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          AuthService.instance.deleteAccount();
+                        },
                         child: const Text(
                           'Удалить аккаунт',
                           style: TextStyle(

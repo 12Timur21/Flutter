@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "567954423667-c1dbiu7e2anqnk0j649aivri4vrvo6g0.apps.googleusercontent.com",
+          "client_id": "567954423667-8grls41ie2929ssc6ak57pqobeof6cff.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.memory_box",
-            "certificate_hash": "d725bc6ac88309134025496f9ab74c1e9578e04f"
+            "certificate_hash": "856b37f8254dbb8c17eae85010ac11ddaa83126d"
           }
         },
         {

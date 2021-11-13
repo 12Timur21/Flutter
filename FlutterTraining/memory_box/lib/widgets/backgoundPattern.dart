@@ -14,11 +14,11 @@ class BackgroundPattern extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
-      // color: Color.fromRGBO(246, 246, 246, 1),
+      backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
       body: Stack(
         children: [
           CustomPaint(
-            size: Size(size.width, 300),
+            size: Size(size.width, 275),
             painter: Pattern(
               patternColor: patternColor,
             ),

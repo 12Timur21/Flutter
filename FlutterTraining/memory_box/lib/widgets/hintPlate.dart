@@ -14,7 +14,7 @@ class HintPlate extends StatelessWidget {
         horizontal: 21,
       ),
       margin: const EdgeInsets.only(
-        bottom: 50,
+        bottom: 20,
         left: 15,
         right: 15,
       ),

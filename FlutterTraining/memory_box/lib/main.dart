@@ -3,23 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:memory_box/models/userModel.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/mainPage.dart';
-import 'package:memory_box/screens/registration.dart';
-import 'package:memory_box/screens/wrapper.dart';
+import 'package:memory_box/screens/Registration/registration.dart';
+import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/services/authService.dart';
+import 'package:memory_box/settings/initialSettings.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/services.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
   runApp(const MyApp());
-
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      systemNavigationBarColor: Color.fromRGBO(246, 246, 246, 1),
-    ),
-  );
+  InitialSettings();
 }
 
 class MyApp extends StatelessWidget {
@@ -31,11 +25,11 @@ class MyApp extends StatelessWidget {
       value: AuthService.instance.user,
       initialData: null,
       catchError: (_, __) => null,
-      child: MaterialApp(
-          title: 'Memory Box',
-          // initialRoute: '/',
-          onGenerateRoute: AppRouter.generateRoute,
-          home: Wrapper()),
+      child: const MaterialApp(
+        title: 'Memory Box',
+        initialRoute: Root.routeName,
+        onGenerateRoute: AppRouter.generateRoute,
+      ),
     );
   }
 }

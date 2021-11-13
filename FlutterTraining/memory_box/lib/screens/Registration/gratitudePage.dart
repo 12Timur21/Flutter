@@ -6,9 +6,11 @@ import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/hintPlate.dart';
+import 'package:memory_box/widgets/textLogo.dart';
 
-class PermanentsUserScreen extends StatelessWidget {
-  const PermanentsUserScreen({Key? key}) : super(key: key);
+class GratitudePage extends StatelessWidget {
+  static const routeName = 'GraitudePage';
+  const GratitudePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class PermanentsUserScreen extends StatelessWidget {
       () {
         Navigator.pushReplacementNamed(
           context,
-          Root.routeName,
+          MainPage.routeName,
         );
       },
     );
@@ -35,34 +37,29 @@ class PermanentsUserScreen extends StatelessWidget {
                   height: 275,
                   width: double.infinity,
                   alignment: Alignment.center,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text(
-                          'MemoryBox',
-                          style: TextStyle(
-                            letterSpacing: 6,
-                            fontSize: 48,
-                            fontFamily: 'TTNorms',
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                  child: Container(
+                    height: 275,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const <Widget>[
+                        FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            'Ты супер!',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'TTNorms',
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 6,
+                              fontSize: 48,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        'Твой голос всегда рядом',
-                        style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2,
-                          color: Colors.white,
-                          fontFamily: 'TTNorms',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 60),
@@ -97,11 +94,6 @@ class PermanentsUserScreen extends StatelessWidget {
                   height: 50,
                 ),
                 SvgPicture.asset('assets/icons/Heart.svg'),
-                Spacer(),
-                const HintPlate(
-                  label:
-                      'Взрослые иногда нуждаются в \n сказке даже больше, чем дети',
-                )
               ],
             ),
           ),

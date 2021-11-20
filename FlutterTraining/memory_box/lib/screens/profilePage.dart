@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/services/authService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circleTextField.dart';
@@ -80,13 +81,16 @@ class _ProfileState extends State<ProfilePage> {
           backgroundColor: Colors.transparent,
           centerTitle: true,
           leading: _currentMode == Mode.viewMode
-              ? IconButton(
-                  icon: SvgPicture.asset(
-                    'assets/icons/Burger.svg',
+              ? Container(
+                  margin: EdgeInsets.only(left: 6),
+                  child: IconButton(
+                    icon: SvgPicture.asset(
+                      'assets/icons/Burger.svg',
+                    ),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
                   ),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
                 )
               : Container(
                   margin: EdgeInsets.only(top: 20, left: 10),
@@ -138,8 +142,10 @@ class _ProfileState extends State<ProfilePage> {
         ),
         drawer: const NavigationBar(),
         body: Center(
-          child: FractionallySizedBox(
-            widthFactor: 0.8,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 40,
+            ),
             child: Column(
               children: [
                 const SizedBox(
@@ -212,7 +218,7 @@ class _ProfileState extends State<ProfilePage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    changeViewMode();
+                    // changeViewMode();
                   },
                   child: Text(
                     _currentMode == Mode.viewMode
@@ -278,12 +284,20 @@ class _ProfileState extends State<ProfilePage> {
                       TextButton(
                         onPressed: () {
                           AuthService.instance.signOut();
+                          Navigator.pushReplacementNamed(
+                            context,
+                            Root.routeName,
+                          );
                         },
                         child: Text('Выйти из приложения'),
                       ),
                       TextButton(
                         onPressed: () {
                           AuthService.instance.deleteAccount();
+                          Navigator.pushReplacementNamed(
+                            context,
+                            Root.routeName,
+                          );
                         },
                         child: const Text(
                           'Удалить аккаунт',

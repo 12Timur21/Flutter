@@ -17,7 +17,7 @@ class PermanentsUserScreen extends StatelessWidget {
       () {
         Navigator.pushReplacementNamed(
           context,
-          Root.routeName,
+          MainPage.routeName,
         );
       },
     );

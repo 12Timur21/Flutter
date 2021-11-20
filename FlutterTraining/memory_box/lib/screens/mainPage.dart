@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
-import 'package:memory_box/screens/ProfilePage.dart';
-import 'package:memory_box/screens/audioListPage.dart';
 import 'package:memory_box/screens/homePage.dart';
-import 'package:memory_box/screens/recordingPage.dart';
-
-import 'package:memory_box/screens/selectionsPage.dart';
-import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:flutter/services.dart';
 import 'package:memory_box/widgets/bottomNavigationBar.dart';
 import 'package:memory_box/widgets/navigationMenu.dart';
 
@@ -30,6 +22,8 @@ class _MainPageState extends State<MainPage> {
     fontSize: 11,
   );
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<NavigationBloc>(
@@ -40,6 +34,7 @@ class _MainPageState extends State<MainPage> {
       ),
       child: BlocBuilder<NavigationBloc, NavigationState>(
         builder: (BuildContext context, NavigationState state) => Scaffold(
+          key: _scaffoldKey,
           drawer: const NavigationBar(),
           body: state.selectedItem,
           bottomNavigationBar: Container(
@@ -61,7 +56,9 @@ class _MainPageState extends State<MainPage> {
                 topLeft: Radius.circular(30.0),
                 topRight: Radius.circular(30.0),
               ),
-              child: BottomNavBar(),
+              child: BottomNavBar(
+                secondKey: _scaffoldKey,
+              ),
             ),
           ),
         ),

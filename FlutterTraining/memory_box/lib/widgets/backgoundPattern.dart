@@ -4,11 +4,13 @@ class BackgroundPattern extends StatelessWidget {
   const BackgroundPattern({
     required this.child,
     this.patternColor = const Color.fromRGBO(140, 132, 226, 1),
+    this.height = 275,
     Key? key,
   });
 
   final Widget child;
   final Color patternColor;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class BackgroundPattern extends StatelessWidget {
       body: Stack(
         children: [
           CustomPaint(
-            size: Size(size.width, 275),
+            size: Size(size.width, height),
             painter: Pattern(
               patternColor: patternColor,
             ),

@@ -105,7 +105,7 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
                   const SizedBox(
                     height: 15,
                   ),
-                  Spacer(),
+                  const Spacer(),
                   const HintPlate(
                     label:
                         'Регистрация привяжет твои сказки \n к облаку, после чего они всегда \n будут с тобой',

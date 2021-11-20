@@ -119,7 +119,7 @@ class AuthService {
       log('sign out');
       return await _auth.currentUser?.delete();
     } catch (e) {
-      log('failed sign out');
+      log('failed delete account');
       log(e.toString());
     }
   }

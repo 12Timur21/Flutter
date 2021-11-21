@@ -8,61 +8,68 @@ import 'package:permission_handler/permission_handler.dart';
 
 class SoundRecorder {
   final String pathToSaveAudio = 'audio_example.aac';
-  FlutterSoundRecorder? _audioRecorder;
+
+  FlutterSoundRecorder? _soundRecorder;
   bool _isRecorderInitialised = false;
 
-  Future<bool?> init() async {
-    _audioRecorder = FlutterSoundRecorder();
-    _isRecorderInitialised = true;
+  Future<void> init() async {
+    try {
+      bool isPermissionsReceived = await _checkPermission();
+      if (isPermissionsReceived) {
+        _isRecorderInitialised = true;
+        _soundRecorder = FlutterSoundRecorder();
 
-    bool isGranted = await _checkPermission();
-    if (isGranted) {
-      await _openRecorderAudioSession();
-      _setAudioRecorderSubscriptionDuration(
-        const Duration(
-          milliseconds: 20,
-        ),
-      );
-      log('recorder session open');
-      return true;
+        await _openRecorderAudioSession();
+        _setAudioRecorderSubscriptionDuration(
+          const Duration(
+            milliseconds: 20,
+          ),
+        );
+        log('Recorder session open');
+      }
+    } catch (e) {
+      dispose();
+      log('Failed to open recorder session ');
     }
-
-    return null;
   }
 
   void dispose() {
     if (!_isRecorderInitialised) return;
     _closeRecorderAudioSession();
-    _audioRecorder = null;
+    _soundRecorder = null;
     _isRecorderInitialised = false;
   }
 
   void startRecording() async {
     if (!_isRecorderInitialised) return;
-    await _audioRecorder!.startRecorder(
+    await _soundRecorder?.startRecorder(
       toFile: pathToSaveAudio,
     );
   }
 
   void finishRecording() async {
     if (!_isRecorderInitialised) return;
-    await _audioRecorder!.stopRecorder();
+    await _soundRecorder?.stopRecorder();
     dispose();
   }
 
-  Stream<RecordingDisposition>? get recorderStream =>
-      _audioRecorder!.onProgress!.asBroadcastStream();
+  Stream<RecordingDisposition>? get recorderStream {
+    if (!_isRecorderInitialised) {
+      return null;
+    }
+    return _soundRecorder?.onProgress;
+  }
 
   Future<void> _openRecorderAudioSession() async {
-    await _audioRecorder!.openAudioSession();
+    await _soundRecorder?.openAudioSession();
   }
 
   Future<void> _closeRecorderAudioSession() async {
-    await _audioRecorder?.closeAudioSession();
+    await _soundRecorder?.closeAudioSession();
   }
 
   Future<void> _setAudioRecorderSubscriptionDuration(Duration duration) async {
-    await _audioRecorder!.setSubscriptionDuration(duration);
+    await _soundRecorder?.setSubscriptionDuration(duration);
   }
 
   Future<bool> _checkPermission() async {
@@ -77,7 +84,8 @@ class SoundRecorder {
     if (isGranted) {
       return true;
     } else {
-      throw RecordingPermissionException('Microphone permission denied');
+      return false;
+      // throw RecordingPermissionException('Permission denied');
     }
   }
 }

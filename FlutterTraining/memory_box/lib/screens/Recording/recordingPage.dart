@@ -17,31 +17,38 @@ class RecordingPage extends StatefulWidget {
 }
 
 class _RecordingScreenState extends State<RecordingPage> {
-  String recordingTime = '00:10:09';
-  String recordName = 'Запись №1';
+  String _recordingTime = '00:00:00';
+
   bool isRecorderStreamInitialized = false;
 
   SoundRecorder recorder = SoundRecorder();
   StreamSubscription<RecordingDisposition>? recorderSubscription;
+  Timer? _timer;
 
   @override
   void initState() {
-    recorder.init().then(
-          (value) async => {
-            await startRecording(),
-            recorderSubscription = recorder.recorderStream!.listen((_) {}),
-            setState(() {
-              isRecorderStreamInitialized = true;
-            }),
-          },
-        );
+    recorder
+        .init()
+        .then((value) async => {
+              await startRecording(),
+              startTimer(),
+              recorderSubscription = recorder.recorderStream?.listen((e) {}),
+              setState(() {
+                isRecorderStreamInitialized = true;
+              }),
+            })
+        .catchError((e) {
+      Navigator.of(context).pop();
+      log(e);
+    });
 
     super.initState();
   }
 
   @override
   void dispose() {
-    recorder.dispose();
+    disposeTimer();
+    disposeRecording();
     recorderSubscription?.cancel();
     recorderSubscription = null;
     isRecorderStreamInitialized = false;
@@ -54,10 +61,45 @@ class _RecordingScreenState extends State<RecordingPage> {
 
   void stopRecoring() {
     recorder.finishRecording();
+    dispose();
   }
 
-  void cancelRecording() {
+  void disposeRecording() {
     recorder.dispose();
+  }
+
+  void startTimer() {
+    int seconds = 00;
+    int minutes = 00;
+    int hours = 00;
+
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (Timer timer) => setState(
+        () {
+          if (seconds < 0) {
+            timer.cancel();
+          } else {
+            seconds = seconds + 1;
+
+            if (seconds > 59) {
+              minutes += 1;
+              seconds = 0;
+              if (minutes > 59) {
+                hours += 1;
+                minutes = 0;
+              }
+            }
+          }
+          _recordingTime =
+              '${hours <= 9 ? '0$hours' : hours}:${minutes <= 9 ? '0$minutes' : minutes}:${seconds <= 9 ? '0$seconds' : seconds}';
+        },
+      ),
+    );
+  }
+
+  void disposeTimer() {
+    _timer?.cancel();
   }
 
   @override
@@ -160,7 +202,7 @@ class _RecordingScreenState extends State<RecordingPage> {
                 ),
               ),
               Text(
-                '$recordingTime',
+                '$_recordingTime',
                 style: const TextStyle(
                   fontFamily: 'TTNorms',
                   fontWeight: FontWeight.w500,

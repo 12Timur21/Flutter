@@ -6,7 +6,7 @@ import 'package:memory_box/blocks/mainPageNavigation/navigation_event.dart';
 import 'package:memory_box/screens/audioListPage.dart';
 import 'package:memory_box/screens/homePage.dart';
 import 'package:memory_box/screens/profilePage.dart';
-import 'package:memory_box/screens/recordingPage.dart';
+import 'package:memory_box/screens/Recording/recordingPage.dart';
 import 'package:memory_box/screens/selectionsPage.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -43,7 +43,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
             setState(() {
               isOpenBottomSheet = false;
             });
-            print('mounted');
           }
         });
   }

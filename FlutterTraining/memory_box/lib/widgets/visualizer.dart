@@ -49,7 +49,7 @@ class Painter extends CustomPainter {
   Painter(this._dbLevels, this.enableRemoveMode, this._isRemoveModeEnable);
   List<double> _dbLevels;
   Function enableRemoveMode;
-  bool _isRemoveModeEnable;
+  final bool _isRemoveModeEnable;
 
   final double _spaceBetwenLines = 2;
   double _halfHeight = 0;
@@ -93,8 +93,6 @@ class Painter extends CustomPainter {
     _halfHeight = size.height / 2;
     canvas.clipRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    print(_dbLevels.length);
-
     if (_isRemoveModeEnable) {
       drawDeficientIndentLine(canvas, size);
     }
@@ -112,7 +110,7 @@ class Painter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter old) {
+  bool shouldRepaint(_) {
     return true;
   }
 }

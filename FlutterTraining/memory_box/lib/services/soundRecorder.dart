@@ -1,18 +1,23 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
 class SoundRecorder {
-  final String pathToSaveAudio = 'audio_example.aac';
+  late Directory appDirectory;
+  late String pathToSaveAudio;
 
   FlutterSoundRecorder? _soundRecorder;
   bool _isRecorderInitialised = false;
 
   Future<void> init() async {
+    appDirectory = await getApplicationDocumentsDirectory();
+    pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
     try {
       bool isPermissionsReceived = await _checkPermission();
       if (isPermissionsReceived) {
@@ -77,7 +82,7 @@ class SoundRecorder {
       Permission.storage,
       Permission.microphone,
     ].request();
-
+    // Permiti
     bool isGranted = permissions[Permission.storage]!.isGranted &&
         permissions[Permission.microphone]!.isGranted;
 
@@ -85,7 +90,6 @@ class SoundRecorder {
       return true;
     } else {
       return false;
-      // throw RecordingPermissionException('Permission denied');
     }
   }
 }

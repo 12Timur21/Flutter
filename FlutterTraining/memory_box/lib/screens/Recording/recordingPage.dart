@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
+import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_event.dart';
+import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
+import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
+import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
+import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/screens/Recording/listeningPage.dart';
 import 'dart:async';
 import 'dart:math';
 
-import 'package:memory_box/services/sound_recorder.dart';
+import 'package:memory_box/services/soundRecorder.dart';
 import 'package:memory_box/widgets/visualizer.dart';
 
 class RecordingPage extends StatefulWidget {
@@ -61,7 +68,7 @@ class _RecordingScreenState extends State<RecordingPage> {
 
   void stopRecoring() {
     recorder.finishRecording();
-    dispose();
+    navigateToListeningPage();
   }
 
   void disposeRecording() {
@@ -102,8 +109,27 @@ class _RecordingScreenState extends State<RecordingPage> {
     _timer?.cancel();
   }
 
+  void navigateToListeningPage() {
+    final navigationBloc = BlocProvider.of<BottomSheetBloc>(context);
+    navigationBloc.add(
+      OpenPage(
+        BottomSheetItems.ListeningPage,
+      ),
+    );
+  }
+
+  void changeRecordingButton() {
+    final recorderButtomBloc = BlocProvider.of<RecorderButtomBloc>(context);
+    recorderButtomBloc.add(
+      ChangeIcon(
+        RecorderButtonStates.WithLine,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    changeRecordingButton();
     return Container(
       height: 500,
       width: double.infinity,

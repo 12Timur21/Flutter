@@ -1,13 +1,9 @@
 import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:memory_box/screens/Registration/gratitudePage.dart';
 import 'package:memory_box/screens/Registration/verifyPinPage.dart';
-
-import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/services/authService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circleTextField.dart';
@@ -47,7 +43,7 @@ class _RegistrationState extends State<Registration> {
     AuthService.instance.signInAnon().then(
           (_) => Navigator.pushReplacementNamed(
             context,
-            Root.routeName,
+            GratitudePage.routeName,
           ),
         );
   }
@@ -136,7 +132,7 @@ class _RegistrationState extends State<Registration> {
                       ),
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   const HintPlate(
                     label:
                         'Регистрация привяжет твои сказки \n к облаку, после чего они всегда \n будут с тобой',

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/models/userModel.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/root.dart';
@@ -7,10 +8,37 @@ import 'package:memory_box/services/authService.dart';
 import 'package:memory_box/settings/initialSettings.dart';
 import 'package:provider/provider.dart';
 
+import 'blocks/mainPageNavigation/navigation_bloc.dart';
+import 'blocks/mainPageNavigation/navigation_state.dart';
+import 'blocks/recorderButton/recorderButton_bloc.dart';
+import 'blocks/recorderButton/recorderButton_state.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<NavigationBloc>(
+          create: (context) => NavigationBloc(
+            const NavigationState(
+              selectedItem: NavigationPages.HomePage,
+            ),
+          ),
+        ),
+        BlocProvider<RecorderButtomBloc>(
+          create: (BuildContext context) {
+            return RecorderButtomBloc(
+              const RecorderButtonState(
+                selectedIcon: RecorderButtonStates.WithIcon,
+              ),
+            );
+          },
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
   InitialSettings();
 }
 
@@ -44,6 +72,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//Убирает
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override
   Widget buildOverscrollIndicator(

@@ -47,11 +47,11 @@ class _VisualizerState extends State<Visualizer> {
 
 class Painter extends CustomPainter {
   Painter(this._dbLevels, this.enableRemoveMode, this._isRemoveModeEnable);
-  List<double> _dbLevels;
+  final List<double> _dbLevels;
   Function enableRemoveMode;
   final bool _isRemoveModeEnable;
 
-  final double _spaceBetwenLines = 2;
+  final double _spaceBetwenLines = 2.2;
   double _halfHeight = 0;
   late double preventX;
 
@@ -97,7 +97,7 @@ class Painter extends CustomPainter {
       drawDeficientIndentLine(canvas, size);
     }
 
-    _dbLevels.forEach((level) {
+    for (double level in _dbLevels) {
       if (level - 25 >= 0) {
         drawColumn(canvas, level);
       } else {
@@ -106,7 +106,7 @@ class Painter extends CustomPainter {
       if (preventX >= size.width && _isRemoveModeEnable == false) {
         enableRemoveMode();
       }
-    });
+    }
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'navigation_state.dart';
+
 abstract class NavigationEvent {
   const NavigationEvent();
 }
@@ -5,5 +7,5 @@ abstract class NavigationEvent {
 class NavigateTo extends NavigationEvent {
   const NavigateTo(this.destination);
 
-  final String destination;
+  final NavigationPages? destination;
 }

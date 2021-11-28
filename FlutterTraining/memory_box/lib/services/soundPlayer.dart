@@ -11,10 +11,22 @@ class SoundPlayer {
   late String pathToSaveAudio;
   bool isSoundPlay = false;
 
-  void init() async {
-    audioPlayer = AudioPlayer();
-    appDirectory = await getApplicationDocumentsDirectory();
-    pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
+  Future<void> init() async {
+    audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
+    // appDirectory = await getApplicationDocumentsDirectory();
+    // pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
+    await audioPlayer?.setUrl('/sdcard/download/test2.aac', isLocal: true);
+
+    print('first steep');
+    Future.delayed(
+      Duration(seconds: 4),
+      () async {
+        print(
+          await audioPlayer?.getDuration(),
+        );
+      },
+    );
+    // audioPlayer?.
     // audioPlayer!.getDuration().then((value) => print(value));
     // audioPlayer!.onAudioPositionChanged.listen((event) {
     //   print(event.inSeconds);
@@ -23,18 +35,23 @@ class SoundPlayer {
     // audioPlayer!.seek(position)
   }
 
+  Future<void> dispose() async {
+    await audioPlayer?.stop();
+    await audioPlayer?.release();
+    await audioPlayer?.dispose();
+    audioPlayer = null;
+  }
+
+  Future<int>? get audioDurationInMs => audioPlayer?.getDuration();
+
   void playLocal() async {
-    int result = await audioPlayer!.play(pathToSaveAudio, isLocal: true);
+    audioPlayer?.resume();
     isSoundPlay = true;
   }
 
   void pauseLocal() async {
     int result = await audioPlayer!.pause();
     isSoundPlay = false;
-  }
-
-  void moveForward() {
-    // int result =  await audioPlayer!.seek()
   }
 
   void moveBack() {}

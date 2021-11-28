@@ -43,8 +43,8 @@ class _MainPageState extends State<MainPage> {
           (BuildContext context) {
             return BlocProvider<BottomSheetBloc>(
               create: (BuildContext context) => BottomSheetBloc(
-                const BottomSheetState(
-                  bottomSheetItem: BottomSheetItems.RecordingPage,
+                RecorderPageState(
+                  BottomSheetItems.RecordingPage,
                 ),
               ),
               child: BlocBuilder<BottomSheetBloc, BottomSheetState>(
@@ -53,7 +53,11 @@ class _MainPageState extends State<MainPage> {
                     return RecordingPage();
                   }
                   if (state.bottomSheetItem == BottomSheetItems.ListeningPage) {
-                    return ListeningPage();
+                    ListeningPageState listeningPageState =
+                        state as ListeningPageState;
+                    return ListeningPage(
+                      audioDuration: listeningPageState.recorderTime,
+                    );
                   }
                   return Container();
                 },

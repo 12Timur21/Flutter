@@ -102,7 +102,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationBarItem(
             icon: BlocBuilder<RecorderButtomBloc, RecorderButtonState>(
               builder: (BuildContext context, RecorderButtonState state) {
-                print(state.selectedIcon);
                 if (state.selectedIcon == RecorderButtonStates.WithIcon) {
                   return RecorderButtonWithIcon();
                 }

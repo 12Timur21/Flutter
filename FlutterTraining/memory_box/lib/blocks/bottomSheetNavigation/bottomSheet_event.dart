@@ -1,11 +1,19 @@
 import 'bottomSheet_state.dart';
 
 abstract class BottomSheet {
-  const BottomSheet();
+  BottomSheet(this.bottomSheetItem);
+  final BottomSheetItems bottomSheetItem;
 }
 
-class OpenPage extends BottomSheet {
-  const OpenPage(this.bottomSheetItem);
+class OpenRecoderPage extends BottomSheet {
+  OpenRecoderPage(bottomSheetItem) : super(bottomSheetItem);
+}
 
-  final BottomSheetItems bottomSheetItem;
+class OpenListeningPage extends BottomSheet {
+  OpenListeningPage(
+    bottomSheetItem,
+    this.recorderTime,
+  ) : super(bottomSheetItem);
+
+  final Duration recorderTime;
 }

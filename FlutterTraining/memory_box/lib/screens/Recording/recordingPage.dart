@@ -12,6 +12,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:memory_box/services/soundRecorder.dart';
+import 'package:memory_box/utils/formatting.dart';
 import 'package:memory_box/widgets/visualizer.dart';
 
 class RecordingPage extends StatefulWidget {
@@ -24,16 +25,20 @@ class RecordingPage extends StatefulWidget {
 }
 
 class _RecordingScreenState extends State<RecordingPage> {
-  String _recordingTime = '00:00:00';
-
   bool isRecorderStreamInitialized = false;
 
   SoundRecorder recorder = SoundRecorder();
   StreamSubscription<RecordingDisposition>? recorderSubscription;
   Timer? _timer;
+  Duration _audioDuration = Duration(
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  );
 
   @override
   void initState() {
+    changeRecordingButton();
     recorder
         .init()
         .then((value) async => {
@@ -76,9 +81,9 @@ class _RecordingScreenState extends State<RecordingPage> {
   }
 
   void startTimer() {
-    int seconds = 00;
-    int minutes = 00;
-    int hours = 00;
+    int seconds = 0;
+    int minutes = 0;
+    int hours = 0;
 
     _timer = Timer.periodic(
       const Duration(seconds: 1),
@@ -98,8 +103,11 @@ class _RecordingScreenState extends State<RecordingPage> {
               }
             }
           }
-          _recordingTime =
-              '${hours <= 9 ? '0$hours' : hours}:${minutes <= 9 ? '0$minutes' : minutes}:${seconds <= 9 ? '0$seconds' : seconds}';
+          _audioDuration = Duration(
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds,
+          );
         },
       ),
     );
@@ -112,8 +120,9 @@ class _RecordingScreenState extends State<RecordingPage> {
   void navigateToListeningPage() {
     final navigationBloc = BlocProvider.of<BottomSheetBloc>(context);
     navigationBloc.add(
-      OpenPage(
+      OpenListeningPage(
         BottomSheetItems.ListeningPage,
+        _audioDuration,
       ),
     );
   }
@@ -129,7 +138,6 @@ class _RecordingScreenState extends State<RecordingPage> {
 
   @override
   Widget build(BuildContext context) {
-    changeRecordingButton();
     return Container(
       height: 500,
       width: double.infinity,
@@ -227,8 +235,9 @@ class _RecordingScreenState extends State<RecordingPage> {
                   shape: BoxShape.circle,
                 ),
               ),
+              //!Преобразовать
               Text(
-                '$_recordingTime',
+                Formatting.printDurationTime(_audioDuration),
                 style: const TextStyle(
                   fontFamily: 'TTNorms',
                   fontWeight: FontWeight.w500,

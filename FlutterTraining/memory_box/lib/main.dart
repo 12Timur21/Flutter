@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//Убирает
+//? Убирает физику "подтягивания" у скрола
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override
   Widget buildOverscrollIndicator(

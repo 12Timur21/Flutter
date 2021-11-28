@@ -6,13 +6,15 @@ import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
 import 'package:memory_box/services/soundPlayer.dart';
+import 'package:memory_box/utils/formatting.dart';
 import 'package:memory_box/widgets/bottomSheetWrapper.dart';
 
 class ListeningPage extends StatefulWidget {
   static const routeName = 'ListeningPage';
 
-  const ListeningPage({Key? key}) : super(key: key);
-
+  const ListeningPage({required this.audioDuration, Key? key})
+      : super(key: key);
+  final Duration audioDuration;
   @override
   _ListeningPageState createState() => _ListeningPageState();
 }
@@ -20,16 +22,30 @@ class ListeningPage extends StatefulWidget {
 class _ListeningPageState extends State<ListeningPage> {
   final String soundName = 'Аудиозапись 1';
   bool isPlayMode = false;
+  Duration audioDuration = Duration(hours: 0, minutes: 0, seconds: 0);
 
   SoundPlayer _soundPlayer = SoundPlayer();
 
   @override
   void initState() {
-    _soundPlayer.init();
-    //   _soundPlayer.durationHandler = (d) => setState(() {
-    //   _duration = d;
-    // });
+    changeRecordingButton();
+    initAudioPlayer();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _soundPlayer.dispose();
+    super.dispose();
+  }
+
+  void initAudioPlayer() async {
+    await _soundPlayer.init();
+    print('second step');
+    audioDuration = Duration(
+      milliseconds: await _soundPlayer.audioDurationInMs ?? 0,
+    );
+    setState(() {});
   }
 
   void shareSound() {
@@ -40,7 +56,7 @@ class _ListeningPageState extends State<ListeningPage> {
     _soundPlayer.localDownloadSound();
   }
 
-  void deleteSound() {
+  void deleteSound() async {
     _soundPlayer.deleteSound();
     Navigator.of(context).pop();
   }
@@ -69,29 +85,51 @@ class _ListeningPageState extends State<ListeningPage> {
     );
   }
 
+  double currentPlayTime = 0;
   @override
   Widget build(BuildContext context) {
-    changeRecordingButton();
-
-    double sliderCurrentTime = 0;
-
     Widget AudioSlider = SliderTheme(
       data: SliderTheme.of(context).copyWith(
           // thumbShape: CustomSliderThumbRhombus(),
           ),
-      child: Slider(
-        activeColor: Colors.black,
-        inactiveColor: Colors.black,
-        value: sliderCurrentTime,
-        min: 0.0,
-        max: 100,
-        thumbColor: Colors.red,
-        onChanged: (double value) {
-          setState(() {
-            // seekToSecond(value.toInt());
-            sliderCurrentTime = value;
-          });
-        },
+      child: Column(
+        children: [
+          Slider(
+            activeColor: Colors.black,
+            inactiveColor: Colors.black,
+            value: currentPlayTime,
+            min: 0.0,
+            max: audioDuration.inMilliseconds.toDouble(),
+
+            /*widget.audioDuration.inMilliseconds.toDouble()*/
+            thumbColor: Colors.red,
+            onChanged: (double value) {
+              setState(() {
+                currentPlayTime = value;
+              });
+            },
+            onChangeEnd: (double value) {
+              currentPlayTime = value;
+              _soundPlayer.audioPlayer?.seek(
+                Duration(
+                  milliseconds: currentPlayTime.toInt(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('00:00'),
+              Text(
+                Formatting.printDurationTime(audioDuration),
+              ),
+            ],
+          )
+        ],
       ),
     );
 

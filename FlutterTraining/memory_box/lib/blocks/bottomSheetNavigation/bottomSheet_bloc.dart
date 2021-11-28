@@ -15,10 +15,7 @@ class BottomSheetBloc extends Bloc<BottomSheet, BottomSheetState> {
     }
     if (event is OpenListeningPage) {
       if (event.bottomSheetItem != state.bottomSheetItem) {
-        yield ListeningPageState(
-          event.bottomSheetItem,
-          event.recorderTime,
-        );
+        yield ListeningPageState(event.bottomSheetItem);
       }
     }
   }

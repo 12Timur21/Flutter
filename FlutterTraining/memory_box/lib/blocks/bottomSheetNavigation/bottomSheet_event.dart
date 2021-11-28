@@ -10,10 +10,5 @@ class OpenRecoderPage extends BottomSheet {
 }
 
 class OpenListeningPage extends BottomSheet {
-  OpenListeningPage(
-    bottomSheetItem,
-    this.recorderTime,
-  ) : super(bottomSheetItem);
-
-  final Duration recorderTime;
+  OpenListeningPage(bottomSheetItem) : super(bottomSheetItem);
 }

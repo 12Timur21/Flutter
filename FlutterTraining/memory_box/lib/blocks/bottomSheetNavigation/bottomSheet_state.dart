@@ -10,12 +10,7 @@ class RecorderPageState extends BottomSheetState {
 }
 
 class ListeningPageState extends BottomSheetState {
-  ListeningPageState(
-    bottomSheetItem,
-    this.recorderTime,
-  ) : super(bottomSheetItem);
-
-  final Duration recorderTime;
+  ListeningPageState(bottomSheetItem) : super(bottomSheetItem);
 }
 
 enum BottomSheetItems {

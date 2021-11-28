@@ -122,7 +122,6 @@ class _RecordingScreenState extends State<RecordingPage> {
     navigationBloc.add(
       OpenListeningPage(
         BottomSheetItems.ListeningPage,
-        _audioDuration,
       ),
     );
   }
@@ -237,7 +236,10 @@ class _RecordingScreenState extends State<RecordingPage> {
               ),
               //!Преобразовать
               Text(
-                Formatting.printDurationTime(_audioDuration),
+                Formatting.printDurationTime(
+                  duration: _audioDuration,
+                  formattingType: FormattingType.HourMunuteSecond,
+                ),
                 style: const TextStyle(
                   fontFamily: 'TTNorms',
                   fontWeight: FontWeight.w500,

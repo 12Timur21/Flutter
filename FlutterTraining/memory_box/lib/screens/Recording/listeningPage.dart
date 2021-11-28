@@ -1,20 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
 import 'package:memory_box/services/soundPlayer.dart';
 import 'package:memory_box/utils/formatting.dart';
 import 'package:memory_box/widgets/bottomSheetWrapper.dart';
+import 'package:memory_box/widgets/deleteAlert.dart';
 
 class ListeningPage extends StatefulWidget {
   static const routeName = 'ListeningPage';
 
-  const ListeningPage({required this.audioDuration, Key? key})
-      : super(key: key);
-  final Duration audioDuration;
+  const ListeningPage({Key? key}) : super(key: key);
   @override
   _ListeningPageState createState() => _ListeningPageState();
 }
@@ -22,57 +22,102 @@ class ListeningPage extends StatefulWidget {
 class _ListeningPageState extends State<ListeningPage> {
   final String soundName = 'Аудиозапись 1';
   bool isPlayMode = false;
-  Duration audioDuration = Duration(hours: 0, minutes: 0, seconds: 0);
 
-  SoundPlayer _soundPlayer = SoundPlayer();
+  SoundPlayer? _soundPlayer;
+  int _soundDuration = 0;
+  int _currentPlayTime = 0;
+
+  Timer? timerController;
 
   @override
   void initState() {
+    _soundPlayer = SoundPlayer();
     changeRecordingButton();
     initAudioPlayer();
     super.initState();
   }
 
+  void initAudioPlayer() async {
+    await _soundPlayer?.init();
+    setState(() {
+      _soundDuration = _soundPlayer?.soundDuration ?? 0;
+    });
+  }
+
   @override
   void dispose() {
-    _soundPlayer.dispose();
+    _soundPlayer?.dispose();
+    timerController?.cancel();
     super.dispose();
   }
 
-  void initAudioPlayer() async {
-    await _soundPlayer.init();
-    print('second step');
-    audioDuration = Duration(
-      milliseconds: await _soundPlayer.audioDurationInMs ?? 0,
-    );
-    setState(() {});
-  }
-
   void shareSound() {
-    _soundPlayer.shareSound();
+    _soundPlayer?.shareSound();
   }
 
   void localDownloadSound() {
-    _soundPlayer.localDownloadSound();
+    _soundPlayer?.localDownloadSound();
   }
 
   void deleteSound() async {
-    _soundPlayer.deleteSound();
-    Navigator.of(context).pop();
+    bool? isDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return const DeleteAlert();
+      },
+    );
+    if (isDelete == true) {
+      _soundPlayer?.deleteSound();
+      Navigator.of(context).pop();
+    }
   }
 
   void saveSound() {
     Navigator.of(context).pop();
   }
 
+  void playSound() {
+    _soundPlayer?.play();
+    startTimer();
+  }
+
+  void pauseSound() {
+    _soundPlayer?.pause();
+    stopTimer();
+  }
+
   void tooglePlay() {
     setState(() {
       isPlayMode = !isPlayMode;
       if (isPlayMode) {
-        _soundPlayer.playLocal();
+        playSound();
       } else {
-        _soundPlayer.pauseLocal();
+        pauseSound();
       }
+    });
+  }
+
+  void seek(int currentPlayTime) {
+    if (_currentPlayTime < 0) {
+      _currentPlayTime = 0;
+    }
+    if (_currentPlayTime >= _soundDuration) {
+      _currentPlayTime = _soundDuration;
+    }
+    _soundPlayer?.seek(playTimeInMS: _currentPlayTime);
+  }
+
+  void moveForward() {
+    setState(() {
+      _currentPlayTime += 15000;
+      seek(_currentPlayTime);
+    });
+  }
+
+  void moveBackward() {
+    setState(() {
+      _currentPlayTime -= 15000;
+      seek(_currentPlayTime);
     });
   }
 
@@ -85,7 +130,22 @@ class _ListeningPageState extends State<ListeningPage> {
     );
   }
 
-  double currentPlayTime = 0;
+  void startTimer() {
+    timerController = Timer.periodic(Duration(seconds: 1), (_) {
+      setState(() {
+        _currentPlayTime += 1000;
+        if (_currentPlayTime >= _soundDuration) {
+          timerController?.cancel();
+          _currentPlayTime = _soundDuration;
+        }
+      });
+    });
+  }
+
+  void stopTimer() {
+    timerController?.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget AudioSlider = SliderTheme(
@@ -97,24 +157,19 @@ class _ListeningPageState extends State<ListeningPage> {
           Slider(
             activeColor: Colors.black,
             inactiveColor: Colors.black,
-            value: currentPlayTime,
+            value: _currentPlayTime.toDouble(),
             min: 0.0,
-            max: audioDuration.inMilliseconds.toDouble(),
+            max: _soundDuration.toDouble(),
 
             /*widget.audioDuration.inMilliseconds.toDouble()*/
             thumbColor: Colors.red,
             onChanged: (double value) {
               setState(() {
-                currentPlayTime = value;
+                _currentPlayTime = value.toInt();
               });
             },
-            onChangeEnd: (double value) {
-              currentPlayTime = value;
-              _soundPlayer.audioPlayer?.seek(
-                Duration(
-                  milliseconds: currentPlayTime.toInt(),
-                ),
-              );
+            onChangeEnd: (_) {
+              seek(_currentPlayTime);
             },
           ),
           const SizedBox(
@@ -123,9 +178,21 @@ class _ListeningPageState extends State<ListeningPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('00:00'),
               Text(
-                Formatting.printDurationTime(audioDuration),
+                Formatting.printDurationTime(
+                  duration: Duration(
+                    milliseconds: _currentPlayTime,
+                  ),
+                  formattingType: FormattingType.HourMinute,
+                ),
+              ),
+              Text(
+                Formatting.printDurationTime(
+                  duration: Duration(
+                    milliseconds: _soundDuration,
+                  ),
+                  formattingType: FormattingType.HourMinute,
+                ),
               ),
             ],
           )
@@ -199,7 +266,9 @@ class _ListeningPageState extends State<ListeningPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      moveBackward();
+                    },
                     icon: SvgPicture.asset(
                       'assets/icons/15SecAgo.svg',
                     ),
@@ -225,7 +294,9 @@ class _ListeningPageState extends State<ListeningPage> {
                     width: 30,
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      moveForward();
+                    },
                     icon: SvgPicture.asset('assets/icons/15SecAfter.svg'),
                   ),
                 ],

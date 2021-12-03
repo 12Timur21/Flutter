@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:memory_box/screens/Registration/registration.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memory_box/blocks/login/login_bloc.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/continueButton.dart';
 import 'package:memory_box/widgets/textLogo.dart';
 
-class NewUserScreen extends StatelessWidget {
-  const NewUserScreen({Key? key}) : super(key: key);
+class LoginSpash extends StatelessWidget {
+  const LoginSpash({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     void navigateToRegistration() {
-      Navigator.pushReplacementNamed(
-        context,
-        Registration.routeName,
-      );
+      final _loginBloc = BlocProvider.of<LoginBloc>(context);
+      _loginBloc.add(LoadLoadingPage());
     }
 
     return Scaffold(

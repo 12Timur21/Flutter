@@ -118,6 +118,7 @@ class _RecordingScreenState extends State<RecordingPage> {
   }
 
   void navigateToListeningPage() {
+    dispose();
     final navigationBloc = BlocProvider.of<BottomSheetBloc>(context);
     navigationBloc.add(
       OpenListeningPage(

@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
+import 'package:memory_box/blocks/login/login_bloc.dart';
 import 'package:memory_box/models/userModel.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/root.dart';
@@ -16,6 +18,7 @@ import 'blocks/recorderButton/recorderButton_state.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -33,6 +36,16 @@ Future<void> main() async {
                 selectedIcon: RecorderButtonStates.WithIcon,
               ),
             );
+          },
+        ),
+        BlocProvider<LoginBloc>(
+          create: (BuildContext context) {
+            return LoginBloc();
+          },
+        ),
+        BlocProvider<AuthenticationBloc>(
+          create: (BuildContext context) {
+            return AuthenticationBloc();
           },
         ),
       ],

@@ -1,38 +1,71 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
 class SoundPlayer {
+  static final SoundPlayer _singleton = SoundPlayer._();
+
+  factory SoundPlayer() {
+    return _singleton;
+  }
+
+  SoundPlayer._();
+
   // AudioPlayer? audioPlayer;
-  FlutterSoundPlayer? _flutterSoundPlayer = FlutterSoundPlayer();
+  FlutterSoundPlayer? _flutterSoundPlayer;
   late String pathToSaveAudio;
   late Directory appDirectory;
 
   bool isSoundPlay = false;
   bool _isPlayerInitialised = false;
 
-  Duration? _soundDuration;
-  int? get soundDuration => _soundDuration?.inMilliseconds;
+  // Duration? _soundDuration;
+  // int? get soundDuration => _soundDuration?.inMilliseconds;
 
-  Future<void> init() async {
-    await _openSoundSession().then(
-      (_) => {
-        _isPlayerInitialised = true,
-      },
-    );
+  Stream<PlaybackDisposition>? get soundDurationStream =>
+      _flutterSoundPlayer?.onProgress?.asBroadcastStream();
 
-    _soundDuration = await _flutterSoundPlayer!.startPlayer(
-      fromURI: '/sdcard/download/test2.aac',
+  Duration? _maxDuration;
+  Duration get maxDuration => _maxDuration ?? Duration.zero;
+
+  Duration? _position;
+  Duration get position => _position ?? Duration.zero;
+
+  Future<void> init({
+    required String soundUrl,
+    int? subscriptionDuration,
+  }) async {
+    _flutterSoundPlayer = FlutterSoundPlayer();
+    await _openSoundSession();
+    _isPlayerInitialised = true;
+
+    _maxDuration = await _flutterSoundPlayer?.startPlayer(
+      fromURI: soundUrl,
       codec: Codec.aacMP4,
+      whenFinished: onFinished,
     );
-    _flutterSoundPlayer!.pausePlayer();
+    _flutterSoundPlayer?.pausePlayer();
 
-    appDirectory = await getApplicationDocumentsDirectory();
-    pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
+    _flutterSoundPlayer?.setSubscriptionDuration(
+      Duration(
+        seconds: subscriptionDuration ?? 1,
+      ),
+    );
+
+    startProgressListener();
+  }
+
+  // String get appDirectory = await getApplicationDocumentsDirectory();
+  //   pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
+
+  //!
+  void onFinished() {
+    print('finished');
   }
 
   Future<void> dispose() async {
@@ -40,11 +73,10 @@ class SoundPlayer {
       pause();
     }
     await _closeSoundSession();
-    _flutterSoundPlayer = null;
     _isPlayerInitialised = false;
   }
 
-  Future<void> _openSoundSession() async {
+  Future<FlutterSoundPlayer?> _openSoundSession() async {
     await _flutterSoundPlayer?.openAudioSession();
   }
 
@@ -52,30 +84,55 @@ class SoundPlayer {
     if (_isPlayerInitialised) await _flutterSoundPlayer?.closeAudioSession();
   }
 
-  void play() async {
-    isSoundPlay = true;
-    _flutterSoundPlayer?.resumePlayer();
+  void startProgressListener() {
+    soundDurationStream?.listen((e) {
+      // maxDuration = e.duration;
+      _position = e.position;
+    });
   }
 
-  void pause() {
+  Future<void> play() async {
+    await _flutterSoundPlayer?.resumePlayer();
+    isSoundPlay = true;
+  }
+
+  Future<void> pause() async {
+    await _flutterSoundPlayer?.pausePlayer();
     isSoundPlay = false;
-    _flutterSoundPlayer?.pausePlayer();
   }
 
   void seek({required int playTimeInMS}) {
-    _flutterSoundPlayer?.seekToPlayer(Duration(milliseconds: playTimeInMS));
+    _flutterSoundPlayer?.seekToPlayer(Duration(
+      milliseconds: playTimeInMS,
+    ));
   }
 
-  void moveForward({required int playTimeInMS}) {
-    _flutterSoundPlayer?.seekToPlayer(
-      Duration(milliseconds: playTimeInMS + 15000),
-    );
+  void moveForward() {
+    if (position.inSeconds + 15 <= maxDuration.inSeconds) {
+      _flutterSoundPlayer?.seekToPlayer(
+        Duration(
+          seconds: position.inSeconds + 15,
+        ),
+      );
+    } else {
+      _flutterSoundPlayer?.seekToPlayer(
+        Duration(
+          seconds: maxDuration.inSeconds,
+        ),
+      );
+    }
   }
 
-  void moveBackward({required int playTimeInMS}) {
-    _flutterSoundPlayer?.seekToPlayer(
-      Duration(milliseconds: playTimeInMS - 15000),
-    );
+  void moveBackward() {
+    if (position.inSeconds - 15 >= 0) {
+      _flutterSoundPlayer?.seekToPlayer(
+        Duration(
+          seconds: position.inSeconds - 15,
+        ),
+      );
+    } else {
+      _flutterSoundPlayer?.seekToPlayer(Duration.zero);
+    }
   }
 
   void shareSound() {

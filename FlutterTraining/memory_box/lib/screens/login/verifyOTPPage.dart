@@ -1,51 +1,36 @@
-import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
-import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-import 'package:memory_box/screens/Registration/gratitudePage.dart';
-import 'package:memory_box/screens/Registration/verifyPinPage.dart';
-import 'package:memory_box/services/authService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circleTextField.dart';
 import 'package:memory_box/widgets/continueButton.dart';
 import 'package:memory_box/widgets/hintPlate.dart';
 
-class Registration extends StatefulWidget {
-  static const routeName = 'Registration';
-
-  const Registration({Key? key}) : super(key: key);
+class VerifyOTPPage extends StatefulWidget {
+  static const routeName = 'VerifyPin';
+  String verficationId;
+  VerifyOTPPage({required this.verficationId, Key? key}) : super(key: key);
 
   @override
-  _RegistrationState createState() => _RegistrationState();
+  _VerifyOTPPageState createState() => _VerifyOTPPageState();
 }
 
-class _RegistrationState extends State<Registration> {
-  final _textFieldController = TextEditingController();
+class _VerifyOTPPageState extends State<VerifyOTPPage> {
+  final _otpController = TextEditingController();
 
-  late String verficationId;
-
-  void verifyPhoneNumber() {
-    AuthService.instance.verifyPhoneNumber(
-        phoneNumber: toNumericString(_textFieldController.text),
-        onSucces: (verficationId) {
-          Navigator.pushReplacementNamed(
-            context,
-            VerifyPinPage.routeName,
-            arguments: verficationId,
-          );
-        },
-        onError: () {
-          log("Can't verify this phoneNumber");
-        });
-  }
-
-  void anonAuth() async {
-    AuthService.instance.signInAnon().then(
-          (_) => Navigator.pushReplacementNamed(
-            context,
-            GratitudePage.routeName,
-          ),
-        );
+  void verifySMSCode() async {
+    // AuthService.instance.verifySMSCode(
+    //   smsCode: _otpController.text,
+    //   verifictionId: widget.verficationId,
+    //   onSucces: () {
+    //     Navigator.pushReplacementNamed(
+    //       context,
+    //       GratitudePage.routeName,
+    //     );
+    //   },
+    //   onError: () {
+    //     print('errro');
+    //   },
+    // );
   }
 
   @override
@@ -92,7 +77,7 @@ class _RegistrationState extends State<Registration> {
                     height: 35,
                   ),
                   const Text(
-                    'Введи номер телефона',
+                    'Введи код из смс, чтобы мы тебя запомнили',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'TTNorms',
@@ -104,33 +89,18 @@ class _RegistrationState extends State<Registration> {
                     height: 20,
                   ),
                   CircleTextField(
-                    controller: _textFieldController,
-                    inputFormatters: [PhoneInputFormatter()],
+                    controller: _otpController,
                   ),
                   const SizedBox(
                     height: 70,
                   ),
                   ContinueButton(
                     onPress: () {
-                      verifyPhoneNumber();
+                      verifySMSCode();
                     },
                   ),
                   const SizedBox(
                     height: 15,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      anonAuth();
-                    },
-                    child: const Text(
-                      'Позже',
-                      style: TextStyle(
-                        fontFamily: 'TTNorms',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 24,
-                        color: Colors.black,
-                      ),
-                    ),
                   ),
                   const Spacer(),
                   const HintPlate(

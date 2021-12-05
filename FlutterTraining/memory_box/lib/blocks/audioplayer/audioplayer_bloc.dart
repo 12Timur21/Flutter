@@ -67,7 +67,8 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
   Stream<AudioplayerState> _play() async* {
     _soundPlayer?.play();
     state.isPlay = true;
-    yield state;
+    print('wtf ${state.isPlay}');
+    yield PlayState();
   }
 
   Stream<AudioplayerState> _pause() async* {

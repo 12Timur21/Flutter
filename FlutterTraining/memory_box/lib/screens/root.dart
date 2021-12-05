@@ -24,40 +24,43 @@ class Root extends StatefulWidget {
 class _RootState extends State<Root> {
   @override
   Widget build(BuildContext context) {
-    return MainPage();
-    // final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    // return MainPage();
+    final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
 
-    // return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-    //   builder: (context, state) {
-    //     if (state is Authenticated) {
-    //       return MainPage();
-    //     }
-    //     if (state is NotAuthenticated) {
-    //       return BlocBuilder<LoginBloc, LoginState>(
-    //         builder: (context, state) {
-    //           if (state is LoginInitial) {
-    //             return const LoginSpash();
-    //           }
-    //           if (state is LoginLoaded) {
-    //             return const LoginPage();
-    //           }
-    //           if (state is VerifyPhoneNumberSucces) {
-    //             return VerifyOTPPage(
-    //               verficationId: state.verifictionId,
-    //             );
-    //           }
-    //           if (state is VerifyOTPSucces) {
-    //             Timer(Duration(seconds: 3), () {
-    //               _authenticationBloc.add(LogIn());
-    //             });
-    //             return GratitudePage();
-    //           }
-    //           return const Placeholder();
-    //         },
-    //       );
-    //     }
-    //     return SplashScreen();
-    //   },
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        if (state is Authenticated) {
+          return MainPage();
+        }
+        if (state is NotAuthenticated) {
+          return BlocBuilder<LoginBloc, LoginState>(
+            builder: (context, state) {
+              if (state is LoginInitial) {
+                return const LoginSpash();
+              }
+              if (state is LoginLoaded) {
+                return const LoginPage();
+              }
+              if (state is VerifyPhoneNumberSucces) {
+                return VerifyOTPPage(
+                  verficationId: state.verifictionId,
+                );
+              }
+              if (state is VerifyOTPSucces) {
+                Timer(Duration(seconds: 3), () {
+                  _authenticationBloc.add(LogIn());
+                });
+                return GratitudePage();
+              }
+              return const Placeholder();
+            },
+          );
+        }
+        return SplashScreen();
+      },
+    );
+  }
+}
     // listener: (context, state) {
     //   if (state is AuthenticationInitial) {
     //     _authenticationBloc.add(
@@ -78,5 +81,4 @@ class _RootState extends State<Root> {
     //     );
     //   }
     // },
-  }
-}
+  // }

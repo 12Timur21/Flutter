@@ -1,29 +1,78 @@
-// import 'dart:io';
+import 'dart:io';
 
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
-// class CloudService {
-//   static final FirebaseStorage _cloud = FirebaseStorage.instanceFor(
-//     app: Firebase.app('MemoryBox'),
-//   );
-//   const CloudService._();
-//   static const CloudService instance = CloudService._();
+enum FileType {
+  sound,
+  file,
+}
 
-//   void init() {
-//     // _cloud.
-//   }
+class CloudService {
+  static final FirebaseStorage _cloud = FirebaseStorage.instance;
+  const CloudService._();
+  static const CloudService instance = CloudService._();
 
-//   Future<void> uploadFile(String filePath) async {
-//     File file = File(filePath);
+  void init() {
+    // _cloud.
+  }
 
-//     try {
-//       await _cloud.ref('colobok.aac').putFile(file);
-//     } on FirebaseException catch (e) {
-//       // e.g, e.code == 'canceled'
-//       print(e);
-//     }
-//   }
+  String mapDestination(FileType fileType) {
+    String destination = '';
+    if (fileType == FileType.file) destination = 'files';
+    if (fileType == FileType.sound) destination = 'audiofiles';
+    return destination;
+  }
 
-//   void dispose() {}
-// }
+  Future<int> filesLength({
+    required FileType fileType,
+    required String uid,
+  }) async {
+    final destination = mapDestination(fileType);
+    ListResult listResult = await _cloud
+        .ref()
+        .child(
+          '$destination/$uid',
+        )
+        .listAll();
+
+    return listResult.items.length;
+  }
+
+  Future<bool> isFileExist({
+    required FileType fileType,
+    required String fileName,
+    required String uid,
+  }) async {
+    final destination = mapDestination(fileType);
+
+    String fileUrl = await _cloud
+        .ref()
+        .child(
+          '$destination/$uid/$fileName',
+        )
+        .getDownloadURL();
+
+    if (fileUrl.isNotEmpty) return true;
+    return false;
+  }
+
+  Future<void> downloadFile() async {}
+
+  Future<void> uploadFile({
+    required File file,
+    required FileType fileType,
+    required String fileName,
+    required String uid,
+  }) async {
+    final destination = mapDestination(fileType);
+
+    try {
+      _cloud.ref().child('$destination/$uid/$fileName').putFile(file);
+    } on FirebaseException catch (e) {
+      print(e);
+    }
+  }
+
+  void dispose() {}
+}

@@ -1,15 +1,18 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
+import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_event.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/services/cloudService.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
 import 'package:memory_box/widgets/bottomSheetWrapper.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
@@ -24,8 +27,11 @@ class ListeningPage extends StatefulWidget {
 }
 
 class _ListeningPageState extends State<ListeningPage> {
+  String fileName = 'Запись №';
+
   @override
   void initState() {
+    asyncInit();
     final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
     _audioBloc.add(
       InitPlayer(
@@ -35,6 +41,21 @@ class _ListeningPageState extends State<ListeningPage> {
     );
     changeRecordingButton();
     super.initState();
+  }
+
+  void asyncInit() async {
+    final _audioBloc = BlocProvider.of<AuthenticationBloc>(context);
+    Authenticated authenticated = _audioBloc.state as Authenticated;
+
+    if (authenticated.user.uid != null) {
+      int index = await CloudService.instance.filesLength(
+        fileType: FileType.sound,
+        uid: authenticated.user.uid!,
+      );
+      setState(() {
+        fileName = 'Запись №$index';
+      });
+    }
   }
 
   @override
@@ -59,6 +80,7 @@ class _ListeningPageState extends State<ListeningPage> {
   }
 
   void deleteSound() async {
+    // await CloudService.instance.filesLength(fileType: FileType.sound);
     // bool? isDelete = await showDialog<bool>(
     //   context: context,
     //   builder: (BuildContext context) {
@@ -72,10 +94,37 @@ class _ListeningPageState extends State<ListeningPage> {
   }
 
   void saveSound() async {
-    // await CloudService.instance.uploadFile('/sdcard/download/test2.aac');
-    // navigateToPreviewPage();
-    dispose();
-    Navigator.of(context).pop();
+    final _audioBloc = BlocProvider.of<AuthenticationBloc>(context);
+    Authenticated authenticated = _audioBloc.state as Authenticated;
+
+    if (authenticated.user.uid != null) {
+      final file = File('/sdcard/download/test2.aac');
+
+      await CloudService.instance.uploadFile(
+        file: file,
+        fileName: 'test2.aac',
+        fileType: FileType.sound,
+        uid: authenticated.user.uid!,
+      );
+      navigateToPreviewPage();
+    }
+    // await CloudService.instance.isFileExist(
+    //   fileType: FileType.sound,
+    //   fileName: 'test2.aac',
+    // );
+
+    // dispose();
+    // Navigator.of(context).pop();
+  }
+
+  void moveBackward() {
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc.add(MoveBackward15Sec());
+  }
+
+  void moveForward() {
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc.add(MoveBackward15Sec());
   }
 
   void tooglePlay() {
@@ -89,16 +138,6 @@ class _ListeningPageState extends State<ListeningPage> {
         Play(),
       );
     }
-  }
-
-  void moveBackward() {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-    _audioBloc.add(MoveBackward15Sec());
-  }
-
-  void moveForward() {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-    _audioBloc.add(MoveBackward15Sec());
   }
 
   void changeRecordingButton() {
@@ -124,7 +163,6 @@ class _ListeningPageState extends State<ListeningPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<AudioplayerBloc, AudioplayerState>(
       builder: (context, state) {
-        // print(state.);
         return BottomSheetWrapeer(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -175,7 +213,7 @@ class _ListeningPageState extends State<ListeningPage> {
                   height: 90,
                 ),
                 Text(
-                  state.title ?? 'No name',
+                  fileName,
                   style: const TextStyle(
                     fontFamily: 'TTNorms',
                     fontWeight: FontWeight.w500,

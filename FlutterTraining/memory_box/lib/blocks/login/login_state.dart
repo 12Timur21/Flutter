@@ -38,6 +38,13 @@ class VerifyPhoneFailure extends LoginState {
   VerifyPhoneFailure({required this.error});
 }
 
-class VerifyOTPSucces extends LoginState {}
+class VerifyOTPSucces extends LoginState {
+  final UserModel user;
+
+  VerifyOTPSucces({required this.user});
+
+  @override
+  List<Object> get props => [user];
+}
 
 class VerifyOTPFailure extends LoginState {}

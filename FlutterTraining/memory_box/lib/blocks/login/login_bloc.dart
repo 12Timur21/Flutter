@@ -61,8 +61,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     _authService.verifyOTPCode(
       smsCode: event.verifictionId,
       verifictionId: event.verifictionId,
-      onSucces: () async* {
-        yield VerifyOTPSucces();
+      onSucces: (UserModel user) async* {
+        yield VerifyOTPSucces(user: user);
       },
       onError: () async* {
         yield VerifyOTPFailure();

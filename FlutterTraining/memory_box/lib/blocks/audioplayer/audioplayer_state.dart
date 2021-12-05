@@ -18,4 +18,4 @@ class AudioplayerState {
 
 // class StopState extends AudioplayerState {}
 
-// class StopState extends AudioplayerState {}
+class PlayState extends AudioplayerState {}

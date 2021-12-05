@@ -56,7 +56,7 @@ class AuthService {
     );
 
     _signInWithPhoneAuthCredential(phoneAuthCredential)
-        .then((_) => onSucces())
+        .then((user) => onSucces(user))
         .onError(
           (_, __) => onError(),
         );

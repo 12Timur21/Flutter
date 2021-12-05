@@ -1,7 +1,10 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
+import 'package:memory_box/blocks/login/login_bloc.dart';
 import 'package:memory_box/services/authService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circleTextField.dart';
@@ -24,10 +27,9 @@ class _RegistrationState extends State<LoginPage> {
 
   void anonAuth() async {
     await AuthService.instance.signInAnon();
-    Navigator.pushReplacementNamed(
-      context,
-      GratitudePage.routeName,
-    );
+    final _authBloc = BlocProvider.of<AuthenticationBloc>(context);
+
+    _authBloc.add(LogIn());
   }
 
   @override

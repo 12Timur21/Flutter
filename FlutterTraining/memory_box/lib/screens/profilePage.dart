@@ -77,7 +77,7 @@ class _ProfileState extends State<ProfilePage> {
     final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
 
     void logOut() {
-      _authenticationBloc.add(LogOut());
+      _authenticationBloc.add(LoggedOut());
     }
 
     void deleteAccount() {

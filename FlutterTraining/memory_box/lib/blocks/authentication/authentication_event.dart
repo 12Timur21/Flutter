@@ -10,8 +10,8 @@ abstract class AuthenticationEvent {
 
 class AppLoaded extends AuthenticationEvent {}
 
-class LogIn extends AuthenticationEvent {}
+class LoggedIn extends AuthenticationEvent {}
 
-class LogOut extends AuthenticationEvent {}
+class LoggedOut extends AuthenticationEvent {}
 
 class DeleteAccount extends AuthenticationEvent {}

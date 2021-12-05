@@ -29,7 +29,7 @@ class _RegistrationState extends State<LoginPage> {
     await AuthService.instance.signInAnon();
     final _authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
-    _authBloc.add(LogIn());
+    _authBloc.add(LoggedIn());
   }
 
   @override

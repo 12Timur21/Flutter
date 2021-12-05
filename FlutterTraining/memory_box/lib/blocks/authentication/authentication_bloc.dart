@@ -23,11 +23,11 @@ class AuthenticationBloc
       yield* _appLoadedToState(event);
     }
 
-    if (event is LogIn) {
+    if (event is LoggedIn) {
       yield* _logInToState();
     }
 
-    if (event is LogOut) {
+    if (event is LoggedOut) {
       yield* _logOutToState(event);
     }
 
@@ -53,7 +53,7 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> _logOutToState(
-    LogOut event,
+    LoggedOut event,
   ) async* {
     await _authService.signOut();
     yield NotAuthenticated();

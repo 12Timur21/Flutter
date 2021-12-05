@@ -80,6 +80,14 @@ class _ListeningPageState extends State<ListeningPage> {
   }
 
   void deleteSound() async {
+    final _audioBloc = BlocProvider.of<AuthenticationBloc>(context);
+    Authenticated authenticated = _audioBloc.state as Authenticated;
+
+    var z = await CloudService.instance.getFileUrl(
+      fileType: FileType.sound,
+      uid: authenticated.user.uid!,
+    );
+    print(z);
     // await CloudService.instance.filesLength(fileType: FileType.sound);
     // bool? isDelete = await showDialog<bool>(
     //   context: context,

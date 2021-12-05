@@ -57,7 +57,21 @@ class CloudService {
     return false;
   }
 
-  Future<void> downloadFile() async {}
+  Future<String> getFileUrl({
+    required FileType fileType,
+    required String uid,
+  }) async {
+    final destination = mapDestination(fileType);
+
+    String downloadUrl = await _cloud
+        .ref()
+        .child(
+          '$destination/$uid',
+        )
+        .getDownloadURL();
+
+    return downloadUrl;
+  }
 
   Future<void> uploadFile({
     required File file,

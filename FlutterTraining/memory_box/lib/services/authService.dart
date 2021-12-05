@@ -16,6 +16,9 @@ class AuthService {
     return _firebaseModeltoUserModel(_auth.currentUser);
   }
 
+  Stream<UserModel?> get authStreamChanges =>
+      _auth.authStateChanges().map((event) => _firebaseModeltoUserModel(event));
+
   Future<void> verifyPhoneNumberAndSendOTP({
     required int phoneNumber,
     required Function onSucces,

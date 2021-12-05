@@ -1,12 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:memory_box/screens/mainPage.dart';
-import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/hintPlate.dart';
-import 'package:memory_box/widgets/textLogo.dart';
 
 class GratitudePage extends StatelessWidget {
   static const routeName = 'GraitudePage';
@@ -14,15 +8,6 @@ class GratitudePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Timer(
-      Duration(seconds: 3),
-      () {
-        Navigator.pushReplacementNamed(
-          context,
-          MainPage.routeName,
-        );
-      },
-    );
     return Scaffold(
       body: BackgroundPattern(
         child: Align(
@@ -101,6 +86,4 @@ class GratitudePage extends StatelessWidget {
       ),
     );
   }
-
-  void redirectToMainPage() {}
 }

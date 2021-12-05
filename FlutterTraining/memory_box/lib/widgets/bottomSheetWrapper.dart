@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 
 class BottomSheetWrapeer extends StatelessWidget {
-  const BottomSheetWrapeer({required this.child, Key? key}) : super(key: key);
+  const BottomSheetWrapeer({
+    required this.child,
+    this.height,
+    Key? key,
+  }) : super(key: key);
+
   final Widget child;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500,
+      height: height ?? 500,
       width: double.infinity,
       margin: const EdgeInsets.symmetric(
         horizontal: 5,

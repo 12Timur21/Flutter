@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,47 +12,102 @@ class AuthService {
 
   static const AuthService instance = AuthService._();
 
-  // late String verifictionId;
+  Future<UserModel?> currentUser() async {
+    return _firebaseModeltoUserModel(_auth.currentUser);
+  }
 
-  void verifyPhoneNumber({
-    required String phoneNumber,
+  Future<void> verifyPhoneNumberAndSendOTP({
+    required int phoneNumber,
     required Function onSucces,
     required Function onError,
+    required Function onTimeOut,
   }) async {
     await _auth.verifyPhoneNumber(
       phoneNumber: '+$phoneNumber',
-      verificationCompleted: (_) {
-        log('success verfication phone number');
+      timeout: const Duration(days: 1),
+      verificationCompleted: (verificationCompleted) {
+        print('verificationcompleted');
+        print(verificationCompleted.smsCode);
+        print(verificationCompleted.verificationId);
+        print(verificationCompleted.token);
       },
       verificationFailed: (FirebaseAuthException e) {
-        log('unsuccess verfication phone number');
         onError(e);
       },
-      codeSent: (verficationIds, resendingToken) async {
-        print('sms code send throw callback');
-        onSucces(verficationIds);
+      codeSent: (verficationIds, resendingToken) {
+        print('codeSent');
+        onSucces(verficationIds, resendingToken);
       },
-      codeAutoRetrievalTimeout: (_) async {},
+      codeAutoRetrievalTimeout: (e) {
+        onTimeOut(e);
+      },
     );
   }
 
-  void verifySMSCode(
-      {required String smsCode,
-      required Function onSucces,
-      required Function onError,
-      required String verifictionId}) async {
+  void verifyOTPCode({
+    required String smsCode,
+    required String verifictionId,
+    required Function onSucces,
+    required Function onError,
+  }) async {
     PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-        verificationId: verifictionId, smsCode: smsCode);
+      verificationId: verifictionId,
+      smsCode: smsCode,
+    );
 
-    AuthService.instance
-        .signInWithPhoneAuthCredential(phoneAuthCredential)
-        .then((_) => onSucces())
+    _signInWithPhoneAuthCredential(phoneAuthCredential)
+        .then((user) => onSucces(user))
         .onError(
           (_, __) => onError(),
         );
   }
 
-  UserModel? _userDataFromFirebaseUser(User? user) {
+  Future<UserModel?> _signInWithPhoneAuthCredential(
+      PhoneAuthCredential phoneAuthCredential) async {
+    try {
+      UserCredential result =
+          await _auth.signInWithCredential(phoneAuthCredential);
+
+      if (result.user != null) {
+        log('successful phone auth');
+        return _firebaseModeltoUserModel(result.user);
+      }
+    } on FirebaseAuthException catch (_) {
+      log('unsuccessful phone auth');
+      return null;
+    }
+  }
+
+  Future<UserModel?> signInAnon() async {
+    try {
+      UserCredential result = await _auth.signInAnonymously();
+      log('sign in anon');
+      return _firebaseModeltoUserModel(result.user);
+    } catch (e) {
+      log('failed sign in anon');
+      log(e.toString());
+      return null;
+    }
+  }
+
+  Future<void> signOut() async {
+    // try {
+    await _auth.signOut();
+    // } catch (e) {
+    //   return ;
+    // }
+  }
+
+  Future deleteAccount() async {
+    // try {
+    return await _auth.currentUser?.delete();
+    // } catch (e) {
+    //   log('failed delete account');
+    //   log(e.toString());
+    // }
+  }
+
+  UserModel? _firebaseModeltoUserModel(User? user) {
     return user != null
         ? UserModel(
             uid: user.uid,
@@ -64,63 +120,13 @@ class AuthService {
   Stream<UserModel?> get user {
     return _auth
         .authStateChanges()
-        .map((User? user) => _userDataFromFirebaseUser(user!));
+        .map((User? user) => _firebaseModeltoUserModel(user!));
   }
 
   bool get isAuth {
     if (_auth.currentUser != null) {
-      log('is auth - true');
       return true;
     }
-    log('is auth - false');
     return false;
-  }
-
-  Future signInWithPhoneAuthCredential(
-      PhoneAuthCredential phoneAuthCredential) async {
-    try {
-      UserCredential result =
-          await _auth.signInWithCredential(phoneAuthCredential);
-
-      if (result.user != null) {
-        log('successful phone auth');
-        return _userDataFromFirebaseUser(result.user);
-      }
-    } on FirebaseAuthException catch (_) {
-      log('unsuccessful phone auth');
-      return null;
-    }
-  }
-
-  Future signInAnon() async {
-    try {
-      UserCredential result = await _auth.signInAnonymously();
-      log('sign in anon');
-      return _userDataFromFirebaseUser(result.user);
-    } catch (e) {
-      log('failed sign in anon');
-      log(e.toString());
-      return null;
-    }
-  }
-
-  Future signOut() async {
-    try {
-      log('sign out');
-      return await _auth.signOut();
-    } catch (e) {
-      log('failed sign out');
-      log(e.toString());
-    }
-  }
-
-  Future deleteAccount() async {
-    try {
-      log('sign out');
-      return await _auth.currentUser?.delete();
-    } catch (e) {
-      log('failed delete account');
-      log(e.toString());
-    }
   }
 }

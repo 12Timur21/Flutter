@@ -7,20 +7,11 @@ import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/hintPlate.dart';
 
-class PermanentsUserScreen extends StatelessWidget {
-  const PermanentsUserScreen({Key? key}) : super(key: key);
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Timer(
-      Duration(seconds: 3),
-      () {
-        Navigator.pushReplacementNamed(
-          context,
-          MainPage.routeName,
-        );
-      },
-    );
     return Scaffold(
       body: BackgroundPattern(
         child: Align(
@@ -109,6 +100,4 @@ class PermanentsUserScreen extends StatelessWidget {
       ),
     );
   }
-
-  void redirectToMainPage() {}
 }

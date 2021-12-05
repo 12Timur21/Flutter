@@ -1,15 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
+import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
+import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
+import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_event.dart';
+import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/services/soundPlayer.dart';
-import 'package:memory_box/utils/formatting.dart';
+import 'package:memory_box/services/cloudService.dart';
+import 'package:memory_box/widgets/audioSlider.dart';
 import 'package:memory_box/widgets/bottomSheetWrapper.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
+import 'package:memory_box/widgets/soundControlsButtons.dart';
 
 class ListeningPage extends StatefulWidget {
   static const routeName = 'ListeningPage';
@@ -20,105 +27,117 @@ class ListeningPage extends StatefulWidget {
 }
 
 class _ListeningPageState extends State<ListeningPage> {
-  final String soundName = 'Аудиозапись 1';
-  bool isPlayMode = false;
-
-  SoundPlayer? _soundPlayer;
-  int _soundDuration = 0;
-  int _currentPlayTime = 0;
-
-  Timer? timerController;
+  String fileName = 'Запись №';
 
   @override
   void initState() {
-    _soundPlayer = SoundPlayer();
+    asyncInit();
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc.add(
+      InitPlayer(
+        title: 'song',
+        soundUrl: '/sdcard/download/test2.aac',
+      ),
+    );
     changeRecordingButton();
-    initAudioPlayer();
     super.initState();
   }
 
-  void initAudioPlayer() async {
-    await _soundPlayer?.init();
-    setState(() {
-      _soundDuration = _soundPlayer?.soundDuration ?? 0;
-    });
+  void asyncInit() async {
+    final _audioBloc = BlocProvider.of<AuthenticationBloc>(context);
+    Authenticated authenticated = _audioBloc.state as Authenticated;
+
+    if (authenticated.user.uid != null) {
+      int index = await CloudService.instance.filesLength(
+        fileType: FileType.sound,
+        uid: authenticated.user.uid!,
+      );
+      setState(() {
+        fileName = 'Запись №$index';
+      });
+    }
   }
 
   @override
   void dispose() {
-    _soundPlayer?.dispose();
-    timerController?.cancel();
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc.add(DisposePlayer());
     super.dispose();
   }
 
   void shareSound() {
-    _soundPlayer?.shareSound();
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc.add(UpdatePlayDuration());
+    print(_audioBloc.state.currentPlayDuration?.inMilliseconds);
+    print(_audioBloc.state.songDuration?.inMilliseconds);
+    _audioBloc.add(Seek());
+
+    // _soundPlayer?.shareSound();
   }
 
   void localDownloadSound() {
-    _soundPlayer?.localDownloadSound();
+    // _soundPlayer?.localDownloadSound();
   }
 
   void deleteSound() async {
-    bool? isDelete = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return const DeleteAlert();
-      },
-    );
-    if (isDelete == true) {
-      _soundPlayer?.deleteSound();
-      Navigator.of(context).pop();
+    // await CloudService.instance.filesLength(fileType: FileType.sound);
+    // bool? isDelete = await showDialog<bool>(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return const DeleteAlert();
+    //   },
+    // );
+    // if (isDelete == true) {
+    //   _soundPlayer?.deleteSound();
+    //   Navigator.of(context).pop();
+    // }
+  }
+
+  void saveSound() async {
+    final _audioBloc = BlocProvider.of<AuthenticationBloc>(context);
+    Authenticated authenticated = _audioBloc.state as Authenticated;
+
+    if (authenticated.user.uid != null) {
+      final file = File('/sdcard/download/test2.aac');
+
+      await CloudService.instance.uploadFile(
+        file: file,
+        fileName: 'test2.aac',
+        fileType: FileType.sound,
+        uid: authenticated.user.uid!,
+      );
+      navigateToPreviewPage();
     }
-  }
+    // await CloudService.instance.isFileExist(
+    //   fileType: FileType.sound,
+    //   fileName: 'test2.aac',
+    // );
 
-  void saveSound() {
-    Navigator.of(context).pop();
-  }
-
-  void playSound() {
-    _soundPlayer?.play();
-    startTimer();
-  }
-
-  void pauseSound() {
-    _soundPlayer?.pause();
-    stopTimer();
-  }
-
-  void tooglePlay() {
-    setState(() {
-      isPlayMode = !isPlayMode;
-      if (isPlayMode) {
-        playSound();
-      } else {
-        pauseSound();
-      }
-    });
-  }
-
-  void seek(int currentPlayTime) {
-    if (_currentPlayTime < 0) {
-      _currentPlayTime = 0;
-    }
-    if (_currentPlayTime >= _soundDuration) {
-      _currentPlayTime = _soundDuration;
-    }
-    _soundPlayer?.seek(playTimeInMS: _currentPlayTime);
-  }
-
-  void moveForward() {
-    setState(() {
-      _currentPlayTime += 15000;
-      seek(_currentPlayTime);
-    });
+    // dispose();
+    // Navigator.of(context).pop();
   }
 
   void moveBackward() {
-    setState(() {
-      _currentPlayTime -= 15000;
-      seek(_currentPlayTime);
-    });
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc.add(MoveBackward15Sec());
+  }
+
+  void moveForward() {
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc.add(MoveBackward15Sec());
+  }
+
+  void tooglePlay() {
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    if (_audioBloc.state.isPlay) {
+      _audioBloc.add(
+        Pause(),
+      );
+    } else {
+      _audioBloc.add(
+        Play(),
+      );
+    }
   }
 
   void changeRecordingButton() {
@@ -130,181 +149,94 @@ class _ListeningPageState extends State<ListeningPage> {
     );
   }
 
-  void startTimer() {
-    timerController = Timer.periodic(Duration(seconds: 1), (_) {
-      setState(() {
-        _currentPlayTime += 1000;
-        if (_currentPlayTime >= _soundDuration) {
-          timerController?.cancel();
-          _currentPlayTime = _soundDuration;
-        }
-      });
-    });
-  }
-
-  void stopTimer() {
-    timerController?.cancel();
+  void navigateToPreviewPage() {
+    dispose();
+    final navigationBloc = BlocProvider.of<BottomSheetBloc>(context);
+    navigationBloc.add(
+      OpenListeningPage(
+        BottomSheetItems.PreviewRecord,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget AudioSlider = SliderTheme(
-      data: SliderTheme.of(context).copyWith(
-          // thumbShape: CustomSliderThumbRhombus(),
-          ),
-      child: Column(
-        children: [
-          Slider(
-            activeColor: Colors.black,
-            inactiveColor: Colors.black,
-            value: _currentPlayTime.toDouble(),
-            min: 0.0,
-            max: _soundDuration.toDouble(),
-
-            /*widget.audioDuration.inMilliseconds.toDouble()*/
-            thumbColor: Colors.red,
-            onChanged: (double value) {
-              setState(() {
-                _currentPlayTime = value.toInt();
-              });
-            },
-            onChangeEnd: (_) {
-              seek(_currentPlayTime);
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                Formatting.printDurationTime(
-                  duration: Duration(
-                    milliseconds: _currentPlayTime,
-                  ),
-                  formattingType: FormattingType.HourMinute,
-                ),
-              ),
-              Text(
-                Formatting.printDurationTime(
-                  duration: Duration(
-                    milliseconds: _soundDuration,
-                  ),
-                  formattingType: FormattingType.HourMinute,
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-
-    return BottomSheetWrapeer(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 20,
-          horizontal: 30,
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<AudioplayerBloc, AudioplayerState>(
+      builder: (context, state) {
+        return BottomSheetWrapeer(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 20,
+              horizontal: 30,
+            ),
+            child: Column(
               children: [
-                Container(
-                  child: Row(
-                    children: [
-                      IconButton(
-                        padding: const EdgeInsets.only(right: 20),
-                        onPressed: shareSound,
-                        icon: SvgPicture.asset('assets/icons/Share.svg'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: Row(
+                        children: [
+                          IconButton(
+                            padding: const EdgeInsets.only(right: 20),
+                            onPressed: shareSound,
+                            icon: SvgPicture.asset('assets/icons/Share.svg'),
+                          ),
+                          IconButton(
+                            onPressed: localDownloadSound,
+                            icon: SvgPicture.asset(
+                                'assets/icons/PaperDownload.svg'),
+                          ),
+                          IconButton(
+                            padding: const EdgeInsets.only(left: 20),
+                            onPressed: deleteSound,
+                            icon: SvgPicture.asset('assets/icons/Delete.svg'),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        onPressed: localDownloadSound,
-                        icon:
-                            SvgPicture.asset('assets/icons/PaperDownload.svg'),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.only(left: 20),
-                        onPressed: deleteSound,
-                        icon: SvgPicture.asset('assets/icons/Delete.svg'),
-                      ),
-                    ],
-                  ),
-                ),
-                TextButton(
-                  onPressed: saveSound,
-                  child: const Text(
-                    'Сохранить',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: 'TTNorms',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
                     ),
+                    TextButton(
+                      onPressed: saveSound,
+                      child: const Text(
+                        'Сохранить',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'TTNorms',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 90,
+                ),
+                Text(
+                  fileName,
+                  style: const TextStyle(
+                    fontFamily: 'TTNorms',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 24,
+                    letterSpacing: 0.4,
                   ),
                 ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Expanded(
+                  child: AudioSlider(),
+                ),
+                SoundControlButtons(
+                  tooglePlay: tooglePlay,
+                  moveBackward: moveBackward,
+                  moveForward: moveForward,
+                )
               ],
             ),
-            const SizedBox(
-              height: 90,
-            ),
-            Text(
-              soundName,
-              style: const TextStyle(
-                fontFamily: 'TTNorms',
-                fontWeight: FontWeight.w500,
-                fontSize: 24,
-                letterSpacing: 0.4,
-              ),
-            ),
-            Expanded(
-              child: AudioSlider,
-            ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      moveBackward();
-                    },
-                    icon: SvgPicture.asset(
-                      'assets/icons/15SecAgo.svg',
-                    ),
-                  ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  GestureDetector(
-                    onTap: tooglePlay,
-                    child: isPlayMode
-                        ? const Icon(
-                            Icons.pause_circle,
-                            color: Color.fromRGBO(241, 180, 136, 1),
-                            size: 80,
-                          )
-                        : const Icon(
-                            Icons.play_circle,
-                            color: Color.fromRGBO(241, 180, 136, 1),
-                            size: 80,
-                          ),
-                  ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      moveForward();
-                    },
-                    icon: SvgPicture.asset('assets/icons/15SecAfter.svg'),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

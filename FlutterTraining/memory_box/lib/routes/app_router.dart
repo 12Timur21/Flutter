@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:memory_box/screens/Registration/gratitudePage.dart';
-import 'package:memory_box/screens/Registration/verifyPinPage.dart';
+import 'package:memory_box/screens/login/gratitudePage.dart';
+import 'package:memory_box/screens/login/loginPage.dart';
+import 'package:memory_box/screens/login/verifyOTPPage.dart';
 import 'package:memory_box/screens/mainPage.dart';
-import 'package:memory_box/screens/Registration/registration.dart';
 import 'package:memory_box/screens/root.dart';
 
 class AppRouter {
@@ -18,14 +18,14 @@ class AppRouter {
         builder = (_) => const Root();
         break;
 
-      case Registration.routeName:
-        builder = (_) => Registration();
+      case LoginPage.routeName:
+        builder = (_) => const LoginPage();
         break;
 
-      case VerifyPinPage.routeName:
+      case VerifyOTPPage.routeName:
         {
           final String args = arguments as String;
-          builder = (_) => VerifyPinPage(
+          builder = (_) => VerifyOTPPage(
                 verficationId: args,
               );
         }

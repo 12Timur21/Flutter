@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/services/authService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
@@ -72,6 +74,16 @@ class _ProfileState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+
+    void logOut() {
+      _authenticationBloc.add(LogOut());
+    }
+
+    void deleteAccount() {
+      _authenticationBloc.add(DeleteAccount());
+    }
+
     return BackgroundPattern(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -283,21 +295,23 @@ class _ProfileState extends State<ProfilePage> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          AuthService.instance.signOut();
-                          Navigator.pushReplacementNamed(
-                            context,
-                            Root.routeName,
-                          );
+                          logOut();
+                          // AuthService.instance.signOut();
+                          // Navigator.pushReplacementNamed(
+                          //   context,
+                          //   Root.routeName,
+                          // );
                         },
                         child: Text('Выйти из приложения'),
                       ),
                       TextButton(
                         onPressed: () {
-                          AuthService.instance.deleteAccount();
-                          Navigator.pushReplacementNamed(
-                            context,
-                            Root.routeName,
-                          );
+                          deleteAccount();
+                          // AuthService.instance.deleteAccount();
+                          // Navigator.pushReplacementNamed(
+                          //   context,
+                          //   Root.routeName,
+                          // );
                         },
                         child: const Text(
                           'Удалить аккаунт',

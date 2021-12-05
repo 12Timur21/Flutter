@@ -4,7 +4,7 @@ import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 
 class InitialSettings {
   InitialSettings() {
-    updateBootomUIColor();
+    // updateBootomUIColor();
     updatePhoneFormatter();
   }
 

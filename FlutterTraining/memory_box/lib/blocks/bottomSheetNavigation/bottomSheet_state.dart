@@ -16,4 +16,5 @@ class ListeningPageState extends BottomSheetState {
 enum BottomSheetItems {
   RecordingPage,
   ListeningPage,
+  PreviewRecord,
 }

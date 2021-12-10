@@ -27,17 +27,22 @@ class UserModel {
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    SubscriptionType subscriptionType = SubscriptionType.values.firstWhere(
-      (e) => e.toString() == json['subscriptionType'],
-    );
+    SubscriptionType? subscriptionType;
 
-    print(subscriptionType);
+    for (final value in SubscriptionType.values) {
+      String enumValue = value.toString().split('.').last;
+
+      if (enumValue == json['subscriptionType']) {
+        print(value);
+        subscriptionType = value;
+      }
+    }
 
     return UserModel(
       uid: json['uid'],
       displayName: json['displayName'],
       phoneNumber: json['phoneNumber'],
-      subscriptionType: subscriptionType,
+      subscriptionType: subscriptionType ?? SubscriptionType.noSubscription,
     );
   }
 

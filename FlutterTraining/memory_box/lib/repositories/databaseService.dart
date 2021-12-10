@@ -22,6 +22,10 @@ class DatabaseService {
     print('object');
     print(uid);
     DocumentSnapshot<Object?> result = await _users.doc(uid).get();
+
+    var zz = result.data() as Map<String, dynamic>;
+    print(zz[uid]);
+
     UserModel user = UserModel.fromJson(result.data() as Map<String, dynamic>);
     return user;
   }

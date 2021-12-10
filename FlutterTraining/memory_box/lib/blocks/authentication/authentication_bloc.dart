@@ -20,6 +20,7 @@ class AuthenticationBloc
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
+    print(event);
     if (event is InitAuth) {
       currentUser = await _authService.currentUser();
       if (currentUser != null) {

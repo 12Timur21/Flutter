@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:memory_box/models/userModel.dart';
+import 'package:memory_box/models/verifyAuthModel.dart';
 
 import 'databaseService.dart';
 
@@ -18,76 +19,55 @@ class AuthService {
     if (uid != null) {
       bool isUserExist = await DatabaseService.instance.isUserExist(uid);
       if (isUserExist) {
-        return await DatabaseService.instance.userModelFromDatabase(uid);
+        UserModel? userModel =
+            await DatabaseService.instance.userModelFromDatabase(uid);
+
+        return userModel;
       }
     }
     return null;
   }
 
-  Future<PhoneAuthCredential?> verifyPhoneNumberAndSendOTP({
+  Future<VerifyAuthModel> verifyPhoneNumberAndSendOTP({
     required String phoneNumber,
-    required Function onSucces,
-    required Function onError,
-    required Function onTimeOut,
   }) async {
+    VerifyAuthModel verifyAuthModel = VerifyAuthModel();
     final completer = Completer<String>();
-    String? ids;
-    int? token;
-    print('1');
     await _auth.verifyPhoneNumber(
       phoneNumber: '+$phoneNumber',
       timeout: const Duration(seconds: 120),
       verificationCompleted: (PhoneAuthCredential credential) {
-        print('test');
         completer.complete(credential.verificationId);
       },
       verificationFailed: (FirebaseAuthException e) {
-        print('test2');
-        completer.completeError(e);
+        completer.completeError(e.message ?? '');
       },
       codeSent: (verficationIds, resendingToken) {
-        ids = verficationIds;
-        token = resendingToken;
-        print('test3');
         completer.complete(verficationIds);
       },
       codeAutoRetrievalTimeout: (String e) {
         completer.completeError(e);
-        print('test4');
       },
     );
-    print('2');
-    String zxc = await completer.future;
-    print(zxc);
-    // try {
-    //   print(completer.isCompleted);
-    //   print('3');
 
-    //   print(credential2?.verificationId);
-    //   print('4');
-    //   onSucces(ids, token);
-    //   // return await verificationComplete(credential);
-    // } catch (e) {
-    //   print('5');
-    //   onError();
-    // }
+    await completer.future.then((value) {
+      verifyAuthModel.verficationIds = value;
+    }).catchError((e) {
+      verifyAuthModel.error = e;
+    });
+
+    return verifyAuthModel;
   }
 
-  Future<void> verifyOTPCode({
+  Future<UserModel?> verifyOTPCode({
     required String smsCode,
     required String verifictionId,
-    required Function onSucces,
-    required Function onError,
   }) async {
     PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
       verificationId: verifictionId,
       smsCode: smsCode,
     );
-    await _signInWithPhoneAuthCredential(phoneAuthCredential)
-        .then((user) => onSucces(user))
-        .onError(
-          (_, __) => onError(),
-        );
+    return await _signInWithPhoneAuthCredential(phoneAuthCredential);
   }
 
   Future<UserModel?> _signInWithPhoneAuthCredential(
@@ -106,7 +86,7 @@ class AuthService {
         if (isUserExist) {
           userModel = await DatabaseService.instance.userModelFromDatabase(uid);
         } else {
-          if (result.user != null && user != null) {
+          if (user != null) {
             userModel = _firebaseModeltoUserModel(user);
             if (userModel != null) {
               DatabaseService.instance.recordNewUser(userModel);

@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:memory_box/models/userModel.dart';
+import 'package:memory_box/models/verifyAuthModel.dart';
 import 'package:memory_box/repositories/authService.dart';
 import 'package:meta/meta.dart';
 
@@ -20,27 +21,18 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
   @override
   Stream<RegistrationState> mapEventToState(RegistrationEvent event) async* {
     if (event is VerifyPhoneNumber) {
-      String? error;
-      String? verficationId;
-
-      PhoneAuthCredential? p = await _authService.verifyPhoneNumberAndSendOTP(
+      VerifyAuthModel varifyAuthModel =
+          await _authService.verifyPhoneNumberAndSendOTP(
         phoneNumber: event.phoneNumber,
-        onSucces: (String verficationIds, int? resendingToken) {
-          verficationId = verficationIds;
-          print(verficationIds);
-        },
-        onError: (FirebaseAuthException e) {
-          error = e.message;
-        },
-        onTimeOut: (String e) {
-          error = e;
-        },
       );
-      print('11');
-      print(p?.verificationId);
-      print('22');
+
+      String? error = varifyAuthModel.error;
+      String? verficationId = varifyAuthModel.verficationIds;
+
       if (error == null && verficationId != null) {
-        yield VerifyPhoneNumberSucces(verificationIds: verficationId!);
+        yield VerifyPhoneNumberSucces(
+          verificationIds: verficationId,
+        );
       } else {
         yield VerifyPhoneFailure(
           error: error,
@@ -48,22 +40,15 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
       }
     }
     if (event is VerifyOTPCode) {
-      bool error = false;
-      UserModel? userModel;
-
-      _authService.verifyOTPCode(
-        smsCode: event.verifictionId,
+      print(event.smsCode);
+      print(event.verifictionId);
+      UserModel? userModel = await _authService.verifyOTPCode(
+        smsCode: event.smsCode,
         verifictionId: event.verifictionId,
-        onSucces: (UserModel? user) {
-          userModel = user;
-        },
-        onError: () {
-          error = true;
-        },
       );
 
-      if (!error && userModel != null) {
-        yield VerifyOTPSucces(user: userModel!);
+      if (userModel != null) {
+        yield VerifyOTPSucces(user: userModel);
       } else {
         yield VerifyOTPFailure();
       }

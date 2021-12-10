@@ -5,12 +5,10 @@ abstract class AudioplayerEvent {}
 
 class InitPlayer extends AudioplayerEvent {
   final String title;
-  // final Duration songDuration;
   final String soundUrl;
 
   InitPlayer({
     required this.title,
-    // required this.songDuration,
     required this.soundUrl,
   });
 
@@ -31,3 +29,5 @@ class MoveBackward15Sec extends AudioplayerEvent {}
 class DisposePlayer extends AudioplayerEvent {}
 
 class UpdatePlayDuration extends AudioplayerEvent {}
+
+class DeleteSong extends AudioplayerEvent {}

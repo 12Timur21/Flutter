@@ -47,7 +47,7 @@ class SoundPlayer {
     _maxDuration = await _flutterSoundPlayer?.startPlayer(
       fromURI: soundUrl,
       codec: Codec.aacMP4,
-      whenFinished: onFinished,
+      whenFinished: () {},
     );
     _flutterSoundPlayer?.pausePlayer();
 
@@ -58,14 +58,6 @@ class SoundPlayer {
     );
 
     startProgressListener();
-  }
-
-  // String get appDirectory = await getApplicationDocumentsDirectory();
-  //   pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
-
-  //!
-  void onFinished() {
-    print('finished');
   }
 
   Future<void> dispose() async {
@@ -142,6 +134,7 @@ class SoundPlayer {
   void localDownloadSound() async {
     String downloadDirectory = '';
 
+    //?
     if (Platform.isAndroid) {
       downloadDirectory = '/sdcard/download/Аудиозапись.aac';
     }

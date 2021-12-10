@@ -3,17 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
-import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
-import 'package:memory_box/blocks/login/login_bloc.dart';
-import 'package:memory_box/models/userModel.dart';
-import 'package:memory_box/screens/login/gratitudePage.dart';
-import 'package:memory_box/screens/login/loginPage.dart';
-import 'package:memory_box/screens/mainPage.dart';
+import 'package:memory_box/blocks/registration/registration_bloc.dart';
+import 'package:memory_box/repositories/authService.dart';
 import 'package:memory_box/screens/splashScreen.dart';
-import 'package:memory_box/services/authService.dart';
-
-import 'login/loginSplash.dart';
-import 'login/verifyOTPPage.dart';
+import 'mainPage.dart';
+import 'registration/gratitudePage.dart';
+import 'registration/registrationPage.dart';
+import 'registration/registrationSplash.dart';
+import 'registration/verifyOTPPage.dart';
 
 class Root extends StatefulWidget {
   static const routeName = 'RootPage';
@@ -25,56 +22,65 @@ class Root extends StatefulWidget {
 
 class _RootState extends State<Root> {
   @override
-  Widget build(BuildContext context) {
-    // return MainPage();
+  void initState() {
     final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    _authenticationBloc.add(InitAuth());
+    super.initState();
+  }
 
-    return StreamBuilder<UserModel?>(
-        stream: AuthService.instance.authStreamChanges,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            print(snapshot.data?.uid);
-          }
-
-          if (snapshot.data != null) {
-            _authenticationBloc.add(LoggedIn());
-          } else {
-            _authenticationBloc.add(LoggedOut());
-          }
-
-          return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-            builder: (context, state) {
-              if (state is Authenticated) {
-                return MainPage();
-              }
-              if (state is NotAuthenticated) {
-                return BlocBuilder<LoginBloc, LoginState>(
-                  builder: (context, state) {
-                    if (state is LoginInitial) {
-                      return const LoginSpash();
-                    }
-                    if (state is LoginLoaded) {
-                      return const LoginPage();
-                    }
-                    if (state is VerifyPhoneNumberSucces) {
-                      return VerifyOTPPage(
-                        verficationId: state.verifictionId,
-                      );
-                    }
-                    if (state is VerifyOTPSucces) {
-                      Timer(Duration(seconds: 3), () {
-                        _authenticationBloc.add(LoggedIn());
-                      });
-                      return GratitudePage();
-                    }
-                    return const Placeholder();
-                  },
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        if (state.status == AuthenticationStatus.authenticated) {
+          // Timer(const Duration(seconds: 3), () {
+          //         _authenticationBloc.add(LogIn());
+          //       });
+          return MainPage();
+        }
+        if (state.status == AuthenticationStatus.notAuthenticated) {
+          //--Not auth --//
+          return BlocListener<RegistrationBloc, RegistrationState>(
+            listener: (context, state) {
+              print(state);
+              final _authenticationBloc =
+                  BlocProvider.of<AuthenticationBloc>(context);
+              if (state is LoginPageLoaded) {
+                Navigator.pushNamed(
+                  context,
+                  RegistrationPage.routeName,
                 );
+
+                // RegistrationPage();
               }
-              return SplashScreen();
+              if (state is VerifyPhoneNumberSucces) {
+                Navigator.pushNamed(
+                  context,
+                  VerifyOTPPage.routeName,
+                  arguments: state.verificationIds,
+                );
+                // VerifyOTPPage(
+                //   verficationId: state.verifictionId,
+                // );
+              }
+              if (state is VerifyOTPSucces) {
+                Timer(const Duration(seconds: 3), () {
+                  _authenticationBloc.add(LogIn());
+                });
+                Navigator.pushNamed(
+                  context,
+                  GratitudePage.routeName,
+                );
+                // GratitudePage();
+              }
             },
+            child: LoginSpash(),
           );
-        });
+          //--End not auth --//
+        }
+        return SplashScreen();
+      },
+    );
   }
 }
     // listener: (context, state) {

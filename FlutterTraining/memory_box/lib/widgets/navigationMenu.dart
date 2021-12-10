@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
+import 'package:memory_box/blocks/mainPageNavigation/navigation_event.dart';
+import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
+import 'package:memory_box/screens/audioListPage.dart';
 import 'package:memory_box/screens/mainPage.dart';
+import 'package:memory_box/screens/subscriptionPage.dart';
 
 class NavigationBar extends StatelessWidget {
   const NavigationBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final navigationBloc = BlocProvider.of<NavigationBloc>(context);
+
     ListTile CustomListTyle({title, svgUrl, callback}) {
       return ListTile(
         minLeadingWidth: 0,
@@ -79,10 +87,8 @@ class NavigationBar extends StatelessWidget {
               title: 'Профиль',
               svgUrl: 'assets/icons/Profile.svg',
               callback: () {
-                Navigator.pushNamed(
-                  context,
-                  MainPage.routeName,
-                  arguments: 4,
+                navigationBloc.add(
+                  NavigateTo(NavigationPages.ProfilePage),
                 );
               },
             ),
@@ -94,7 +100,11 @@ class NavigationBar extends StatelessWidget {
             CustomListTyle(
               title: 'Все аудиофайлы',
               svgUrl: 'assets/icons/Paper.svg',
-              callback: () {},
+              callback: () {
+                navigationBloc.add(
+                  NavigateTo(NavigationPages.SelectionsPage),
+                );
+              },
             ),
             CustomListTyle(
               title: 'Поиск',
@@ -112,7 +122,15 @@ class NavigationBar extends StatelessWidget {
             CustomListTyle(
               title: 'Подписка',
               svgUrl: 'assets/icons/Wallet.svg',
-              callback: () {},
+              callback: () {
+                navigationBloc.add(
+                  NavigateTo(NavigationPages.SubscriptionPage),
+                );
+                // Navigator.pushNamed(
+                //   context,
+                //   MainPage.routeName,
+                // );
+              },
             ),
             const SizedBox(
               height: 30,

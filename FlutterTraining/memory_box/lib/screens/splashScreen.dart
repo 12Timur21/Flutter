@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
-    _authenticationBloc.add(AppLoaded());
-
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(

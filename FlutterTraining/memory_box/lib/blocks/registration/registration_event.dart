@@ -1,15 +1,15 @@
-part of 'login_bloc.dart';
+part of 'registration_bloc.dart';
 
 @immutable
-abstract class LoginEvent {
+abstract class RegistrationEvent {
   @override
   List<Object> get props => [];
 }
 
-class LoadLoadingPage extends LoginEvent {}
+class LoadLoadingPage extends RegistrationEvent {}
 
-class VerifyPhoneNumber extends LoginEvent {
-  final int phoneNumber;
+class VerifyPhoneNumber extends RegistrationEvent {
+  final String phoneNumber;
 
   VerifyPhoneNumber({
     required this.phoneNumber,
@@ -19,7 +19,7 @@ class VerifyPhoneNumber extends LoginEvent {
   List<Object> get props => [phoneNumber];
 }
 
-class VerifyOTPCode extends LoginEvent {
+class VerifyOTPCode extends RegistrationEvent {
   final String verifictionId;
   final String smsCode;
 

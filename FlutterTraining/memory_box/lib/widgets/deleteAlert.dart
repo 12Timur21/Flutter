@@ -1,42 +1,76 @@
 import 'package:flutter/material.dart';
 
 class DeleteAlert extends StatelessWidget {
-  const DeleteAlert({Key? key}) : super(key: key);
+  const DeleteAlert({
+    required this.title,
+    required this.content,
+    Key? key,
+  }) : super(key: key);
+
+  final String title;
+  final String content;
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.center,
       child: AlertDialog(
-        title: const Text(
-          'Удалить эту аудиозапись?',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 20,
-            fontFamily: 'TTNorms',
+        contentPadding: EdgeInsets.symmetric(vertical: 30),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(30),
           ),
         ),
-        content: const Text(
-          'Вы действительно хотите удалить аудиозапись?',
+        titlePadding: EdgeInsets.only(
+          top: 55,
+        ),
+        actionsPadding: EdgeInsets.only(
+          bottom: 15,
+        ),
+        title: Text(
+          title,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 18,
+          style: const TextStyle(
+            fontSize: 20,
             fontFamily: 'TTNorms',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        content: Text(
+          content,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 14,
+            fontFamily: 'TTNorms',
+            fontWeight: FontWeight.w400,
+            color: Color.fromRGBO(58, 58, 85, 0.7),
           ),
         ),
         actions: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context, true);
                 },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 40,
+                  ),
+                  backgroundColor: Color.fromRGBO(226, 119, 119, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
                 child: const Text(
-                  'Подтвердить',
+                  'Удалить',
                   style: TextStyle(
                     fontFamily: 'TTNorms',
-                    color: Colors.red,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -44,10 +78,26 @@ class DeleteAlert extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context, false);
                 },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 40,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Color.fromRGBO(140, 132, 226, 1),
+                      width: 2.0,
+                    ),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
                 child: const Text(
-                  'Отменить',
+                  'Нет',
                   style: TextStyle(
                     fontFamily: 'TTNorms',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Color.fromRGBO(140, 132, 226, 1),
                   ),
                 ),
               ),

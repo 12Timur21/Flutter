@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memory_box/blocks/registration/registration_bloc.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circleTextField.dart';
 import 'package:memory_box/widgets/continueButton.dart';
@@ -18,19 +20,13 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
   final _otpController = TextEditingController();
 
   void verifySMSCode() async {
-    // AuthService.instance.verifySMSCode(
-    //   smsCode: _otpController.text,
-    //   verifictionId: widget.verficationId,
-    //   onSucces: () {
-    //     Navigator.pushReplacementNamed(
-    //       context,
-    //       GratitudePage.routeName,
-    //     );
-    //   },
-    //   onError: () {
-    //     print('errro');
-    //   },
-    // );
+    final _loginBloc = BlocProvider.of<RegistrationBloc>(context);
+    _loginBloc.add(
+      VerifyOTPCode(
+        smsCode: _otpController.text,
+        verifictionId: widget.verficationId,
+      ),
+    );
   }
 
   @override

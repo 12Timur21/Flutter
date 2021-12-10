@@ -1,22 +1,14 @@
 part of 'authentication_bloc.dart';
 
+enum AuthenticationStatus { initial, authenticated, notAuthenticated, failure }
+
 @immutable
-abstract class AuthenticationState {
-  const AuthenticationState();
+class AuthenticationState {
+  final AuthenticationStatus status;
+  final UserModel? user;
 
-  @override
-  List<Object> get props => [];
-}
-
-class AuthenticationInitial extends AuthenticationState {}
-
-class NotAuthenticated extends AuthenticationState {}
-
-class Authenticated extends AuthenticationState {
-  final UserModel user;
-
-  const Authenticated({required this.user});
-
-  @override
-  List<Object> get props => [user];
+  const AuthenticationState({
+    this.status = AuthenticationStatus.initial,
+    this.user,
+  });
 }

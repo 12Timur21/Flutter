@@ -15,4 +15,5 @@ enum NavigationPages {
   RecordingPage,
   AudioListPage,
   ProfilePage,
+  SubscriptionPage
 }

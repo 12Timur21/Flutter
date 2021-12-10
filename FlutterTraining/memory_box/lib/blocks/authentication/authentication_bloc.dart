@@ -1,9 +1,7 @@
-import 'dart:math';
-
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:memory_box/models/userModel.dart';
-import 'package:memory_box/services/authService.dart';
+import 'package:memory_box/repositories/authService.dart';
+import 'package:memory_box/repositories/databaseService.dart';
 import 'package:meta/meta.dart';
 
 part 'authentication_event.dart';
@@ -11,58 +9,71 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final AuthService _authService = AuthService.instance;
+  AuthenticationBloc() : super(AuthenticationState());
 
-  AuthenticationBloc() : super(AuthenticationInitial());
+  final AuthService _authService = AuthService.instance;
+  final DatabaseService _databaseService = DatabaseService.instance;
+
+  UserModel? currentUser;
 
   @override
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
-    if (event is AppLoaded) {
-      yield* _appLoadedToState(event);
+    if (event is InitAuth) {
+      currentUser = await _authService.currentUser();
+      if (currentUser != null) {
+        yield AuthenticationState(
+          status: AuthenticationStatus.authenticated,
+          user: currentUser,
+        );
+      } else {
+        yield AuthenticationState(
+          status: AuthenticationStatus.notAuthenticated,
+          user: null,
+        );
+      }
     }
 
-    if (event is LoggedIn) {
-      yield* _logInToState();
+    if (event is LogIn) {
+      currentUser = await _authService.currentUser();
+      yield AuthenticationState(
+        status: AuthenticationStatus.authenticated,
+        user: currentUser,
+      );
     }
 
-    if (event is LoggedOut) {
-      yield* _logOutToState(event);
+    if (event is LogOut) {
+      currentUser = null;
+      await _authService.signOut();
+      yield AuthenticationState(
+        status: AuthenticationStatus.notAuthenticated,
+        user: null,
+      );
     }
 
     if (event is DeleteAccount) {
-      yield* _deleteUserToState(event);
+      currentUser = null;
+      await _databaseService.deleteUserCollections(event.uid);
+      await _authService.deleteAccount();
+
+      yield AuthenticationState(
+        status: AuthenticationStatus.notAuthenticated,
+        user: null,
+      );
     }
-  }
 
-  Stream<AuthenticationState> _appLoadedToState(AppLoaded event) async* {
-    final currentUser = await _authService.currentUser();
-
-    if (currentUser != null) {
-      yield Authenticated(user: currentUser);
-    } else {
-      yield NotAuthenticated();
+    if (event is UpdateAccount) {
+      currentUser = await _authService.currentUser();
+      yield AuthenticationState(
+        status: AuthenticationStatus.notAuthenticated,
+        user: currentUser?.copyWith(
+          uid: event.uid,
+          displayName: event.displayName,
+          phoneNumber: event.phoneNumber,
+          subscriptionType: event.subscriptionType,
+        ),
+      );
     }
-  }
-
-  Stream<AuthenticationState> _logInToState() async* {
-    final currentUser = await _authService.currentUser();
-
-    yield Authenticated(user: currentUser!);
-  }
-
-  Stream<AuthenticationState> _logOutToState(
-    LoggedOut event,
-  ) async* {
-    await _authService.signOut();
-    yield NotAuthenticated();
-  }
-
-  Stream<AuthenticationState> _deleteUserToState(
-    DeleteAccount event,
-  ) async* {
-    await _authService.deleteAccount();
-    yield NotAuthenticated();
   }
 }

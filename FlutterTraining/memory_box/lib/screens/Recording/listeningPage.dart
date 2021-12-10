@@ -12,7 +12,7 @@ import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/services/cloudService.dart';
+import 'package:memory_box/repositories/storageService.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
 import 'package:memory_box/widgets/bottomSheetWrapper.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
@@ -44,13 +44,13 @@ class _ListeningPageState extends State<ListeningPage> {
   }
 
   void asyncInit() async {
-    final _audioBloc = BlocProvider.of<AuthenticationBloc>(context);
-    Authenticated authenticated = _audioBloc.state as Authenticated;
+    final _authBloc = BlocProvider.of<AuthenticationBloc>(context).state;
+    String? uid = _authBloc.user?.uid;
 
-    if (authenticated.user.uid != null) {
-      int index = await CloudService.instance.filesLength(
+    if (uid != null) {
+      int index = await StorageService.instance.filesLength(
         fileType: FileType.sound,
-        uid: authenticated.user.uid!,
+        uid: uid,
       );
       setState(() {
         fileName = 'Запись №$index';
@@ -80,42 +80,38 @@ class _ListeningPageState extends State<ListeningPage> {
   }
 
   void deleteSound() async {
-    final _audioBloc = BlocProvider.of<AuthenticationBloc>(context);
-    Authenticated authenticated = _audioBloc.state as Authenticated;
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
 
-    var z = await CloudService.instance.getFileUrl(
-      fileType: FileType.sound,
-      uid: authenticated.user.uid!,
+    bool? isDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return const DeleteAlert(
+          title: 'Удалить эту аудиозапись?',
+          content: 'Вы действительно хотите удалить аудиозапись?',
+        );
+      },
     );
-    print(z);
-    // await CloudService.instance.filesLength(fileType: FileType.sound);
-    // bool? isDelete = await showDialog<bool>(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return const DeleteAlert();
-    //   },
-    // );
-    // if (isDelete == true) {
-    //   _soundPlayer?.deleteSound();
-    //   Navigator.of(context).pop();
-    // }
+    if (isDelete == true) {
+      _audioBloc.add(DeleteSong());
+      Navigator.of(context).pop();
+    }
   }
 
   void saveSound() async {
-    final _audioBloc = BlocProvider.of<AuthenticationBloc>(context);
-    Authenticated authenticated = _audioBloc.state as Authenticated;
+    final user = BlocProvider.of<AuthenticationBloc>(context).state;
+    final String? uid = user.user?.uid;
 
-    if (authenticated.user.uid != null) {
-      final file = File('/sdcard/download/test2.aac');
-
-      await CloudService.instance.uploadFile(
+    if (uid != null) {
+      final file = File('sdcard/download/test2.aac');
+      await StorageService.instance.uploadFile(
         file: file,
         fileName: 'test2.aac',
         fileType: FileType.sound,
-        uid: authenticated.user.uid!,
+        uid: uid,
       );
-      navigateToPreviewPage();
+      // navigateToPreviewPage();
     }
+    //!!!!
     // await CloudService.instance.isFileExist(
     //   fileType: FileType.sound,
     //   fileName: 'test2.aac',

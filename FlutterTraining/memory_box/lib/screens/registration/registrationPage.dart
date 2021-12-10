@@ -1,35 +1,32 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
-import 'package:memory_box/blocks/login/login_bloc.dart';
-import 'package:memory_box/services/authService.dart';
+import 'package:memory_box/blocks/registration/registration_bloc.dart';
+import 'package:memory_box/repositories/authService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circleTextField.dart';
 import 'package:memory_box/widgets/continueButton.dart';
 import 'package:memory_box/widgets/hintPlate.dart';
 
-import 'gratitudePage.dart';
-
-class LoginPage extends StatefulWidget {
+class RegistrationPage extends StatefulWidget {
   static const routeName = 'Registration';
 
-  const LoginPage({Key? key}) : super(key: key);
+  const RegistrationPage({Key? key}) : super(key: key);
 
   @override
   _RegistrationState createState() => _RegistrationState();
 }
 
-class _RegistrationState extends State<LoginPage> {
+class _RegistrationState extends State<RegistrationPage> {
   final _textFieldController = TextEditingController();
 
   void anonAuth() async {
     await AuthService.instance.signInAnon();
     final _authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
-    _authBloc.add(LoggedIn());
+    _authBloc.add(LogIn());
   }
 
   @override
@@ -37,18 +34,12 @@ class _RegistrationState extends State<LoginPage> {
     double height = MediaQuery.of(context).size.height;
 
     void verifyPhoneNumber() {
-      // AuthService.instance.verifyPhoneNumber(
-      //     phoneNumber: toNumericString(_textFieldController.text),
-      //     onSucces: (verficationId) {
-      // Navigator.pushReplacementNamed(
-      //   context,
-      //   VerifyPinPage.routeName,
-      //   arguments: verficationId,
-      // );
-      //     },
-      //     onError: () {
-      //       log("Can't verify this phoneNumber");
-      //     });
+      final _registrationBloc = BlocProvider.of<RegistrationBloc>(context);
+      _registrationBloc.add(
+        VerifyPhoneNumber(
+          phoneNumber: toNumericString(_textFieldController.text),
+        ),
+      );
     }
 
     return Scaffold(

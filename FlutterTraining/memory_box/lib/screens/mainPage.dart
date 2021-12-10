@@ -14,6 +14,7 @@ import 'package:memory_box/screens/homePage.dart';
 import 'package:memory_box/screens/profilePage.dart';
 import 'package:memory_box/screens/recording/recordPreview.dart';
 import 'package:memory_box/screens/selectionsPage.dart';
+import 'package:memory_box/screens/subscriptionPage.dart';
 import 'package:memory_box/widgets/bottomNavigationBar.dart';
 import 'package:memory_box/widgets/navigationMenu.dart';
 
@@ -56,26 +57,23 @@ class _MainPageState extends State<MainPage> {
                   create: (context) => AudioplayerBloc(),
                 ),
               ],
-              child: GestureDetector(
-                onVerticalDragDown: (_) {},
-                child: BlocBuilder<BottomSheetBloc, BottomSheetState>(
-                  builder: (BuildContext context, BottomSheetState state) {
-                    if (state.bottomSheetItem ==
-                        BottomSheetItems.RecordingPage) {
-                      return const RecordingPage();
-                    }
-                    if (state.bottomSheetItem ==
-                        BottomSheetItems.ListeningPage) {
-                      return const ListeningPage();
-                    }
-                    if (state.bottomSheetItem ==
-                        BottomSheetItems.PreviewRecord) {
-                      return const RecordPreview();
-                    }
-                    return Container();
-                  },
-                ),
+              // child: GestureDetector(
+              // onVerticalDragDown: (_) {},
+              child: BlocBuilder<BottomSheetBloc, BottomSheetState>(
+                builder: (BuildContext context, BottomSheetState state) {
+                  if (state.bottomSheetItem == BottomSheetItems.RecordingPage) {
+                    return const RecordingPage();
+                  }
+                  if (state.bottomSheetItem == BottomSheetItems.ListeningPage) {
+                    return const ListeningPage();
+                  }
+                  if (state.bottomSheetItem == BottomSheetItems.PreviewRecord) {
+                    return const RecordPreview();
+                  }
+                  return Container();
+                },
               ),
+              // ),
             );
           },
           // transitionAnimationController: transition,
@@ -109,6 +107,7 @@ class _MainPageState extends State<MainPage> {
       drawer: const NavigationBar(),
       body: BlocBuilder<NavigationBloc, NavigationState>(
         builder: (BuildContext context, NavigationState state) {
+          print(state.selectedItem);
           if (state.selectedItem == NavigationPages.HomePage) {
             return const HomePage();
           }
@@ -120,6 +119,9 @@ class _MainPageState extends State<MainPage> {
           }
           if (state.selectedItem == NavigationPages.ProfilePage) {
             return ProfilePage();
+          }
+          if (state.selectedItem == NavigationPages.SubscriptionPage) {
+            return SubscriptionPage();
           }
           return Container();
         },

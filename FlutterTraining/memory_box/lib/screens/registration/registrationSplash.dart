@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:memory_box/blocks/login/login_bloc.dart';
+import 'package:memory_box/blocks/registration/registration_bloc.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/continueButton.dart';
 import 'package:memory_box/widgets/textLogo.dart';
@@ -11,7 +11,7 @@ class LoginSpash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void navigateToRegistration() {
-      final _loginBloc = BlocProvider.of<LoginBloc>(context);
+      final _loginBloc = BlocProvider.of<RegistrationBloc>(context);
       _loginBloc.add(LoadLoadingPage());
     }
 

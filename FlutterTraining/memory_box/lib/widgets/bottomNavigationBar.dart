@@ -114,46 +114,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 return Container();
               },
             ),
-
-            // Stack(
-            //   alignment: Alignment.topCenter,
-            //   children: [
-            //     if (isOpenBottomSheet)
-            //       Container(
-            //         decoration: const BoxDecoration(
-            //           boxShadow: [
-            //             BoxShadow(
-            //               color: Color.fromRGBO(241, 180, 136, 1),
-            //               offset: Offset(0, -10),
-            //             ),
-            //           ],
-            //         ),
-            //         width: 5,
-            //         height: 30,
-            //       ),
-            //     Container(
-            //       height: 46,
-            //       width: 46,
-            //       decoration: const BoxDecoration(
-            //         color: Color.fromRGBO(241, 180, 136, 1),
-            //         borderRadius: BorderRadius.all(
-            //           Radius.circular(20),
-            //         ),
-            //       ),
-            //       child: Center(
-            //         child: Container(
-            //           margin: const EdgeInsets.only(top: 3),
-            //           child: isOpenBottomSheet == false
-            //               ? SvgPicture.asset(
-            //                   'assets/icons/Voice.svg',
-            //                   height: 28,
-            //                 )
-            //               : null,
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
             title: Text(
               'Запись',
               style: TextStyle(

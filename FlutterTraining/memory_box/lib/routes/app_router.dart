@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:memory_box/screens/login/gratitudePage.dart';
-import 'package:memory_box/screens/login/loginPage.dart';
-import 'package:memory_box/screens/login/verifyOTPPage.dart';
 import 'package:memory_box/screens/mainPage.dart';
+import 'package:memory_box/screens/registration/gratitudePage.dart';
+import 'package:memory_box/screens/registration/registrationPage.dart';
+import 'package:memory_box/screens/registration/verifyOTPPage.dart';
 import 'package:memory_box/screens/root.dart';
+import 'package:memory_box/screens/subscriptionPage.dart';
 
 class AppRouter {
   const AppRouter._();
@@ -18,8 +19,8 @@ class AppRouter {
         builder = (_) => const Root();
         break;
 
-      case LoginPage.routeName:
-        builder = (_) => const LoginPage();
+      case RegistrationPage.routeName:
+        builder = (_) => const RegistrationPage();
         break;
 
       case VerifyOTPPage.routeName:

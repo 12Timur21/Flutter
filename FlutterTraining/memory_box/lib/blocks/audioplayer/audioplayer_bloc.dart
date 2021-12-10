@@ -75,13 +75,14 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
   Stream<AudioplayerState> _seek() async* {}
 
   Stream<AudioplayerState> _moveForward15Sec() async* {
-    // _soundPlayer?.pause();
-    // state.isPlay = false;
-    print('object-3');
+    _soundPlayer?.moveForward();
     yield state;
   }
 
-  Stream<AudioplayerState> _moveBackward15Sec() async* {}
+  Stream<AudioplayerState> _moveBackward15Sec() async* {
+    _soundPlayer?.moveBackward();
+    yield state;
+  }
 
   Stream<AudioplayerState> _updatePlayDuration() async* {
     state.songDuration = _soundPlayer?.maxDuration;

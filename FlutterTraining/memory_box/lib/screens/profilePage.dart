@@ -1,16 +1,23 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
+import 'package:memory_box/models/userModel.dart';
+import 'package:memory_box/repositories/authService.dart';
+import 'package:memory_box/repositories/databaseService.dart';
+import 'package:memory_box/repositories/storageService.dart';
 import 'package:memory_box/screens/root.dart';
-import 'package:memory_box/services/authService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circleTextField.dart';
+import 'package:memory_box/widgets/deleteAlert.dart';
 import 'package:memory_box/widgets/navigationMenu.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/single_child_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = 'ProfilePage';
@@ -21,90 +28,135 @@ class ProfilePage extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
-enum Mode {
-  viewMode,
-  editMode,
-}
-
 class _ProfileState extends State<ProfilePage> {
-  TextEditingController _phoneInputContoller = TextEditingController();
-  TextEditingController _nameFieldController = TextEditingController();
-  Mode _currentMode = Mode.viewMode;
+  final _phoneInputContoller = TextEditingController();
+  final _nameInputController = TextEditingController();
+
+  bool _isEditMode = false;
+
+  UserModel? user;
 
   String? _userName;
-  String? _updatedUserName;
+  String? _phoneNumber;
 
-  String _phoneNumber = '380969596645';
-  String? _updatedPhoneNumber;
-
-  XFile? _selectedImage, _updatedImage;
-
-  Future _pickImage() async {
-    XFile? image = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-
-    setState(() {
-      _selectedImage = image;
-    });
-  }
-
-  void changeViewMode() {
-    setState(() {
-      if (_currentMode == Mode.viewMode)
-        _currentMode = Mode.editMode;
-      else
-        _currentMode = Mode.viewMode;
-    });
-  }
-
-  // void saveChanges() {
-  //   _userName = _updatedUserName;
-  //   _selectedImage = _updatedImage;
-  //   if()
-  //   _phoneNumber = _updatedPhoneNumber;
-  // }
+  XFile? _selectedImage, _oldImage;
 
   @override
   void initState() {
-    _nameFieldController.text = _userName ?? '';
-    _phoneInputContoller.text = PhoneInputFormatter().mask(_phoneNumber);
+    asyncInitState();
     super.initState();
+  }
+
+  void asyncInitState() async {
+    final UserModel? userModel = await AuthService.instance.currentUser();
+    user = await AuthService.instance.currentUser();
+
+    updatePhoneField(userModel?.phoneNumber);
+  }
+
+  void updatePhoneField(String? phoneNumber) {
+    _phoneInputContoller.text = PhoneInputFormatter().mask(
+      _phoneNumber ?? '',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    final storage = StorageService.instance;
+    final database = DatabaseService.instance;
 
-    void logOut() {
-      _authenticationBloc.add(LoggedOut());
+    final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+
+    // void update
+
+    Future<void> _pickImage() async {
+      XFile? image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      );
+
+      setState(() {
+        _selectedImage = image;
+      });
     }
 
-    void deleteAccount() {
-      _authenticationBloc.add(DeleteAccount());
+    void saveChanges() async {
+      if (user?.uid != null && _selectedImage != null) {
+        storage.uploadFile(
+          file: File(_selectedImage!.path),
+          fileName: user!.uid!,
+          fileType: FileType.avatar,
+        );
+        database.updateUserCollection(
+          uid: user!.uid!,
+          phoneNumber: toNumericString(_phoneInputContoller.text),
+          displayName: _nameInputController.text,
+        );
+        authenticationBloc.add(
+          UpdateAccount(
+            displayName: _nameInputController.text,
+            phoneNumber: toNumericString(_phoneInputContoller.text),
+          ),
+        );
+      }
+      setState(() {
+        _userName = _nameInputController.text;
+        _phoneNumber = _phoneInputContoller.text;
+      });
+    }
+
+    void undoChanges() {
+      setState(() {
+        _nameInputController.text = _userName ?? '';
+        _phoneInputContoller.text = _phoneNumber ?? '';
+        _selectedImage = _oldImage;
+        _isEditMode = false;
+      });
+    }
+
+    void _toogleMode() {
+      setState(() {
+        _isEditMode = !_isEditMode;
+        if (_isEditMode) {
+          _userName = _nameInputController.text;
+          _phoneNumber = _phoneInputContoller.text;
+          _oldImage = _selectedImage;
+        } else {
+          saveChanges();
+        }
+      });
+    }
+
+    void logOut() {
+      authenticationBloc.add(LogOut());
+    }
+
+    void deleteAccount() async {
+      bool? isDelete = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return const DeleteAlert(
+            title: 'Точно удалить аккаунт?',
+            content:
+                'Все аудиофайлы исчезнут и восстановить аккаунт будет невозможно',
+          );
+        },
+      );
+      if (isDelete == true && user?.uid != null) {
+        authenticationBloc.add(DeleteAccount(user!.uid!));
+      }
     }
 
     return BackgroundPattern(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           primary: true,
           toolbarHeight: 70,
           backgroundColor: Colors.transparent,
           centerTitle: true,
-          leading: _currentMode == Mode.viewMode
+          leading: _isEditMode
               ? Container(
-                  margin: EdgeInsets.only(left: 6),
-                  child: IconButton(
-                    icon: SvgPicture.asset(
-                      'assets/icons/Burger.svg',
-                    ),
-                    onPressed: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                  ),
-                )
-              : Container(
                   margin: EdgeInsets.only(top: 20, left: 10),
                   width: 60,
                   height: 60,
@@ -121,7 +173,18 @@ class _ProfileState extends State<ProfilePage> {
                       'assets/icons/ArrowLeftCircle.svg',
                     ),
                     onPressed: () {
-                      changeViewMode();
+                      undoChanges();
+                    },
+                  ),
+                )
+              : Container(
+                  margin: EdgeInsets.only(left: 6),
+                  child: IconButton(
+                    icon: SvgPicture.asset(
+                      'assets/icons/Burger.svg',
+                    ),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
                     },
                   ),
                 ),
@@ -181,7 +244,7 @@ class _ProfileState extends State<ProfilePage> {
                                 height: 228,
                                 fit: BoxFit.fill,
                               ),
-                        if (_currentMode == Mode.editMode)
+                        if (_isEditMode)
                           GestureDetector(
                             onTap: () {
                               _pickImage();
@@ -207,9 +270,9 @@ class _ProfileState extends State<ProfilePage> {
                 Container(
                   width: 180,
                   child: TextField(
-                    controller: _nameFieldController,
+                    controller: _nameInputController,
                     textAlign: TextAlign.center,
-                    enabled: _currentMode == Mode.viewMode ? false : true,
+                    enabled: _isEditMode ? true : false,
                     style: const TextStyle(
                       fontFamily: 'TTNorms',
                       fontWeight: FontWeight.w500,
@@ -223,19 +286,17 @@ class _ProfileState extends State<ProfilePage> {
                 CircleTextField(
                   controller: _phoneInputContoller,
                   inputFormatters: [PhoneInputFormatter()],
-                  editable: _currentMode == Mode.viewMode ? false : true,
+                  editable: _isEditMode ? true : false,
                 ),
                 const SizedBox(
                   height: 0,
                 ),
                 TextButton(
                   onPressed: () {
-                    // changeViewMode();
+                    _toogleMode();
                   },
                   child: Text(
-                    _currentMode == Mode.viewMode
-                        ? 'Редактировать'
-                        : 'Сохранить',
+                    _isEditMode ? 'Сохранить' : 'Редактировать',
                     style: const TextStyle(
                       fontFamily: 'TTNorms',
                       fontWeight: FontWeight.w500,
@@ -244,7 +305,7 @@ class _ProfileState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-                if (_currentMode == Mode.viewMode)
+                if (!_isEditMode)
                   TextButton(
                     onPressed: () {},
                     child: const Text(
@@ -264,7 +325,7 @@ class _ProfileState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-                if (_currentMode == Mode.viewMode)
+                if (!_isEditMode)
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -287,9 +348,9 @@ class _ProfileState extends State<ProfilePage> {
                 const SizedBox(
                   height: 5,
                 ),
-                if (_currentMode == Mode.viewMode) Text('150/500 мб'),
+                if (!_isEditMode) Text('150/500 мб'),
                 Spacer(),
-                if (_currentMode == Mode.viewMode)
+                if (!_isEditMode)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

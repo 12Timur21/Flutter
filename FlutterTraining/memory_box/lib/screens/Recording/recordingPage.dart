@@ -237,7 +237,7 @@ class _RecordingScreenState extends State<RecordingPage> {
               ),
               //!Преобразовать
               Text(
-                Formatting.printDurationTime(
+                printDurationTime(
                   duration: _audioDuration,
                   formattingType: FormattingType.HourMunuteSecond,
                 ),

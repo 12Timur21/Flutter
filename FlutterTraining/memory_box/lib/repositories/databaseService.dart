@@ -19,15 +19,8 @@ class DatabaseService {
   Future<UserModel> userModelFromDatabase(
     String uid,
   ) async {
-    print('object');
-    print(uid);
     DocumentSnapshot<Object?> result = await _users.doc(uid).get();
-
-    var zz = result.data() as Map<String, dynamic>;
-    print(zz[uid]);
-
-    UserModel user = UserModel.fromJson(result.data() as Map<String, dynamic>);
-    return user;
+    return UserModel.fromJson(result.data() as Map<String, dynamic>);
   }
 
   Future<void> deleteUserCollections(String uid) async {
@@ -41,12 +34,18 @@ class DatabaseService {
 
   Future<void> updateUserCollection({
     required String uid,
-    required String phoneNumber,
-    required String displayName,
+    String? phoneNumber,
+    String? displayName,
   }) async {
-    _users.doc(uid).update({
-      'displayName': displayName,
-      'phoneNumber': phoneNumber,
-    });
+    Map<String, dynamic> updatedPair = {};
+
+    if (phoneNumber != null && phoneNumber != '') {
+      updatedPair['phoneNumber'] = phoneNumber;
+    }
+    if (displayName != null && displayName != '') {
+      updatedPair['displayName'] = displayName;
+    }
+
+    _users.doc(uid).update(updatedPair);
   }
 }

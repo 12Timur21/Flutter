@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:memory_box/services/soundPlayer.dart';
@@ -10,83 +12,100 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
   AudioplayerBloc() : super(AudioplayerState());
 
   SoundPlayer? _soundPlayer;
+  StreamSubscription<void>? timerController;
 
   @override
   Stream<AudioplayerState> mapEventToState(
     AudioplayerEvent event,
   ) async* {
     if (event is InitPlayer) {
-      yield* _initPlayer(event);
+      _soundPlayer = SoundPlayer();
+      await _soundPlayer?.init(
+        soundUrl: event.soundUrl,
+      );
+      yield AudioplayerState.initial().copyWith(
+        title: 'ddfsdd',
+        songDuration: _soundPlayer?.songDuration,
+        currentPlayDuration: _soundPlayer?.currentPlayDuration,
+        songUrl: event.soundUrl,
+        isInit: true,
+      );
+
+      timerController = Stream.periodic(
+        Duration(seconds: 1),
+      ).listen((event) {
+        add(UpdatePlayDuration());
+      });
+      timerController?.pause();
     }
 
     if (event is DisposePlayer) {
-      yield* _disposePlayer();
+      print('wtf');
+      _soundPlayer?.dispose();
+      timerController?.cancel();
+      yield AudioplayerState.initial();
     }
 
     if (event is Play) {
-      yield* _play();
+      _soundPlayer?.play();
+
+      yield state.copyWith(
+        isPlay: true,
+      );
+      add(StartTimer());
     }
 
     if (event is Pause) {
-      yield* _pause();
+      await _soundPlayer?.pause();
+      add(StopTimer());
+      yield state.copyWith(
+        isPlay: false,
+      );
     }
 
     if (event is Seek) {
-      yield* _seek();
+      int currentPlayTimeInSec = event.currentPlayTimeInSec.toInt();
+      _soundPlayer?.seek(
+        currentPlayTimeInSec: currentPlayTimeInSec,
+      );
+      yield state.copyWith(
+        currentPlayDuration: Duration(
+          seconds: currentPlayTimeInSec,
+        ),
+      );
     }
 
     if (event is MoveBackward15Sec) {
-      yield* _moveBackward15Sec();
+      int currentPlayTimeInSec = state.currentPlayDuration?.inSeconds ?? 0;
+      _soundPlayer?.moveBackward15Sec(
+        currentPlayTimeInSec: currentPlayTimeInSec,
+      );
+      add(UpdatePlayDuration());
     }
 
     if (event is MoveForward15Sec) {
-      yield* _moveForward15Sec();
+      int currentPlayTimeInSec = state.currentPlayDuration?.inSeconds ?? 0;
+      _soundPlayer?.moveForward15Sec(
+        currentPlayTimeInSec: currentPlayTimeInSec,
+      );
+      add(UpdatePlayDuration());
     }
-    int z = 1;
+
     if (event is UpdatePlayDuration) {
-      yield* _updatePlayDuration();
+      print('hmm');
+      yield state.copyWith(
+        songDuration: _soundPlayer?.songDuration,
+        currentPlayDuration: _soundPlayer?.currentPlayDuration,
+      );
     }
-  }
 
-  Stream<AudioplayerState> _initPlayer(InitPlayer event) async* {
-    _soundPlayer = SoundPlayer();
-    await _soundPlayer?.init(soundUrl: event.soundUrl);
-    yield state;
-  }
+    if (event is StartTimer) {
+      print('res');
+      timerController?.resume();
+    }
 
-  Stream<AudioplayerState> _disposePlayer() async* {
-    _soundPlayer?.dispose();
-
-    yield AudioplayerState.initial();
-  }
-
-  Stream<AudioplayerState> _play() async* {
-    _soundPlayer?.play();
-    state.isPlay = true;
-    yield state;
-  }
-
-  Stream<AudioplayerState> _pause() async* {
-    await _soundPlayer?.pause();
-    state.isPlay = false;
-    yield state;
-  }
-
-  Stream<AudioplayerState> _seek() async* {}
-
-  Stream<AudioplayerState> _moveForward15Sec() async* {
-    _soundPlayer?.moveForward();
-    yield state;
-  }
-
-  Stream<AudioplayerState> _moveBackward15Sec() async* {
-    _soundPlayer?.moveBackward();
-    yield state;
-  }
-
-  Stream<AudioplayerState> _updatePlayDuration() async* {
-    state.songDuration = _soundPlayer?.maxDuration;
-    state.currentPlayDuration = _soundPlayer?.position;
-    yield state;
+    if (event is StopTimer) {
+      timerController?.pause();
+    }
   }
 }

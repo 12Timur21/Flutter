@@ -9,63 +9,58 @@ import 'package:share/share.dart';
 
 class SoundPlayer {
   static final SoundPlayer _singleton = SoundPlayer._();
-
   factory SoundPlayer() {
     return _singleton;
   }
-
   SoundPlayer._();
 
-  // AudioPlayer? audioPlayer;
   FlutterSoundPlayer? _flutterSoundPlayer;
-  late String pathToSaveAudio;
-  late Directory appDirectory;
-
+  String? pathToSaveAudio;
+  Directory? appDirectory;
   bool isSoundPlay = false;
-  bool _isPlayerInitialised = false;
-
-  // Duration? _soundDuration;
-  // int? get soundDuration => _soundDuration?.inMilliseconds;
 
   Stream<PlaybackDisposition>? get soundDurationStream =>
-      _flutterSoundPlayer?.onProgress?.asBroadcastStream();
+      _flutterSoundPlayer?.onProgress;
 
-  Duration? _maxDuration;
-  Duration get maxDuration => _maxDuration ?? Duration.zero;
+  Duration? _soundDuration;
+  Duration get songDuration => _soundDuration ?? Duration.zero;
 
-  Duration? _position;
-  Duration get position => _position ?? Duration.zero;
+  Duration? _currentPlayDuration;
+  Duration get currentPlayDuration => _currentPlayDuration ?? Duration.zero;
 
-  Future<void> init({
-    required String soundUrl,
-    int? subscriptionDuration,
-  }) async {
+  Future<void> init({required String soundUrl}) async {
     _flutterSoundPlayer = FlutterSoundPlayer();
     await _openSoundSession();
-    _isPlayerInitialised = true;
 
-    _maxDuration = await _flutterSoundPlayer?.startPlayer(
+    //
+    _soundDuration = await _flutterSoundPlayer?.startPlayer(
       fromURI: soundUrl,
       codec: Codec.aacMP4,
       whenFinished: () {},
     );
     _flutterSoundPlayer?.pausePlayer();
+    //
 
-    _flutterSoundPlayer?.setSubscriptionDuration(
-      Duration(
-        seconds: subscriptionDuration ?? 1,
-      ),
+    setSubscriptionDuration(
+      subscriptionDurationInSec: 1,
     );
-
     startProgressListener();
   }
 
   Future<void> dispose() async {
-    if (isSoundPlay) {
-      pause();
-    }
     await _closeSoundSession();
-    _isPlayerInitialised = false;
+    await _flutterSoundPlayer?.stopPlayer();
+    _flutterSoundPlayer = null;
+  }
+
+  Future<void> setSubscriptionDuration({
+    required int subscriptionDurationInSec,
+  }) async {
+    await _flutterSoundPlayer?.setSubscriptionDuration(
+      Duration(
+        seconds: subscriptionDurationInSec,
+      ),
+    );
   }
 
   Future<FlutterSoundPlayer?> _openSoundSession() async {
@@ -73,13 +68,14 @@ class SoundPlayer {
   }
 
   Future<void> _closeSoundSession() async {
-    if (_isPlayerInitialised) await _flutterSoundPlayer?.closeAudioSession();
+    await _flutterSoundPlayer?.closeAudioSession();
   }
 
   void startProgressListener() {
+    //!
     soundDurationStream?.listen((e) {
       // maxDuration = e.duration;
-      _position = e.position;
+      _currentPlayDuration = e.position;
     });
   }
 
@@ -93,33 +89,33 @@ class SoundPlayer {
     isSoundPlay = false;
   }
 
-  void seek({required int playTimeInMS}) {
+  void seek({required int currentPlayTimeInSec}) {
     _flutterSoundPlayer?.seekToPlayer(Duration(
-      milliseconds: playTimeInMS,
+      seconds: currentPlayTimeInSec,
     ));
   }
 
-  void moveForward() {
-    if (position.inSeconds + 15 <= maxDuration.inSeconds) {
+  void moveForward15Sec({required int currentPlayTimeInSec}) {
+    if (currentPlayTimeInSec + 15 <= songDuration.inSeconds) {
       _flutterSoundPlayer?.seekToPlayer(
         Duration(
-          seconds: position.inSeconds + 15,
+          seconds: currentPlayTimeInSec + 15,
         ),
       );
     } else {
       _flutterSoundPlayer?.seekToPlayer(
         Duration(
-          seconds: maxDuration.inSeconds,
+          seconds: songDuration.inSeconds,
         ),
       );
     }
   }
 
-  void moveBackward() {
-    if (position.inSeconds - 15 >= 0) {
+  void moveBackward15Sec({required int currentPlayTimeInSec}) {
+    if (currentPlayTimeInSec - 15 >= 0) {
       _flutterSoundPlayer?.seekToPlayer(
         Duration(
-          seconds: position.inSeconds - 15,
+          seconds: currentPlayTimeInSec - 15,
         ),
       );
     } else {
@@ -127,11 +123,11 @@ class SoundPlayer {
     }
   }
 
-  void shareSound() {
+  void shareSound(String pathToSaveAudio) {
     Share.shareFiles([pathToSaveAudio]);
   }
 
-  void localDownloadSound() async {
+  void localDownloadSound(String pathToSaveAudio) async {
     String downloadDirectory = '';
 
     //?
@@ -150,6 +146,6 @@ class SoundPlayer {
   }
 
   void deleteSound() {
-    appDirectory.deleteSync(recursive: true);
+    // appDirectory?.deleteSync(recursive: true);
   }
 }

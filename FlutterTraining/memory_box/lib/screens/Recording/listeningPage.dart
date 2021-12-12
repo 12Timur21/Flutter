@@ -27,12 +27,16 @@ class ListeningPage extends StatefulWidget {
 }
 
 class _ListeningPageState extends State<ListeningPage> {
-  String fileName = 'Запись №';
+  String fileName = 'Запись №_';
 
   @override
   void initState() {
     asyncInit();
     final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+
+    // appDirectory = await getApplicationDocumentsDirectory();
+    // pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
+
     _audioBloc.add(
       InitPlayer(
         title: 'song',
@@ -70,12 +74,12 @@ class _ListeningPageState extends State<ListeningPage> {
     _audioBloc.add(UpdatePlayDuration());
     print(_audioBloc.state.currentPlayDuration?.inMilliseconds);
     print(_audioBloc.state.songDuration?.inMilliseconds);
-    _audioBloc.add(Seek());
 
     // _soundPlayer?.shareSound();
   }
 
   void localDownloadSound() {
+    dispose();
     // _soundPlayer?.localDownloadSound();
   }
 
@@ -133,7 +137,8 @@ class _ListeningPageState extends State<ListeningPage> {
 
   void tooglePlay() {
     final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-    if (_audioBloc.state.isPlay) {
+    bool? isPlay = _audioBloc.state.isPlay;
+    if (isPlay == true) {
       _audioBloc.add(
         Pause(),
       );
@@ -165,82 +170,98 @@ class _ListeningPageState extends State<ListeningPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AudioplayerBloc, AudioplayerState>(
-      builder: (context, state) {
-        return BottomSheetWrapeer(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 20,
-              horizontal: 30,
-            ),
-            child: Column(
+    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+
+    return BottomSheetWrapeer(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 20,
+          horizontal: 30,
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Row(
-                        children: [
-                          IconButton(
-                            padding: const EdgeInsets.only(right: 20),
-                            onPressed: shareSound,
-                            icon: SvgPicture.asset('assets/icons/Share.svg'),
-                          ),
-                          IconButton(
-                            onPressed: localDownloadSound,
-                            icon: SvgPicture.asset(
-                                'assets/icons/PaperDownload.svg'),
-                          ),
-                          IconButton(
-                            padding: const EdgeInsets.only(left: 20),
-                            onPressed: deleteSound,
-                            icon: SvgPicture.asset('assets/icons/Delete.svg'),
-                          ),
-                        ],
+                Container(
+                  child: Row(
+                    children: [
+                      IconButton(
+                        padding: const EdgeInsets.only(right: 20),
+                        onPressed: shareSound,
+                        icon: SvgPicture.asset('assets/icons/Share.svg'),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: saveSound,
-                      child: const Text(
-                        'Сохранить',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'TTNorms',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
+                      IconButton(
+                        onPressed: localDownloadSound,
+                        icon:
+                            SvgPicture.asset('assets/icons/PaperDownload.svg'),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 90,
-                ),
-                Text(
-                  fileName,
-                  style: const TextStyle(
-                    fontFamily: 'TTNorms',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 24,
-                    letterSpacing: 0.4,
+                      IconButton(
+                        padding: const EdgeInsets.only(left: 20),
+                        onPressed: deleteSound,
+                        icon: SvgPicture.asset('assets/icons/Delete.svg'),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(
-                  height: 40,
+                TextButton(
+                  onPressed: saveSound,
+                  child: const Text(
+                    'Сохранить',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'TTNorms',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-                Expanded(
-                  child: AudioSlider(),
-                ),
-                SoundControlButtons(
-                  tooglePlay: tooglePlay,
-                  moveBackward: moveBackward,
-                  moveForward: moveForward,
-                )
               ],
             ),
-          ),
-        );
-      },
+            const SizedBox(
+              height: 90,
+            ),
+            Text(
+              fileName,
+              style: const TextStyle(
+                fontFamily: 'TTNorms',
+                fontWeight: FontWeight.w500,
+                fontSize: 24,
+                letterSpacing: 0.4,
+              ),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            Expanded(
+              child: BlocBuilder<AudioplayerBloc, AudioplayerState>(
+                  builder: (context, state) {
+                return AudioSlider(
+                  onChanged: () {
+                    _audioBloc.add(StopTimer());
+                  },
+                  onChangeEnd: (double value) {
+                    _audioBloc.add(
+                      Seek(currentPlayTimeInSec: value),
+                    );
+                    if (state.isPlay == true) {
+                      print('true');
+                      _audioBloc.add(StartTimer());
+                    }
+                  },
+                  currentPlayDuration: state.currentPlayDuration,
+                  soundDuration: state.songDuration,
+                );
+              }),
+            ),
+            SoundControlButtons(
+              tooglePlay: tooglePlay,
+              moveBackward: moveBackward,
+              moveForward: moveForward,
+            )
+          ],
+        ),
+      ),
     );
   }
 }

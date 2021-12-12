@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
@@ -6,41 +8,34 @@ import 'package:memory_box/utils/formatting.dart';
 
 class AudioSlider extends StatefulWidget {
   const AudioSlider({
-    // required
+    required this.onChanged,
+    required this.onChangeEnd,
+    this.currentPlayDuration,
+    this.soundDuration,
     Key? key,
   }) : super(key: key);
+
+  final Function onChanged;
+  final Function(double) onChangeEnd;
+  final Duration? currentPlayDuration;
+  final Duration? soundDuration;
 
   @override
   _AudioSliderState createState() => _AudioSliderState();
 }
 
 class _AudioSliderState extends State<AudioSlider> {
-  // SoundPlayer? _soundPlayer;
-  // Duration? _currentPlayTime;
-  // Duration? _soundDuration;
+  double sliderTimeValue = 0;
 
   @override
   void initState() {
-    // _soundPlayer = SoundPlayer();
-    // _soundPlayer?.soundDurationStream?.listen((e) {
-    //   setState(() {
-    //     _currentPlayTime = e.position;
-    //     _soundDuration = e.duration;
-    //   });
-    // });
+    sliderTimeValue =
+        widget.currentPlayDuration?.inMilliseconds.toDouble() ?? 0;
     super.initState();
-  }
-
-  void seek(double ms) {
-    // _soundPlayer?.seek(
-    //   playTimeInMS: _currentPlayTime!.inMilliseconds.toInt(),
-    // );
   }
 
   @override
   Widget build(BuildContext context) {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-    print(_audioBloc.state.isPlay);
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
         overlayShape: SliderComponentShape.noOverlay,
@@ -52,15 +47,21 @@ class _AudioSliderState extends State<AudioSlider> {
           Slider(
             activeColor: Colors.black,
             inactiveColor: Colors.black,
-            value: 1,
+            max: widget.soundDuration?.inSeconds.toDouble() ?? 0,
             min: 0.0,
-            max: 100,
+            value: sliderTimeValue,
             thumbColor: Colors.red,
             onChanged: (double value) {
-              seek(value);
+              widget.onChanged();
+              setState(() {
+                sliderTimeValue = value;
+              });
             },
             onChangeEnd: (double value) {
-              seek(value);
+              setState(() {
+                sliderTimeValue = value;
+              });
+              widget.onChangeEnd(value);
             },
           ),
           const SizedBox(
@@ -69,18 +70,18 @@ class _AudioSliderState extends State<AudioSlider> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Text(
-              //   Formatting.printDurationTime(
-              //     duration: _currentPlayTime,
-              //     formattingType: FormattingType.HourMinute,
-              //   ),
-              // ),
-              // Text(
-              //   Formatting.printDurationTime(
-              //     duration: _soundDuration,
-              //     formattingType: FormattingType.HourMinute,
-              //   ),
-              // ),
+              Text(
+                printDurationTime(
+                  duration: widget.currentPlayDuration,
+                  formattingType: FormattingType.HourMinute,
+                ),
+              ),
+              Text(
+                printDurationTime(
+                  duration: widget.soundDuration,
+                  formattingType: FormattingType.HourMinute,
+                ),
+              ),
             ],
           )
         ],

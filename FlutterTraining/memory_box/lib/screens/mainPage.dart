@@ -49,7 +49,7 @@ class _MainPageState extends State<MainPage> {
                 BlocProvider<BottomSheetBloc>(
                   create: (context) => BottomSheetBloc(
                     ListeningPageState(
-                      BottomSheetItems.ListeningPage,
+                      BottomSheetItems.RecordingPage,
                     ),
                   ),
                 ),

@@ -48,10 +48,9 @@ class _ProfileState extends State<ProfilePage> {
   }
 
   void asyncInitState() async {
-    final UserModel? userModel = await AuthService.instance.currentUser();
     user = await AuthService.instance.currentUser();
 
-    updatePhoneField(userModel?.phoneNumber);
+    updatePhoneField(user?.phoneNumber);
   }
 
   void updatePhoneField(String? phoneNumber) {
@@ -67,8 +66,6 @@ class _ProfileState extends State<ProfilePage> {
 
     final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
 
-    // void update
-
     Future<void> _pickImage() async {
       XFile? image = await ImagePicker().pickImage(
         source: ImageSource.gallery,
@@ -80,19 +77,20 @@ class _ProfileState extends State<ProfilePage> {
     }
 
     void saveChanges() async {
-      if (user?.uid != null && _selectedImage != null) {
-        storage.uploadFile(
-          file: File(_selectedImage!.path),
-          fileName: user!.uid!,
-          fileType: FileType.avatar,
-        );
-        database.updateUserCollection(
-          uid: user!.uid!,
-          phoneNumber: toNumericString(_phoneInputContoller.text),
-          displayName: _nameInputController.text,
-        );
+      String? uid = user?.uid;
+      String? path = _selectedImage?.path;
+      if (uid != null) {
+        if (path != null) {
+          await storage.uploadFile(
+            file: File(path),
+            fileName: uid,
+            fileType: FileType.avatar,
+          );
+        }
+
         authenticationBloc.add(
           UpdateAccount(
+            uid: uid,
             displayName: _nameInputController.text,
             phoneNumber: toNumericString(_phoneInputContoller.text),
           ),

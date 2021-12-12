@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:memory_box/models/userModel.dart';
 import 'package:memory_box/repositories/authService.dart';
 import 'package:memory_box/repositories/databaseService.dart';
@@ -66,10 +68,26 @@ class AuthenticationBloc
 
     if (event is UpdateAccount) {
       currentUser = await _authService.currentUser();
+      String? uid = event.uid;
+
+      // PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credentialFromToken();
+
+      if (uid != null) {
+        await _databaseService.updateUserCollection(
+          uid: uid,
+          phoneNumber: event.phoneNumber != null
+              ? toNumericString(event.phoneNumber)
+              : null,
+          displayName: event.displayName,
+        );
+
+        // await _authService.updatePhoneNumber()
+      }
+
       yield AuthenticationState(
-        status: AuthenticationStatus.notAuthenticated,
+        status: AuthenticationStatus.authenticated,
         user: currentUser?.copyWith(
-          uid: event.uid,
+          uid: uid,
           displayName: event.displayName,
           phoneNumber: event.phoneNumber,
           subscriptionType: event.subscriptionType,

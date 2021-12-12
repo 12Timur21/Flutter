@@ -43,6 +43,8 @@ class AuthService {
         completer.completeError(e.message ?? '');
       },
       codeSent: (verficationIds, resendingToken) {
+        print(resendingToken);
+        print('qeqeqeq');
         completer.complete(verficationIds);
       },
       codeAutoRetrievalTimeout: (String e) {
@@ -136,5 +138,11 @@ class AuthService {
 
   bool isAuth() {
     return _auth.currentUser == null ? false : true;
+  }
+
+  Future<void> updatePhoneNumber(
+    PhoneAuthCredential phoneAuthCredential,
+  ) async {
+    _auth.currentUser?.updatePhoneNumber(phoneAuthCredential);
   }
 }

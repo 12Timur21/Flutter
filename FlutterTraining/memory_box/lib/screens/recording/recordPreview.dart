@@ -277,7 +277,7 @@ class _RecordPreviewState extends State<RecordPreview> {
                 padding: EdgeInsets.symmetric(
                   horizontal: 20,
                 ),
-                child: AudioSlider(),
+                // child: AudioSlider(),
               ),
             ),
             // const SoundControlButtons()

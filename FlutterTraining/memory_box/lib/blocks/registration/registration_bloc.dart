@@ -53,6 +53,14 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
         yield VerifyOTPFailure();
       }
     }
+
+    if (event is AnonRegistration) {
+      UserModel? userModel = await _authService.signInAnon();
+      if (userModel != null) {
+        yield AnonRegistrationSucces(user: userModel);
+      }
+    }
+
     if (event is LoadLoadingPage) {
       yield LoginPageLoaded();
     }

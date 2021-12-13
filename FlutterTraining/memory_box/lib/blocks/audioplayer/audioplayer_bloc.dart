@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,7 +26,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
         soundUrl: event.soundUrl,
       );
       yield AudioplayerState.initial().copyWith(
-        title: 'ddfsdd',
+        title: '',
         songDuration: _soundPlayer?.songDuration,
         currentPlayDuration: _soundPlayer?.currentPlayDuration,
         songUrl: event.soundUrl,
@@ -40,7 +42,6 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
     }
 
     if (event is DisposePlayer) {
-      print('wtf');
       _soundPlayer?.dispose();
       timerController?.cancel();
       yield AudioplayerState.initial();
@@ -92,7 +93,6 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
     }
 
     if (event is UpdatePlayDuration) {
-      print('hmm');
       yield state.copyWith(
         songDuration: _soundPlayer?.songDuration,
         currentPlayDuration: _soundPlayer?.currentPlayDuration,
@@ -100,12 +100,43 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
     }
 
     if (event is StartTimer) {
-      print('res');
       timerController?.resume();
     }
 
     if (event is StopTimer) {
       timerController?.pause();
+    }
+
+    if (event is ShareSound) {
+      String? songUrl = state.songUrl;
+      if (songUrl != null) {
+        _soundPlayer?.shareSound(songUrl);
+      }
+    }
+
+    if (event is LocalSaveSound) {
+      //   String? songUrl = state.songUrl;
+      //   if (songUrl != null) {
+      //      File pathToAudio = File(songUrl);
+
+      // try {
+      //   await pathToAudio.rename(songUrl);
+      // } catch {
+
+      // }
+      //      _soundPlayer?.localDownloadSound(pathToSaveAudio)
+      //   }
+
+    }
+
+    if (event is DeleteSound) {
+      _soundPlayer?.deleteSound();
+    }
+
+    if (event is UpdateSoundTitle) {
+      yield state.copyWith(
+        title: event.title,
+      );
     }
   }
 }

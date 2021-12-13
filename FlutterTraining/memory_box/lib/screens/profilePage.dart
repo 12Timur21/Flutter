@@ -17,6 +17,7 @@ import 'package:memory_box/widgets/circleTextField.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
 import 'package:memory_box/widgets/navigationMenu.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:memory_box/widgets/undoButton.dart';
 import 'package:provider/single_child_widget.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -154,26 +155,10 @@ class _ProfileState extends State<ProfilePage> {
           backgroundColor: Colors.transparent,
           centerTitle: true,
           leading: _isEditMode
-              ? Container(
-                  margin: EdgeInsets.only(top: 20, left: 10),
-                  width: 60,
-                  height: 60,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(
-                        15,
-                      ),
-                    ),
-                  ),
-                  child: IconButton(
-                    icon: SvgPicture.asset(
-                      'assets/icons/ArrowLeftCircle.svg',
-                    ),
-                    onPressed: () {
-                      undoChanges();
-                    },
-                  ),
+              ? UndoButton(
+                  undoChanges: () {
+                    undoChanges();
+                  },
                 )
               : Container(
                   margin: EdgeInsets.only(left: 6),

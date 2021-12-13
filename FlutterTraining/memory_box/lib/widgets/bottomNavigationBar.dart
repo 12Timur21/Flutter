@@ -35,7 +35,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     NavigationPages? navigationPage;
 
     if (index == 0) navigationPage = NavigationPages.HomePage;
-    if (index == 1) navigationPage = NavigationPages.SelectionsPage;
+    if (index == 1) navigationPage = NavigationPages.CollectionsListPage;
     if (index == 2) {
       widget.openButtomSheet();
       return;

@@ -19,6 +19,8 @@ class VerifyPhoneNumber extends RegistrationEvent {
   List<Object> get props => [phoneNumber];
 }
 
+class AnonRegistration extends RegistrationEvent {}
+
 class VerifyOTPCode extends RegistrationEvent {
   final String verifictionId;
   final String smsCode;

@@ -10,6 +10,7 @@ import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
 import 'package:memory_box/screens/Recording/listeningPage.dart';
 import 'package:memory_box/screens/audioListPage.dart';
+import 'package:memory_box/screens/collections/collectionsListPage.dart';
 import 'package:memory_box/screens/homePage.dart';
 import 'package:memory_box/screens/profilePage.dart';
 import 'package:memory_box/screens/recording/recordPreview.dart';
@@ -19,6 +20,8 @@ import 'package:memory_box/widgets/bottomNavigationBar.dart';
 import 'package:memory_box/widgets/navigationMenu.dart';
 
 import 'Recording/recordingPage.dart';
+import 'collections/createCollectionPage.dart';
+import 'collections/selectSoundCollection.dart';
 
 class MainPage extends StatefulWidget {
   static const routeName = 'MainPage';
@@ -111,8 +114,8 @@ class _MainPageState extends State<MainPage> {
           if (state.selectedItem == NavigationPages.HomePage) {
             return const HomePage();
           }
-          if (state.selectedItem == NavigationPages.SelectionsPage) {
-            return const SelectionsPage();
+          if (state.selectedItem == NavigationPages.CollectionsListPage) {
+            return const SelectSoundCollection();
           }
           if (state.selectedItem == NavigationPages.AudioListPage) {
             return const AudioListPage();

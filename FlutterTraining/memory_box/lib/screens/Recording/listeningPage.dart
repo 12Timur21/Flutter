@@ -28,18 +28,18 @@ class ListeningPage extends StatefulWidget {
 
 class _ListeningPageState extends State<ListeningPage> {
   String fileName = 'Запись №_';
+  late final AudioplayerBloc _audioBloc;
 
   @override
   void initState() {
     asyncInit();
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
 
     // appDirectory = await getApplicationDocumentsDirectory();
     // pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
 
     _audioBloc.add(
       InitPlayer(
-        title: 'song',
         soundUrl: '/sdcard/download/test2.aac',
       ),
     );
@@ -58,28 +58,20 @@ class _ListeningPageState extends State<ListeningPage> {
       );
       setState(() {
         fileName = 'Запись №$index';
+        _audioBloc.add(UpdateSoundTitle(fileName));
       });
     }
   }
 
   @override
   void dispose() {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
     _audioBloc.add(DisposePlayer());
     super.dispose();
   }
 
-  void shareSound() {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-    _audioBloc.add(UpdatePlayDuration());
-    print(_audioBloc.state.currentPlayDuration?.inMilliseconds);
-    print(_audioBloc.state.songDuration?.inMilliseconds);
-
-    // _soundPlayer?.shareSound();
-  }
+  void shareSound() {}
 
   void localDownloadSound() {
-    dispose();
     // _soundPlayer?.localDownloadSound();
   }
 
@@ -96,7 +88,7 @@ class _ListeningPageState extends State<ListeningPage> {
       },
     );
     if (isDelete == true) {
-      _audioBloc.add(DeleteSong());
+      _audioBloc.add(DeleteSound());
       Navigator.of(context).pop();
     }
   }
@@ -238,14 +230,16 @@ class _ListeningPageState extends State<ListeningPage> {
                   builder: (context, state) {
                 return AudioSlider(
                   onChanged: () {
-                    _audioBloc.add(StopTimer());
+                    if (state.isPlay == true) {
+                      _audioBloc.add(StopTimer());
+                    }
                   },
                   onChangeEnd: (double value) {
                     _audioBloc.add(
                       Seek(currentPlayTimeInSec: value),
                     );
+
                     if (state.isPlay == true) {
-                      print('true');
                       _audioBloc.add(StartTimer());
                     }
                   },

@@ -22,6 +22,8 @@ class SoundPlayer {
   Stream<PlaybackDisposition>? get soundDurationStream =>
       _flutterSoundPlayer?.onProgress;
 
+  StreamSubscription? soundDurationStreamController;
+
   Duration? _soundDuration;
   Duration get songDuration => _soundDuration ?? Duration.zero;
 
@@ -48,9 +50,10 @@ class SoundPlayer {
   }
 
   Future<void> dispose() async {
+    print('dassadsadsdsdsadsa');
     await _closeSoundSession();
-    await _flutterSoundPlayer?.stopPlayer();
     _flutterSoundPlayer = null;
+    soundDurationStreamController?.cancel();
   }
 
   Future<void> setSubscriptionDuration({
@@ -73,7 +76,7 @@ class SoundPlayer {
 
   void startProgressListener() {
     //!
-    soundDurationStream?.listen((e) {
+    soundDurationStreamController = soundDurationStream?.listen((e) {
       // maxDuration = e.duration;
       _currentPlayDuration = e.position;
     });
@@ -130,7 +133,6 @@ class SoundPlayer {
   void localDownloadSound(String pathToSaveAudio) async {
     String downloadDirectory = '';
 
-    //?
     if (Platform.isAndroid) {
       downloadDirectory = '/sdcard/download/Аудиозапись.aac';
     }
@@ -146,6 +148,6 @@ class SoundPlayer {
   }
 
   void deleteSound() {
-    // appDirectory?.deleteSync(recursive: true);
+    appDirectory?.deleteSync(recursive: true);
   }
 }

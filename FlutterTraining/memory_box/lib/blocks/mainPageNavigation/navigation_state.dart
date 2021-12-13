@@ -11,7 +11,7 @@ class NavigationState {
 
 enum NavigationPages {
   HomePage,
-  SelectionsPage,
+  CollectionsListPage,
   RecordingPage,
   AudioListPage,
   ProfilePage,

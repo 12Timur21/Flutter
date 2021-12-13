@@ -95,16 +95,16 @@ class NavigationBar extends StatelessWidget {
             CustomListTyle(
               title: 'Подборки',
               svgUrl: 'assets/icons/Category.svg',
-              callback: () {},
+              callback: () {
+                navigationBloc.add(
+                  NavigateTo(NavigationPages.CollectionsListPage),
+                );
+              },
             ),
             CustomListTyle(
               title: 'Все аудиофайлы',
               svgUrl: 'assets/icons/Paper.svg',
-              callback: () {
-                navigationBloc.add(
-                  NavigateTo(NavigationPages.SelectionsPage),
-                );
-              },
+              callback: () {},
             ),
             CustomListTyle(
               title: 'Поиск',

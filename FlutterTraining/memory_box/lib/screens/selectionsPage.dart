@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/widgets/appBarWithButtons.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/navigationMenu.dart';
 
@@ -21,22 +22,10 @@ class _SelectionsPageState extends State<SelectionsPage> {
       height: 260,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          primary: true,
-          toolbarHeight: 70,
-          backgroundColor: Colors.transparent,
-          centerTitle: true,
-          leading: Container(
-            margin: EdgeInsets.only(left: 6),
-            child: IconButton(
-              icon: SvgPicture.asset(
-                'assets/icons/Burger.svg',
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            ),
-          ),
+        appBar: appBarWithButtons(
+          leadingOnPress: () {
+            Scaffold.of(context).openDrawer();
+          },
           title: Container(
             margin: const EdgeInsets.only(top: 10),
             child: RichText(
@@ -63,20 +52,7 @@ class _SelectionsPageState extends State<SelectionsPage> {
               ),
             ),
           ),
-          actions: [
-            Container(
-              margin: const EdgeInsets.only(
-                right: 15,
-              ),
-              child: IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(
-                  'assets/icons/More.svg',
-                ),
-              ),
-            )
-          ],
-          elevation: 0,
+          actionsOnPress: () {},
         ),
         drawer: const NavigationBar(),
         body: Padding(

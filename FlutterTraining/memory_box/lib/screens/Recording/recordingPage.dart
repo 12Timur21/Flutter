@@ -239,7 +239,7 @@ class _RecordingScreenState extends State<RecordingPage> {
               Text(
                 printDurationTime(
                   duration: _audioDuration,
-                  formattingType: FormattingType.HourMunuteSecond,
+                  formattingType: FormattingType.HourMinuteSecond,
                 ),
                 style: const TextStyle(
                   fontFamily: 'TTNorms',

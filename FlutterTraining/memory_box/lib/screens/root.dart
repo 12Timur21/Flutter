@@ -73,6 +73,10 @@ class _RootState extends State<Root> {
                 );
                 // GratitudePage();
               }
+
+              if (state is AnonRegistrationSucces) {
+                _authenticationBloc.add(LogIn());
+              }
             },
             child: LoginSpash(),
           );

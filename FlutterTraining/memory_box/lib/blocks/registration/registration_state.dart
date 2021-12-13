@@ -48,3 +48,9 @@ class VerifyOTPSucces extends RegistrationState {
 }
 
 class VerifyOTPFailure extends RegistrationState {}
+
+class AnonRegistrationSucces extends RegistrationState {
+  final UserModel user;
+
+  AnonRegistrationSucces({required this.user});
+}

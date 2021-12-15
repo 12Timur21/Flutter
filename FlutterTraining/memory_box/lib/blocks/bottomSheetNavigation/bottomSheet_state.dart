@@ -1,20 +1,10 @@
-class BottomSheetState {
-  BottomSheetState(this.bottomSheetItem);
-  BottomSheetItems bottomSheetItem;
-}
+class BottomSheetState {}
 
-class RecorderPageState extends BottomSheetState {
-  RecorderPageState(
-    bottomSheetItem,
-  ) : super(bottomSheetItem);
-}
+class RecorderPageState extends BottomSheetState {}
 
-class ListeningPageState extends BottomSheetState {
-  ListeningPageState(bottomSheetItem) : super(bottomSheetItem);
-}
+class ListeningPageState extends BottomSheetState {}
 
-enum BottomSheetItems {
-  RecordingPage,
-  ListeningPage,
-  PreviewRecord,
+class PreviewPageState extends BottomSheetState {
+  final String soundTitle;
+  PreviewPageState(this.soundTitle);
 }

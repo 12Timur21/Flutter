@@ -10,25 +10,25 @@ class DatabaseService {
 
   final AuthService _authService = AuthService.instance;
 
-  final CollectionReference _users = _firestore.collection('users');
+  final CollectionReference _userCollection = _firestore.collection('users');
 
   void recordNewUser(UserModel user) {
-    _users.doc(user.uid).set(user.toJson());
+    _userCollection.doc(user.uid).set(user.toJson());
   }
 
   Future<UserModel> userModelFromDatabase(
     String uid,
   ) async {
-    DocumentSnapshot<Object?> result = await _users.doc(uid).get();
+    DocumentSnapshot<Object?> result = await _userCollection.doc(uid).get();
     return UserModel.fromJson(result.data() as Map<String, dynamic>);
   }
 
   Future<void> deleteUserCollections(String uid) async {
-    _users.doc(uid).delete();
+    _userCollection.doc(uid).delete();
   }
 
   Future<bool> isUserExist(String uid) async {
-    DocumentSnapshot<Object?> document = await _users.doc(uid).get();
+    DocumentSnapshot<Object?> document = await _userCollection.doc(uid).get();
     return document.exists;
   }
 
@@ -46,6 +46,49 @@ class DatabaseService {
       updatedPair['displayName'] = displayName;
     }
 
-    _users.doc(uid).update(updatedPair);
+    _userCollection.doc(uid).update(updatedPair);
+  }
+
+  Future<void> addSoundToUserCollection({
+    required String uid,
+    required String soundTitle,
+    required String soundUID,
+  }) async {
+    Map<String, Map<String, dynamic>> updatedPair = {};
+    Map<String, dynamic> pair = {};
+    DocumentSnapshot userSnapshot = await _userCollection.doc(uid).get();
+    pair = await userSnapshot.get('soundList');
+
+    pair[soundTitle] = soundUID;
+
+    updatedPair['soundList'] = pair;
+    _userCollection.doc(uid).update(updatedPair);
+  }
+
+  Future<void> updateSongTitle({
+    required String oldTitle,
+    required String newTitle,
+    required String uid,
+  }) async {
+    Map<String, Map<String, dynamic>> updatedPair = {};
+    Map<String, dynamic> pair = {};
+
+    await _userCollection.doc(uid).get().then((value) {
+      pair = value.get('soundList');
+    });
+
+    pair.forEach((key, value) {
+      print('$key - $value');
+      // if (key == oldTitle) {
+      //   value = newTitle;
+      // }
+      // soundList[value] = key;
+    });
+
+    // pair[soundTitle] = soundUID;
+
+    // updatedPair['soundList'] = pair;
+
+    // _userCollection.doc(uid).update(updatedPair);
   }
 }

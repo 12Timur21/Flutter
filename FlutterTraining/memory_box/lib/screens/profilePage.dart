@@ -82,11 +82,11 @@ class _ProfileState extends State<ProfilePage> {
       String? path = _selectedImage?.path;
       if (uid != null) {
         if (path != null) {
-          await storage.uploadFile(
-            file: File(path),
-            fileName: uid,
-            fileType: FileType.avatar,
-          );
+          // await storage.uploadFile(
+          //   file: File(path),
+          //   fileName: uid,
+          //   fileType: FileType.avatar,
+          // );
         }
 
         authenticationBloc.add(

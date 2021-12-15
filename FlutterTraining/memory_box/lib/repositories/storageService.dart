@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:memory_box/repositories/databaseService.dart';
+import 'package:uuid/uuid.dart';
 
 enum FileType {
   sound,
@@ -11,8 +13,10 @@ enum FileType {
 
 class StorageService {
   static final FirebaseStorage _cloud = FirebaseStorage.instance;
-  const StorageService._();
-  static const StorageService instance = StorageService._();
+  StorageService._();
+  static StorageService instance = StorageService._();
+
+  DatabaseService _databaseService = DatabaseService.instance;
 
   String mapDestination({
     required FileType fileType,
@@ -93,23 +97,33 @@ class StorageService {
     required File file,
     required FileType fileType,
     required String fileName,
-    String? uid,
+    required String userUID,
   }) async {
+    String fileUID = Uuid().v4();
+
     final destination = mapDestination(
       fileType: fileType,
-      uid: uid,
-      fileName: fileName,
+      uid: userUID,
+      fileName: fileUID,
     );
 
     try {
-      print('--error--');
-      print(destination);
-      print(file.length());
       _cloud.ref().child('/$destination').putFile(file);
+      _databaseService.addSoundToUserCollection(
+        uid: userUID,
+        soundTitle: fileName,
+        soundUID: fileUID,
+      );
     } on FirebaseException catch (e) {
       print(e);
     }
   }
+
+  // Future<void> updateSoundTitle({
+  //   required String newName,
+  //   required String oldName,
+  //   required String userUID,
+  // }) {}
 
   void dispose() {}
 }

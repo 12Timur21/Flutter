@@ -5,13 +5,14 @@ abstract class AudioplayerEvent {}
 
 class InitPlayer extends AudioplayerEvent {
   final String soundUrl;
-
+  final String soundTitle;
   InitPlayer({
     required this.soundUrl,
+    required this.soundTitle,
   });
 
   @override
-  List<Object> get props => [soundUrl];
+  List<Object> get props => [soundUrl, soundTitle];
 }
 
 class Play extends AudioplayerEvent {}

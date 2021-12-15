@@ -50,7 +50,6 @@ class SoundPlayer {
   }
 
   Future<void> dispose() async {
-    print('dassadsadsdsdsadsa');
     await _closeSoundSession();
     _flutterSoundPlayer = null;
     soundDurationStreamController?.cancel();

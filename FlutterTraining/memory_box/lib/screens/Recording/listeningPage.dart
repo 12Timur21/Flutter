@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/repositories/databaseService.dart';
 import 'package:memory_box/repositories/storageService.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
 import 'package:memory_box/widgets/bottomSheetWrapper.dart';
@@ -28,22 +28,23 @@ class ListeningPage extends StatefulWidget {
 
 class _ListeningPageState extends State<ListeningPage> {
   String fileName = 'Запись №_';
-  late final AudioplayerBloc _audioBloc;
+  AudioplayerBloc? _audioBloc;
 
   @override
   void initState() {
-    asyncInit();
     _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
 
+    asyncInit();
     // appDirectory = await getApplicationDocumentsDirectory();
     // pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
-
-    _audioBloc.add(
+    changeRecordingButton();
+    _audioBloc?.add(
       InitPlayer(
         soundUrl: '/sdcard/download/test2.aac',
+        soundTitle: '',
       ),
     );
-    changeRecordingButton();
+
     super.initState();
   }
 
@@ -58,15 +59,9 @@ class _ListeningPageState extends State<ListeningPage> {
       );
       setState(() {
         fileName = 'Запись №$index';
-        _audioBloc.add(UpdateSoundTitle(fileName));
+        _audioBloc?.add(UpdateSoundTitle(fileName));
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _audioBloc.add(DisposePlayer());
-    super.dispose();
   }
 
   void shareSound() {}
@@ -76,8 +71,6 @@ class _ListeningPageState extends State<ListeningPage> {
   }
 
   void deleteSound() async {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-
     bool? isDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -88,7 +81,8 @@ class _ListeningPageState extends State<ListeningPage> {
       },
     );
     if (isDelete == true) {
-      _audioBloc.add(DeleteSound());
+      _audioBloc?.add(DeleteSound());
+      _audioBloc?.add(DisposePlayer());
       Navigator.of(context).pop();
     }
   }
@@ -99,12 +93,15 @@ class _ListeningPageState extends State<ListeningPage> {
 
     if (uid != null) {
       final file = File('sdcard/download/test2.aac');
-      await StorageService.instance.uploadFile(
-        file: file,
-        fileName: 'test2.aac',
-        fileType: FileType.sound,
-        uid: uid,
-      );
+
+      // await StorageService.instance.uploadFile(
+      //   file: file,
+      //   fileName: fileName,
+      //   fileType: FileType.sound,
+      //   userUID: uid,
+      // );
+      await DatabaseService.instance.updateSongTitle(
+          oldTitle: "oldTitle", newTitle: "newTitle", uid: "uid");
       // navigateToPreviewPage();
     }
     //!!!!
@@ -113,29 +110,28 @@ class _ListeningPageState extends State<ListeningPage> {
     //   fileName: 'test2.aac',
     // );
 
-    // dispose();
     // Navigator.of(context).pop();
   }
 
   void moveBackward() {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-    _audioBloc.add(MoveBackward15Sec());
+    _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc?.add(MoveBackward15Sec());
   }
 
   void moveForward() {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-    _audioBloc.add(MoveBackward15Sec());
+    _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc?.add(MoveForward15Sec());
   }
 
   void tooglePlay() {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-    bool? isPlay = _audioBloc.state.isPlay;
+    _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    bool? isPlay = _audioBloc?.state.isPlay;
     if (isPlay == true) {
-      _audioBloc.add(
+      _audioBloc?.add(
         Pause(),
       );
     } else {
-      _audioBloc.add(
+      _audioBloc?.add(
         Play(),
       );
     }
@@ -152,18 +148,15 @@ class _ListeningPageState extends State<ListeningPage> {
 
   void navigateToPreviewPage() {
     dispose();
+
     final navigationBloc = BlocProvider.of<BottomSheetBloc>(context);
     navigationBloc.add(
-      OpenListeningPage(
-        BottomSheetItems.PreviewRecord,
-      ),
+      OpenPreviewPage(fileName),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
-
     return BottomSheetWrapeer(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -231,16 +224,16 @@ class _ListeningPageState extends State<ListeningPage> {
                 return AudioSlider(
                   onChanged: () {
                     if (state.isPlay == true) {
-                      _audioBloc.add(StopTimer());
+                      _audioBloc?.add(StopTimer());
                     }
                   },
                   onChangeEnd: (double value) {
-                    _audioBloc.add(
+                    _audioBloc?.add(
                       Seek(currentPlayTimeInSec: value),
                     );
 
                     if (state.isPlay == true) {
-                      _audioBloc.add(StartTimer());
+                      _audioBloc?.add(StartTimer());
                     }
                   },
                   currentPlayDuration: state.currentPlayDuration,

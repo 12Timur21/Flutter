@@ -1,44 +1,58 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
+import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/repositories/databaseService.dart';
+import 'package:memory_box/repositories/storageService.dart';
 import 'package:memory_box/services/soundPlayer.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
 import 'package:memory_box/widgets/bottomSheetWrapper.dart';
 import 'package:memory_box/widgets/soundControlsButtons.dart';
 
 class RecordPreview extends StatefulWidget {
-  const RecordPreview({Key? key}) : super(key: key);
-
+  const RecordPreview({
+    required this.soundTitle,
+    Key? key,
+  }) : super(key: key);
+  final String soundTitle;
   @override
   _RecordPreviewState createState() => _RecordPreviewState();
 }
 
 class _RecordPreviewState extends State<RecordPreview> {
-  final String soundName = 'Аудиозапись 1';
-
-  SoundPlayer? _soundPlayer;
-
   final _textEditingController = TextEditingController();
 
   bool _isEditMode = false;
-  String audioLabel = 'Название подборки';
+  String? audioLabel;
+  AudioplayerBloc? _audioBloc;
 
   @override
   void initState() {
-    _soundPlayer = SoundPlayer();
-    //! _soundPlayer?.init();
-    _textEditingController.text = 'Название аудиозаписи';
+    _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+
+    audioLabel = widget.soundTitle;
+
+    _textEditingController.text = audioLabel ?? '';
     changeRecordingButton();
+
+    _audioBloc?.add(
+      InitPlayer(
+        soundUrl: '/sdcard/download/test2.aac',
+        soundTitle: widget.soundTitle,
+      ),
+    );
     super.initState();
   }
 
   @override
   void dispose() {
-    _soundPlayer?.dispose();
+    _audioBloc?.add(DisposePlayer());
     _textEditingController.dispose();
     super.dispose();
   }
@@ -65,15 +79,49 @@ class _RecordPreviewState extends State<RecordPreview> {
     });
   }
 
-  void saveChanges() {
+  void saveChanges() async {
+    final user = BlocProvider.of<AuthenticationBloc>(context).state;
+    final String? uid = user.user?.uid;
+
+    if (uid != null && audioLabel != null) {
+      await DatabaseService.instance.updateSongTitle(
+        uid: uid,
+        oldTitle: audioLabel!,
+        newTitle: _textEditingController.text,
+      );
+    }
     changeEditMode();
   }
 
   void undoChanges() {
     setState(() {
-      _textEditingController.text = audioLabel;
+      _textEditingController.text = audioLabel ?? '';
     });
     changeEditMode();
+  }
+
+  void moveBackward() {
+    _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc?.add(MoveBackward15Sec());
+  }
+
+  void moveForward() {
+    _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc?.add(MoveForward15Sec());
+  }
+
+  void tooglePlay() {
+    _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    bool? isPlay = _audioBloc?.state.isPlay;
+    if (isPlay == true) {
+      _audioBloc?.add(
+        Pause(),
+      );
+    } else {
+      _audioBloc?.add(
+        Play(),
+      );
+    }
   }
 
   @override
@@ -97,7 +145,7 @@ class _RecordPreviewState extends State<RecordPreview> {
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 20,
-          horizontal: 10,
+          horizontal: 30,
         ),
         child: Column(
           children: [
@@ -229,7 +277,7 @@ class _RecordPreviewState extends State<RecordPreview> {
               height: 15,
             ),
             Text(
-              'Название подборки',
+              _isEditMode ? '' : 'Название подборки',
               style: TextStyle(
                 color: _isEditMode ? Colors.grey : Colors.black,
                 fontFamily: 'TTNorms',
@@ -272,14 +320,34 @@ class _RecordPreviewState extends State<RecordPreview> {
                 ),
               ),
             ),
-            const Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
-                // child: AudioSlider(),
-              ),
+            Expanded(
+              child: BlocBuilder<AudioplayerBloc, AudioplayerState>(
+                  builder: (context, state) {
+                return AudioSlider(
+                  onChanged: () {
+                    if (state.isPlay == true) {
+                      _audioBloc?.add(StopTimer());
+                    }
+                  },
+                  onChangeEnd: (double value) {
+                    _audioBloc?.add(
+                      Seek(currentPlayTimeInSec: value),
+                    );
+
+                    if (state.isPlay == true) {
+                      _audioBloc?.add(StartTimer());
+                    }
+                  },
+                  currentPlayDuration: state.currentPlayDuration,
+                  soundDuration: state.songDuration,
+                );
+              }),
             ),
+            SoundControlButtons(
+              tooglePlay: tooglePlay,
+              moveBackward: moveBackward,
+              moveForward: moveForward,
+            )
             // const SoundControlButtons()
           ],
         ),

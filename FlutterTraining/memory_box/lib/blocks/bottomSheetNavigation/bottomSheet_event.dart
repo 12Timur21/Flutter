@@ -1,14 +1,16 @@
 import 'bottomSheet_state.dart';
 
-abstract class BottomSheet {
-  BottomSheet(this.bottomSheetItem);
-  final BottomSheetItems bottomSheetItem;
-}
+class BottomSheet {}
 
 class OpenRecoderPage extends BottomSheet {
-  OpenRecoderPage(bottomSheetItem) : super(bottomSheetItem);
+  OpenRecoderPage();
 }
 
 class OpenListeningPage extends BottomSheet {
-  OpenListeningPage(bottomSheetItem) : super(bottomSheetItem);
+  OpenListeningPage();
+}
+
+class OpenPreviewPage extends BottomSheet {
+  String soundTitle;
+  OpenPreviewPage(this.soundTitle);
 }

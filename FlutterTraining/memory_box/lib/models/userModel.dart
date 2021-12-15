@@ -9,7 +9,6 @@ class UserModel {
   String? displayName;
   String? phoneNumber;
   SubscriptionType subscriptionType;
-
   UserModel({
     this.uid,
     this.displayName,
@@ -58,6 +57,7 @@ class UserModel {
     String? displayName,
     String? phoneNumber,
     SubscriptionType? subscriptionType,
+    Map<String, String>? soundList,
   }) {
     return UserModel(
       uid: uid ?? this.uid,

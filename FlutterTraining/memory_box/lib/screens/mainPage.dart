@@ -51,9 +51,7 @@ class _MainPageState extends State<MainPage> {
               providers: [
                 BlocProvider<BottomSheetBloc>(
                   create: (context) => BottomSheetBloc(
-                    ListeningPageState(
-                      BottomSheetItems.RecordingPage,
-                    ),
+                    ListeningPageState(),
                   ),
                 ),
                 BlocProvider(
@@ -64,14 +62,16 @@ class _MainPageState extends State<MainPage> {
               // onVerticalDragDown: (_) {},
               child: BlocBuilder<BottomSheetBloc, BottomSheetState>(
                 builder: (BuildContext context, BottomSheetState state) {
-                  if (state.bottomSheetItem == BottomSheetItems.RecordingPage) {
+                  if (state is RecorderPageState) {
                     return const RecordingPage();
                   }
-                  if (state.bottomSheetItem == BottomSheetItems.ListeningPage) {
+                  if (state is ListeningPageState) {
                     return const ListeningPage();
                   }
-                  if (state.bottomSheetItem == BottomSheetItems.PreviewRecord) {
-                    return const RecordPreview();
+                  if (state is PreviewPageState) {
+                    return RecordPreview(
+                      soundTitle: state.soundTitle,
+                    );
                   }
                   return Container();
                 },

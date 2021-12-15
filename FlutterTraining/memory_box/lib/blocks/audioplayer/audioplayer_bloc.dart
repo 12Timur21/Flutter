@@ -26,7 +26,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
         soundUrl: event.soundUrl,
       );
       yield AudioplayerState.initial().copyWith(
-        title: '',
+        title: event.soundTitle,
         songDuration: _soundPlayer?.songDuration,
         currentPlayDuration: _soundPlayer?.currentPlayDuration,
         songUrl: event.soundUrl,

@@ -13,14 +13,16 @@ class AuthService {
   const AuthService._();
   static const AuthService instance = AuthService._();
 
+  static String? userID;
+
   Future<UserModel?> currentUser() async {
     String? uid = _auth.currentUser?.uid;
-
+    userID = uid;
     if (uid != null) {
-      bool isUserExist = await DatabaseService.instance.isUserExist(uid);
+      bool isUserExist = await DatabaseService.instance.isUserExist();
       if (isUserExist) {
         UserModel? userModel =
-            await DatabaseService.instance.userModelFromDatabase(uid);
+            await DatabaseService.instance.userModelFromDatabase();
 
         return userModel;
       }
@@ -80,13 +82,14 @@ class AuthService {
           await _auth.signInWithCredential(phoneAuthCredential);
       String? uid = result.user?.uid;
       if (uid != null) {
+        userID = uid;
         UserModel? userModel;
         User? user = result.user;
 
-        bool isUserExist = await DatabaseService.instance.isUserExist(uid);
+        bool isUserExist = await DatabaseService.instance.isUserExist();
 
         if (isUserExist) {
-          userModel = await DatabaseService.instance.userModelFromDatabase(uid);
+          userModel = await DatabaseService.instance.userModelFromDatabase();
         } else {
           if (user != null) {
             userModel = _firebaseModeltoUserModel(user);
@@ -110,6 +113,7 @@ class AuthService {
       UserModel? userModel = _firebaseModeltoUserModel(user);
       if (userModel != null) {
         DatabaseService.instance.recordNewUser(userModel);
+        userID = userModel.uid;
       }
       return userModel;
     } catch (e) {
@@ -118,6 +122,7 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    userID = null;
     await _auth.signOut();
   }
 

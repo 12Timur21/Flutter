@@ -1,52 +1,43 @@
 part of 'audioplayer_bloc.dart';
 
 class AudioplayerState {
-  String? title;
-  Duration? songDuration;
+  TaleModel? soundModel;
   Duration? currentPlayDuration;
-  String? songUrl;
   bool? isPlay;
   bool? isInit;
 
   AudioplayerState({
-    this.title,
-    this.songDuration,
+    this.soundModel,
     this.currentPlayDuration,
-    this.songUrl,
     this.isPlay = false,
     this.isInit = false,
   });
 
   AudioplayerState.initial() {
-    title = '';
-    songDuration = Duration.zero;
+    soundModel?.title = '';
+    soundModel?.duration = Duration.zero;
     currentPlayDuration = Duration.zero;
-    songUrl = '';
     isPlay = false;
     isInit = false;
   }
 
   AudioplayerState copyWith({
+    TaleModel? newSoundModel,
     String? title,
-    Duration? songDuration,
+    Duration? soundDuration,
     Duration? currentPlayDuration,
-    String? songUrl,
+    String? soundUrl,
     bool? isPlay,
     bool? isInit,
   }) {
+    soundModel?.title ??= title;
+    soundModel?.duration ??= soundDuration;
+
     return AudioplayerState(
-      title: title ?? this.title,
-      songDuration: songDuration ?? this.songDuration,
+      soundModel: newSoundModel ?? soundModel,
       currentPlayDuration: currentPlayDuration ?? this.currentPlayDuration,
-      songUrl: songUrl ?? this.songUrl,
       isPlay: isPlay ?? this.isPlay,
       isInit: isInit ?? this.isInit,
     );
   }
 }
-
-// class AudioplayerInitial extends AudioplayerState {}
-
-// class StopState extends AudioplayerState {}
-
-class PlayState extends AudioplayerState {}

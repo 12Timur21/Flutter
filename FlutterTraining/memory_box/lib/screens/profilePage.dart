@@ -15,7 +15,7 @@ import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circleTextField.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
-import 'package:memory_box/widgets/navigationMenu.dart';
+import 'package:memory_box/widgets/customNavigationBar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 import 'package:provider/single_child_widget.dart';
@@ -198,7 +198,7 @@ class _ProfileState extends State<ProfilePage> {
           ),
           elevation: 0,
         ),
-        drawer: const NavigationBar(),
+        drawer: const CustomNavigationBar(),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(

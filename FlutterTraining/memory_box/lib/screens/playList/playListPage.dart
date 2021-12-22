@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/utils/formatting.dart';
 import 'package:memory_box/widgets/appBarWithButtons.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 
-class CollectionsListPage extends StatefulWidget {
-  const CollectionsListPage({Key? key}) : super(key: key);
+class PlayListPage extends StatefulWidget {
+  const PlayListPage({Key? key}) : super(key: key);
 
   @override
-  _CollectionsListPageState createState() => _CollectionsListPageState();
+  _PlayListPageState createState() => _PlayListPageState();
 }
 
-class _CollectionsListPageState extends State<CollectionsListPage> {
+class _PlayListPageState extends State<PlayListPage> {
+  void createNewCollection() {
+    final navigationBloc = BlocProvider.of<PlayListNavigationBloc>(context);
+    navigationBloc.add(
+      OpenPlayListCreationScreen(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget CollectionTile({
@@ -147,7 +156,9 @@ class _CollectionsListPageState extends State<CollectionsListPage> {
               icon: SvgPicture.asset(
                 'assets/icons/Plus.svg',
               ),
-              onPressed: () {},
+              onPressed: () {
+                createNewCollection();
+              },
             ),
           ),
           title: Container(

@@ -5,23 +5,24 @@ import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
+import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
 import 'package:memory_box/screens/Recording/listeningPage.dart';
 import 'package:memory_box/screens/audioListPage.dart';
-import 'package:memory_box/screens/collections/collectionsListPage.dart';
-import 'package:memory_box/screens/homePage.dart';
+import 'package:memory_box/screens/playList/createPlayListPage.dart';
+import 'package:memory_box/screens/playList/playListPage.dart';
+import 'package:memory_box/screens/playList/selectSoundPlayList.dart';
 import 'package:memory_box/screens/profilePage.dart';
 import 'package:memory_box/screens/recording/recordPreview.dart';
-import 'package:memory_box/screens/selectionsPage.dart';
+
 import 'package:memory_box/screens/subscriptionPage.dart';
+import 'package:memory_box/screens/test.dart';
 import 'package:memory_box/widgets/bottomNavigationBar.dart';
-import 'package:memory_box/widgets/navigationMenu.dart';
+import 'package:memory_box/widgets/customNavigationBar.dart';
 
 import 'Recording/recordingPage.dart';
-import 'collections/createCollectionPage.dart';
-import 'collections/selectSoundCollection.dart';
 
 class MainPage extends StatefulWidget {
   static const routeName = 'MainPage';
@@ -69,9 +70,7 @@ class _MainPageState extends State<MainPage> {
                     return const ListeningPage();
                   }
                   if (state is PreviewPageState) {
-                    return RecordPreview(
-                      soundTitle: state.soundTitle,
-                    );
+                    return RecordPreview();
                   }
                   return Container();
                 },
@@ -107,15 +106,28 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
-      drawer: const NavigationBar(),
+      drawer: const CustomNavigationBar(),
       body: BlocBuilder<NavigationBloc, NavigationState>(
-        builder: (BuildContext context, NavigationState state) {
-          print(state.selectedItem);
+        builder: (context, state) {
           if (state.selectedItem == NavigationPages.HomePage) {
-            return const HomePage();
+            return const Test();
           }
           if (state.selectedItem == NavigationPages.CollectionsListPage) {
-            return const SelectSoundCollection();
+            return BlocBuilder<PlayListNavigationBloc, PlayListNavigationState>(
+              builder: (context, state) {
+                if (state is PlayListCreationScreen) {
+                  return CreatePlayListPage(
+                    collectionCreationState: state.playListCreationState,
+                  );
+                }
+                if (state is PlayListSelectionScreen) {
+                  return SelectSoundPlayList(
+                    collectionCreationState: state.playListCreationState,
+                  );
+                }
+                return const PlayListPage();
+              },
+            );
           }
           if (state.selectedItem == NavigationPages.AudioListPage) {
             return const AudioListPage();
@@ -126,6 +138,7 @@ class _MainPageState extends State<MainPage> {
           if (state.selectedItem == NavigationPages.SubscriptionPage) {
             return SubscriptionPage();
           }
+
           return Container();
         },
       ),

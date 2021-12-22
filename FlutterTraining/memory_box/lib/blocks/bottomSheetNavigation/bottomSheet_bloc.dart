@@ -14,7 +14,7 @@ class BottomSheetBloc extends Bloc<BottomSheet, BottomSheetState> {
       yield ListeningPageState();
     }
     if (event is OpenPreviewPage) {
-      yield PreviewPageState(event.soundTitle);
+      yield PreviewPageState();
     }
   }
 }

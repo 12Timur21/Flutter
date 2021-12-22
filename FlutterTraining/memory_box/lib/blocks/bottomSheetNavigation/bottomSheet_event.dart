@@ -1,3 +1,5 @@
+import 'package:memory_box/models/taleModel.dart';
+
 import 'bottomSheet_state.dart';
 
 class BottomSheet {}
@@ -10,7 +12,4 @@ class OpenListeningPage extends BottomSheet {
   OpenListeningPage();
 }
 
-class OpenPreviewPage extends BottomSheet {
-  String soundTitle;
-  OpenPreviewPage(this.soundTitle);
-}
+class OpenPreviewPage extends BottomSheet {}

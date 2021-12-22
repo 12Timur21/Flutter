@@ -8,8 +8,8 @@ import 'package:memory_box/screens/audioListPage.dart';
 import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/subscriptionPage.dart';
 
-class NavigationBar extends StatelessWidget {
-  const NavigationBar({Key? key}) : super(key: key);
+class CustomNavigationBar extends StatelessWidget {
+  const CustomNavigationBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +104,11 @@ class NavigationBar extends StatelessWidget {
             CustomListTyle(
               title: 'Все аудиофайлы',
               svgUrl: 'assets/icons/Paper.svg',
-              callback: () {},
+              callback: () {
+                navigationBloc.add(
+                  NavigateTo(NavigationPages.AudioListPage),
+                );
+              },
             ),
             CustomListTyle(
               title: 'Поиск',

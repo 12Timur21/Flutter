@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:memory_box/screens/audioListPage.dart';
 import 'package:memory_box/screens/homePage.dart';
 import 'package:memory_box/screens/profilePage.dart';
-import 'package:memory_box/screens/selectionsPage.dart';
 
 class NavigationState {
   final NavigationPages? selectedItem;
@@ -15,5 +14,6 @@ enum NavigationPages {
   RecordingPage,
   AudioListPage,
   ProfilePage,
-  SubscriptionPage
+  SubscriptionPage,
+  SelectionsPage,
 }

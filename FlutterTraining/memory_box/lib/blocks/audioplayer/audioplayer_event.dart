@@ -4,15 +4,10 @@ part of 'audioplayer_bloc.dart';
 abstract class AudioplayerEvent {}
 
 class InitPlayer extends AudioplayerEvent {
-  final String soundUrl;
-  final String soundTitle;
+  TaleModel soundModel;
   InitPlayer({
-    required this.soundUrl,
-    required this.soundTitle,
+    required this.soundModel,
   });
-
-  @override
-  List<Object> get props => [soundUrl, soundTitle];
 }
 
 class Play extends AudioplayerEvent {}
@@ -38,10 +33,10 @@ class StartTimer extends AudioplayerEvent {}
 
 class StopTimer extends AudioplayerEvent {}
 
-class UpdateSoundTitle extends AudioplayerEvent {
-  String title;
+class UpdateSoundModel extends AudioplayerEvent {
+  String? title;
 
-  UpdateSoundTitle(this.title);
+  UpdateSoundModel({this.title});
 }
 
 class LocalSaveSound extends AudioplayerEvent {}

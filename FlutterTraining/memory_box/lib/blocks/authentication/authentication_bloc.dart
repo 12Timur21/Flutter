@@ -57,7 +57,7 @@ class AuthenticationBloc
 
     if (event is DeleteAccount) {
       currentUser = null;
-      await _databaseService.deleteUserCollections(event.uid);
+      await _databaseService.deleteUserFromFirebase();
       await _authService.deleteAccount();
 
       yield AuthenticationState(
@@ -74,7 +74,7 @@ class AuthenticationBloc
 
       if (uid != null) {
         await _databaseService.updateUserCollection(
-          uid: uid,
+          // uid: uid,
           phoneNumber: event.phoneNumber != null
               ? toNumericString(event.phoneNumber)
               : null,

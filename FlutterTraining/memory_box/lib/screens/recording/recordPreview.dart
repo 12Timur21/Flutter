@@ -8,6 +8,8 @@ import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/models/taleModel.dart';
+import 'package:memory_box/repositories/authService.dart';
 import 'package:memory_box/repositories/databaseService.dart';
 import 'package:memory_box/repositories/storageService.dart';
 import 'package:memory_box/services/soundPlayer.dart';
@@ -17,10 +19,9 @@ import 'package:memory_box/widgets/soundControlsButtons.dart';
 
 class RecordPreview extends StatefulWidget {
   const RecordPreview({
-    required this.soundTitle,
     Key? key,
   }) : super(key: key);
-  final String soundTitle;
+
   @override
   _RecordPreviewState createState() => _RecordPreviewState();
 }
@@ -36,17 +37,17 @@ class _RecordPreviewState extends State<RecordPreview> {
   void initState() {
     _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
 
-    audioLabel = widget.soundTitle;
+    audioLabel = _audioBloc?.state.soundModel?.title;
 
     _textEditingController.text = audioLabel ?? '';
     changeRecordingButton();
 
-    _audioBloc?.add(
-      InitPlayer(
-        soundUrl: '/sdcard/download/test2.aac',
-        soundTitle: widget.soundTitle,
-      ),
-    );
+    // _audioBloc?.add(
+    //   InitPlayer(
+    //     soundUrl: '/sdcard/download/test2.aac',
+    //     soundTitle: widget.soundTitle,
+    //   ),
+    // );
     super.initState();
   }
 
@@ -58,6 +59,7 @@ class _RecordPreviewState extends State<RecordPreview> {
   }
 
   void closeWindow() {
+    _audioBloc?.add(DisposePlayer());
     Navigator.of(context).pop();
   }
 
@@ -80,13 +82,10 @@ class _RecordPreviewState extends State<RecordPreview> {
   }
 
   void saveChanges() async {
-    final user = BlocProvider.of<AuthenticationBloc>(context).state;
-    final String? uid = user.user?.uid;
-
-    if (uid != null && audioLabel != null) {
-      await DatabaseService.instance.updateSongTitle(
-        uid: uid,
-        oldTitle: audioLabel!,
+    String? ID = _audioBloc?.state.soundModel?.ID;
+    if (ID != null && audioLabel != null) {
+      await StorageService.instance.updateTaleTitle(
+        taleID: ID,
         newTitle: _textEditingController.text,
       );
     }
@@ -339,7 +338,7 @@ class _RecordPreviewState extends State<RecordPreview> {
                     }
                   },
                   currentPlayDuration: state.currentPlayDuration,
-                  soundDuration: state.songDuration,
+                  soundDuration: state.soundModel?.duration,
                 );
               }),
             ),

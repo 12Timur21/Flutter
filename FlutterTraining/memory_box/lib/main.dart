@@ -2,12 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
-
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/settings/initialSettings.dart';
 import 'blocks/mainPageNavigation/navigation_bloc.dart';
 import 'blocks/mainPageNavigation/navigation_state.dart';
+import 'blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'blocks/recorderButton/recorderButton_bloc.dart';
 import 'blocks/recorderButton/recorderButton_state.dart';
 import 'blocks/registration/registration_bloc.dart';
@@ -43,6 +43,11 @@ Future<void> main() async {
         BlocProvider<AuthenticationBloc>(
           create: (BuildContext context) {
             return AuthenticationBloc();
+          },
+        ),
+        BlocProvider<PlayListNavigationBloc>(
+          create: (BuildContext context) {
+            return PlayListNavigationBloc();
           },
         ),
       ],

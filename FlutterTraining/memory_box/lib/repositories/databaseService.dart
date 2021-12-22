@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memory_box/models/userModel.dart';
+import 'package:uuid/uuid.dart';
 
 import 'authService.dart';
 
@@ -8,32 +9,24 @@ class DatabaseService {
   DatabaseService._();
   static DatabaseService instance = DatabaseService._();
 
-  final AuthService _authService = AuthService.instance;
-
+  //**[Start] Refs
   final CollectionReference _userCollection = _firestore.collection('users');
+  final CollectionReference _playListsCollection =
+      _firestore.collection('playLists');
+  //**[Start] Refs
 
-  void recordNewUser(UserModel user) {
-    _userCollection.doc(user.uid).set(user.toJson());
-  }
-
-  Future<UserModel> userModelFromDatabase(
-    String uid,
-  ) async {
-    DocumentSnapshot<Object?> result = await _userCollection.doc(uid).get();
-    return UserModel.fromJson(result.data() as Map<String, dynamic>);
-  }
-
-  Future<void> deleteUserCollections(String uid) async {
-    _userCollection.doc(uid).delete();
-  }
-
-  Future<bool> isUserExist(String uid) async {
+  //??[Start] User
+  Future<bool> isUserExist() async {
+    String? uid = AuthService.userID;
     DocumentSnapshot<Object?> document = await _userCollection.doc(uid).get();
     return document.exists;
   }
 
+  Future<void> recordNewUser(UserModel user) async {
+    await _userCollection.doc(user.uid).set(user.toJson());
+  }
+
   Future<void> updateUserCollection({
-    required String uid,
     String? phoneNumber,
     String? displayName,
   }) async {
@@ -46,49 +39,141 @@ class DatabaseService {
       updatedPair['displayName'] = displayName;
     }
 
-    _userCollection.doc(uid).update(updatedPair);
+    await _userCollection.doc(AuthService.userID).update(updatedPair);
   }
 
-  Future<void> addSoundToUserCollection({
-    required String uid,
-    required String soundTitle,
-    required String soundUID,
-  }) async {
-    Map<String, Map<String, dynamic>> updatedPair = {};
-    Map<String, dynamic> pair = {};
-    DocumentSnapshot userSnapshot = await _userCollection.doc(uid).get();
-    pair = await userSnapshot.get('soundList');
+  Future<void> deleteUserFromFirebase() async {
+    String? uid = AuthService.userID;
 
-    pair[soundTitle] = soundUID;
-
-    updatedPair['soundList'] = pair;
-    _userCollection.doc(uid).update(updatedPair);
+    await _userCollection.doc(uid).delete();
   }
 
-  Future<void> updateSongTitle({
-    required String oldTitle,
-    required String newTitle,
-    required String uid,
-  }) async {
-    Map<String, Map<String, dynamic>> updatedPair = {};
-    Map<String, dynamic> pair = {};
+  Future<UserModel?> userModelFromDatabase() async {
+    String? uid = AuthService.userID;
+    if (uid != null) {
+      DocumentSnapshot<Object?> result = await _userCollection.doc(uid).get();
+      return UserModel.fromJson(result.data() as Map<String, dynamic>);
+    }
+    return null;
+  }
+  //??[End] User
 
-    await _userCollection.doc(uid).get().then((value) {
-      pair = value.get('soundList');
+  //??[Start] PlayList
+  Future<void> createPlayList({
+    required String playListID,
+    required String title,
+    String? description,
+    List<String>? talesIDs,
+  }) async {
+    String? uid = AuthService.userID;
+
+    Map<String, dynamic> collection = {
+      'title': title,
+      'description': description,
+      'tilesIDSList': talesIDs,
+    };
+
+    DocumentSnapshot documentSnapshot =
+        await _playListsCollection.doc(uid).get();
+    if (!documentSnapshot.exists) {
+      await _playListsCollection.doc(uid).set({playListID: collection});
+    } else {
+      await _playListsCollection.doc(uid).update({playListID: collection});
+    }
+  }
+
+  Future<void> updatePlayList({
+    required String playListID,
+    String? title,
+    String? description,
+    List<String>? talesIDs,
+  }) async {
+    String? uid = AuthService.userID;
+
+    DocumentSnapshot documentSnapshot =
+        await _playListsCollection.doc(uid).get();
+
+    Map<String, dynamic>? collection =
+        documentSnapshot.data() as Map<String, dynamic>?;
+
+    collection = collection?[playListID];
+
+    if (title != null) collection?['title'] = title;
+    if (description != null) collection?['description'] = description;
+    if (talesIDs != null) collection?['talesIDs'] = talesIDs;
+
+    await _playListsCollection.doc(uid).update({playListID: collection});
+  }
+
+  void addTalesToPlayList({
+    required String playListID,
+    required List<String> talesIDs,
+  }) async {
+    String? uid = AuthService.userID;
+
+    DocumentSnapshot documentSnapshot =
+        await _playListsCollection.doc(uid).get();
+
+    Map<String, dynamic>? collection =
+        documentSnapshot.data() as Map<String, dynamic>?;
+
+    List<dynamic>? tilesIDSList = collection?[playListID]['tilesIDSList'] ?? [];
+    tilesIDSList?..addAll(talesIDs);
+
+    collection?[playListID]['tilesIDSList'] = tilesIDSList;
+
+    await _playListsCollection.doc(uid).update({
+      playListID: collection?[playListID],
+    });
+  }
+
+  Future<void> removeTalesFromPlayList({
+    required String playListID,
+    required List<String> talesIDs,
+  }) async {
+    String? uid = AuthService.userID;
+
+    DocumentSnapshot documentSnapshot =
+        await _playListsCollection.doc(uid).get();
+
+    Map<String, dynamic>? collection =
+        documentSnapshot.data() as Map<String, dynamic>?;
+
+    List<dynamic>? tilesIDSList = collection?[playListID]['tilesIDSList'] ?? [];
+    tilesIDSList?.removeWhere((element) {
+      for (String item in talesIDs) {
+        if (item == element) return true;
+      }
+      return false;
     });
 
-    pair.forEach((key, value) {
-      print('$key - $value');
-      // if (key == oldTitle) {
-      //   value = newTitle;
-      // }
-      // soundList[value] = key;
+    collection?[playListID]['tilesIDSList'] = tilesIDSList;
+
+    await _playListsCollection.doc(uid).update({
+      playListID: collection?[playListID],
     });
-
-    // pair[soundTitle] = soundUID;
-
-    // updatedPair['soundList'] = pair;
-
-    // _userCollection.doc(uid).update(updatedPair);
   }
+
+  Future<Map<String, dynamic>?> getPlayList({
+    required String playListID,
+  }) async {
+    String? uid = AuthService.userID;
+
+    DocumentSnapshot documentSnapshot =
+        await _playListsCollection.doc(uid).get();
+
+    Map<String, dynamic>? collection =
+        documentSnapshot.data() as Map<String, dynamic>?;
+
+    return collection?[playListID];
+  }
+
+  Future<void> deletePlayList({
+    required String playListID,
+  }) async {
+    String? uid = AuthService.userID;
+
+    await _playListsCollection.doc('$uid/$playListID').delete();
+  }
+  //??[END] PlayList
 }

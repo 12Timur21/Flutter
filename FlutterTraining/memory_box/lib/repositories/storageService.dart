@@ -1,14 +1,18 @@
+import 'dart:async';
+import 'dart:core';
 import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:memory_box/models/taleModel.dart';
+
+import 'package:memory_box/repositories/authService.dart';
 import 'package:memory_box/repositories/databaseService.dart';
-import 'package:uuid/uuid.dart';
 
 enum FileType {
-  sound,
+  tale,
   file,
   avatar,
+  playListCover,
 }
 
 class StorageService {
@@ -26,8 +30,9 @@ class StorageService {
     String destination = '';
     String src = '';
     if (fileType == FileType.file) destination = 'files';
-    if (fileType == FileType.sound) destination = 'audiofiles';
+    if (fileType == FileType.tale) destination = 'audiofiles';
     if (fileType == FileType.avatar) destination = 'avatars';
+    if (fileType == FileType.playListCover) destination = 'playListCovers';
 
     if (uid != null) src = '$destination/$uid';
     if (fileName != null) src = '$destination/$fileName';
@@ -37,13 +42,14 @@ class StorageService {
     return src;
   }
 
+  //??[Start] File
+
   Future<int> filesLength({
     required FileType fileType,
-    required String uid,
   }) async {
     final destination = mapDestination(
       fileType: fileType,
-      uid: uid,
+      uid: AuthService.userID,
     );
     ListResult listResult = await _cloud.ref().child(destination).listAll();
 
@@ -53,11 +59,9 @@ class StorageService {
   Future<bool> isFileExist({
     required FileType fileType,
     required String fileName,
-    required String uid,
   }) async {
     final destination = mapDestination(
       fileType: fileType,
-      uid: uid,
       fileName: fileName,
     );
 
@@ -74,12 +78,10 @@ class StorageService {
 
   Future<String> getFileUrl({
     required FileType fileType,
-    String? uid,
     required String fileName,
   }) async {
     final destination = mapDestination(
       fileType: fileType,
-      uid: uid,
       fileName: fileName,
     );
 
@@ -96,34 +98,215 @@ class StorageService {
   Future<void> uploadFile({
     required File file,
     required FileType fileType,
-    required String fileName,
-    required String userUID,
+    String? fileName,
+    TaleModel? soundModel,
   }) async {
-    String fileUID = Uuid().v4();
-
     final destination = mapDestination(
       fileType: fileType,
-      uid: userUID,
-      fileName: fileUID,
+      uid: AuthService.userID,
+      fileName: fileName ?? soundModel?.ID,
     );
 
     try {
-      _cloud.ref().child('/$destination').putFile(file);
-      _databaseService.addSoundToUserCollection(
-        uid: userUID,
-        soundTitle: fileName,
-        soundUID: fileUID,
-      );
+      await _cloud.ref().child('/$destination').putFile(
+            file,
+            SettableMetadata(
+              customMetadata: soundModel?.toMap(),
+            ),
+          );
+    } on FirebaseException catch (e) {
+      print(e);
+    }
+  }
+  //??[End] File
+
+  //??[Start] Tale
+
+  Future<void> uploadTaleFIle({
+    required File file,
+    required String taleID,
+    required String title,
+    required Duration duration,
+  }) async {
+    final destination = mapDestination(
+      fileType: FileType.tale,
+      uid: AuthService.userID,
+      fileName: taleID,
+    );
+
+    Map<String, String> taleMetadata = {
+      'taleID': taleID,
+      'title': title,
+      'durationInMS': duration.inMilliseconds.toString(),
+    };
+
+    try {
+      await _cloud.ref().child('/$destination').putFile(
+            file,
+            SettableMetadata(
+              customMetadata: taleMetadata,
+            ),
+          );
     } on FirebaseException catch (e) {
       print(e);
     }
   }
 
-  // Future<void> updateSoundTitle({
-  //   required String newName,
-  //   required String oldName,
-  //   required String userUID,
-  // }) {}
+  Future<void> updateTaleTitle({
+    required String taleID,
+    required String newTitle,
+  }) async {
+    final destination = mapDestination(
+      fileType: FileType.tale,
+      uid: AuthService.userID,
+      fileName: taleID,
+    );
 
-  void dispose() {}
+    try {
+      FullMetadata fullMetaData =
+          await _cloud.ref().child('/$destination').getMetadata();
+      Map<String, String>? customMetaData = fullMetaData.customMetadata;
+      customMetaData?['title'] = newTitle;
+
+      if (customMetaData != null) {
+        await _cloud.ref().child('/$destination').updateMetadata(
+              SettableMetadata(
+                customMetadata: customMetaData,
+              ),
+            );
+      }
+    } catch (_) {}
+  }
+
+  Future<TaleModel> getTaleModel({
+    required String taleID,
+  }) async {
+    TaleModel taleModel = TaleModel();
+
+    final destination = mapDestination(
+      fileType: FileType.tale,
+      uid: AuthService.userID,
+      fileName: taleID,
+    );
+
+    try {
+      String? url = await _cloud.ref().child('/$destination').getDownloadURL();
+
+      FullMetadata fullMetaData =
+          await _cloud.ref().child('/$destination').getMetadata();
+
+      Map<String, dynamic>? customMetadata =
+          fullMetaData.customMetadata as Map<String, dynamic>?;
+
+      taleModel.duration = Duration(
+        milliseconds: int.parse(
+          customMetadata?['durationInMS'],
+        ),
+      );
+      taleModel.title = customMetadata?['title'];
+      taleModel.ID = taleID;
+      taleModel.url = url;
+    } catch (e) {
+      print(e);
+    }
+    return taleModel;
+  }
+
+  Future<List<TaleModel?>> getAllTaleModels() async {
+    final destination = mapDestination(
+      fileType: FileType.tale,
+      uid: AuthService.userID,
+    );
+
+    List<TaleModel> taleModels = [];
+
+    try {
+      ListResult listResult =
+          await _cloud.ref().child('/$destination').listAll();
+
+      String? url;
+      FullMetadata fullMetadata;
+      Map<String, dynamic>? customMetadata;
+
+      for (Reference item in listResult.items) {
+        TaleModel taleModel = TaleModel();
+
+        url = await item.getDownloadURL();
+        fullMetadata = await item.getMetadata();
+        customMetadata = fullMetadata.customMetadata as Map<String, dynamic>?;
+
+        taleModel.duration = Duration(
+          milliseconds: int.parse(
+            customMetadata?['durationInMS'],
+          ),
+        );
+        taleModel.title = customMetadata?['title'];
+        taleModel.ID = customMetadata?['taleID'];
+        taleModel.url = url;
+
+        taleModels.add(taleModel);
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return taleModels;
+  }
+
+  Future<Map<String, String>?> getTaleMetadata({
+    required String taleID,
+  }) async {
+    final destination = mapDestination(
+      fileType: FileType.tale,
+      uid: AuthService.userID,
+      fileName: taleID,
+    );
+
+    try {
+      FullMetadata fullMetaData =
+          await _cloud.ref().child('/$destination').getMetadata();
+      return fullMetaData.customMetadata;
+    } catch (_) {}
+  }
+
+  Future<void> deleteTale({
+    required String taleID,
+  }) async {
+    final destination = mapDestination(
+      uid: AuthService.userID,
+      fileName: taleID,
+      fileType: FileType.tale,
+    );
+
+    await _cloud.ref().child('/$destination').delete();
+  }
+
+  //??[End] Tale
+
+  //??[Start] PlayList
+  Future<void> uploadPlayListCover({
+    required File file,
+    required String coverID,
+  }) async {
+    final destination = mapDestination(
+      uid: AuthService.userID,
+      fileName: coverID,
+      fileType: FileType.playListCover,
+    );
+
+    await _cloud.ref().child('/$destination').putFile(file);
+  }
+
+  Future<void> deletePlayListCover({
+    required String coverID,
+  }) async {
+    final destination = mapDestination(
+      uid: AuthService.userID,
+      fileName: coverID,
+      fileType: FileType.playListCover,
+    );
+
+    await _cloud.ref().child('/$destination').delete();
+  }
+  //??[End] PlayList
 }

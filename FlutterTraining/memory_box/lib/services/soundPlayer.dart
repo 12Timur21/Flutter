@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
+import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
@@ -30,8 +32,10 @@ class SoundPlayer {
   Duration? _currentPlayDuration;
   Duration get currentPlayDuration => _currentPlayDuration ?? Duration.zero;
 
-  Future<void> init({required String soundUrl}) async {
-    _flutterSoundPlayer = FlutterSoundPlayer();
+  Future<void> init({
+    required String soundUrl,
+  }) async {
+    _flutterSoundPlayer = FlutterSoundPlayer(logLevel: Level.nothing);
     await _openSoundSession();
 
     //

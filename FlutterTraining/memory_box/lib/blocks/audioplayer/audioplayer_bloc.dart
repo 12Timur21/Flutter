@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:memory_box/models/taleModel.dart';
 import 'package:memory_box/services/soundPlayer.dart';
 import 'package:meta/meta.dart';
 
@@ -22,23 +23,33 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
   ) async* {
     if (event is InitPlayer) {
       _soundPlayer = SoundPlayer();
-      await _soundPlayer?.init(
-        soundUrl: event.soundUrl,
-      );
-      yield AudioplayerState.initial().copyWith(
-        title: event.soundTitle,
-        songDuration: _soundPlayer?.songDuration,
-        currentPlayDuration: _soundPlayer?.currentPlayDuration,
-        songUrl: event.soundUrl,
-        isInit: true,
-      );
 
-      timerController = Stream.periodic(
-        Duration(seconds: 1),
-      ).listen((event) {
-        add(UpdatePlayDuration());
-      });
-      timerController?.pause();
+      TaleModel soundModel = event.soundModel;
+
+      String? url = event.soundModel.url;
+      if (url != null) {
+        await _soundPlayer?.init(
+          soundUrl: url,
+        );
+        soundModel.duration = _soundPlayer?.songDuration;
+
+        yield AudioplayerState.initial().copyWith(
+          newSoundModel: soundModel,
+          currentPlayDuration: _soundPlayer?.currentPlayDuration,
+          isInit: true,
+        );
+
+        timerController = Stream.periodic(
+          Duration(seconds: 1),
+        ).listen((event) {
+          add(UpdatePlayDuration());
+        });
+        timerController?.pause();
+      } else {
+        yield AudioplayerState.initial().copyWith(
+          isInit: false,
+        );
+      }
     }
 
     if (event is DisposePlayer) {
@@ -94,7 +105,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
 
     if (event is UpdatePlayDuration) {
       yield state.copyWith(
-        songDuration: _soundPlayer?.songDuration,
+        // songDuration: _soundPlayer?.songDuration,
         currentPlayDuration: _soundPlayer?.currentPlayDuration,
       );
     }
@@ -108,10 +119,10 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
     }
 
     if (event is ShareSound) {
-      String? songUrl = state.songUrl;
-      if (songUrl != null) {
-        _soundPlayer?.shareSound(songUrl);
-      }
+      // String? songUrl = state.songUrl;
+      // if (songUrl != null) {
+      //   _soundPlayer?.shareSound(songUrl);
+      // }
     }
 
     if (event is LocalSaveSound) {
@@ -133,7 +144,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
       _soundPlayer?.deleteSound();
     }
 
-    if (event is UpdateSoundTitle) {
+    if (event is UpdateSoundModel) {
       yield state.copyWith(
         title: event.title,
       );

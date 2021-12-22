@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/navigationMenu.dart';
+import 'package:memory_box/widgets/customNavigationBar.dart';
 
 class SubscriptionPage extends StatefulWidget {
   static const routeName = 'SubscriptionPage';
@@ -131,7 +131,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           ),
           elevation: 0,
         ),
-        drawer: const NavigationBar(),
+        drawer: const CustomNavigationBar(),
         body: Container(
           width: double.infinity,
           color: Colors.white,

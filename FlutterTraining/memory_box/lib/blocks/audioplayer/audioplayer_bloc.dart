@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:memory_box/models/taleModel.dart';
+import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/services/soundPlayer.dart';
 import 'package:meta/meta.dart';
 

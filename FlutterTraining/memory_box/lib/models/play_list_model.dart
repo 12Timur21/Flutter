@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'taleModel.dart';
+import 'tale_model.dart';
 
 class PlayListModel {
   File? cover;

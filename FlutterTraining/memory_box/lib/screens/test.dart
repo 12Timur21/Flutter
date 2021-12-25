@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:memory_box/models/taleModel.dart';
-import 'package:memory_box/repositories/databaseService.dart';
-import 'package:memory_box/repositories/storageService.dart';
+import 'package:memory_box/models/tale_model.dart';
+import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/repositories/storage_service.dart';
 import 'package:uuid/uuid.dart';
 
 class Test extends StatefulWidget {

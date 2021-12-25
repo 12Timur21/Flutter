@@ -4,10 +4,10 @@ import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/blocks/registration/registration_bloc.dart';
-import 'package:memory_box/repositories/authService.dart';
+import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/circleTextField.dart';
-import 'package:memory_box/widgets/continueButton.dart';
+import 'package:memory_box/widgets/circle_textField.dart';
+import 'package:memory_box/widgets/continue_button.dart';
 import 'package:memory_box/widgets/hintPlate.dart';
 
 class RegistrationPage extends StatefulWidget {

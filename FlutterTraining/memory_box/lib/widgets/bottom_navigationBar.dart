@@ -7,9 +7,9 @@ import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/widgets/RecorderButtons/defaultRecorderButton.dart';
-import 'package:memory_box/widgets/RecorderButtons/recorderButtonWithIcon.dart';
-import 'package:memory_box/widgets/RecorderButtons/recorderButtonWithLine.dart';
+import 'package:memory_box/widgets/RecorderButtons/default_recorder_button.dart';
+import 'package:memory_box/widgets/RecorderButtons/recorder_button_withIcon.dart';
+import 'package:memory_box/widgets/RecorderButtons/recorder_button_withLine.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({required this.openButtomSheet, Key? key})

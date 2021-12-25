@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
-import 'package:memory_box/models/userModel.dart';
-import 'package:memory_box/repositories/authService.dart';
-import 'package:memory_box/repositories/databaseService.dart';
+import 'package:memory_box/models/user_model.dart';
+import 'package:memory_box/repositories/auth_service.dart';
+import 'package:memory_box/repositories/database_service.dart';
 import 'package:meta/meta.dart';
 
 part 'authentication_event.dart';

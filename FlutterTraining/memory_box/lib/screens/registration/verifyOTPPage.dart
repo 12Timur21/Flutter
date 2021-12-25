@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/registration/registration_bloc.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/circleTextField.dart';
-import 'package:memory_box/widgets/continueButton.dart';
+import 'package:memory_box/widgets/circle_textField.dart';
+import 'package:memory_box/widgets/continue_button.dart';
 import 'package:memory_box/widgets/hintPlate.dart';
 
 class VerifyOTPPage extends StatefulWidget {

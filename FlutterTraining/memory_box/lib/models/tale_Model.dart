@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class TaleModel {
   String? ID;
   String? title;

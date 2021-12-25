@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:memory_box/widgets/appBarWithButtons.dart';
+import 'package:memory_box/widgets/appBar_withButtons.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/customNavigationBar.dart';
+import 'package:memory_box/widgets/custom_navigationBar.dart';
 
 class AudioListPage extends StatefulWidget {
   static const routeName = 'AudioListPage';

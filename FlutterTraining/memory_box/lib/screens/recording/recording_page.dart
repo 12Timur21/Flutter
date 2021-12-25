@@ -7,7 +7,6 @@ import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/screens/Recording/listeningPage.dart';
 import 'dart:async';
 import 'dart:math';
 

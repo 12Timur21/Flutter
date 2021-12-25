@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/utils/formatting.dart';
-import 'package:memory_box/widgets/appBarWithButtons.dart';
+import 'package:memory_box/widgets/appBar_withButtons.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 
 class PlayListPage extends StatefulWidget {

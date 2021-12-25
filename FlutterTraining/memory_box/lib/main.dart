@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/root.dart';
-import 'package:memory_box/settings/initialSettings.dart';
+import 'package:memory_box/settings/initial_settings.dart';
 import 'blocks/mainPageNavigation/navigation_bloc.dart';
 import 'blocks/mainPageNavigation/navigation_state.dart';
 import 'blocks/playListNavigation/playListNavigation_bloc.dart';

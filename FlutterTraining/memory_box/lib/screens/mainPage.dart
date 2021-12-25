@@ -9,20 +9,20 @@ import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dar
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/screens/Recording/listeningPage.dart';
-import 'package:memory_box/screens/audioListPage.dart';
+import 'package:memory_box/screens/audio_list.dart';
 import 'package:memory_box/screens/playList/createPlayListPage.dart';
 import 'package:memory_box/screens/playList/playListPage.dart';
 import 'package:memory_box/screens/playList/selectSoundPlayList.dart';
-import 'package:memory_box/screens/profilePage.dart';
-import 'package:memory_box/screens/recording/recordPreview.dart';
+import 'package:memory_box/screens/profile.dart';
+import 'package:memory_box/screens/recording/record_preview.dart';
 
-import 'package:memory_box/screens/subscriptionPage.dart';
+import 'package:memory_box/screens/subscription.dart';
 import 'package:memory_box/screens/test.dart';
-import 'package:memory_box/widgets/bottomNavigationBar.dart';
-import 'package:memory_box/widgets/customNavigationBar.dart';
+import 'package:memory_box/widgets/bottom_navigationBar.dart';
+import 'package:memory_box/widgets/custom_navigationBar.dart';
 
-import 'Recording/recordingPage.dart';
+import 'recording/listening_tale.dart';
+import 'recording/recording_page.dart';
 
 class MainPage extends StatefulWidget {
   static const routeName = 'MainPage';

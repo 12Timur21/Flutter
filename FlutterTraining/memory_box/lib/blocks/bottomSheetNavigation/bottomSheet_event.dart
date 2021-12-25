@@ -1,4 +1,4 @@
-import 'package:memory_box/models/taleModel.dart';
+import 'package:memory_box/models/tale_model.dart';
 
 import 'bottomSheet_state.dart';
 

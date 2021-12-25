@@ -4,9 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_event.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
-import 'package:memory_box/screens/audioListPage.dart';
+import 'package:memory_box/screens/audio_list.dart';
 import 'package:memory_box/screens/mainPage.dart';
-import 'package:memory_box/screens/subscriptionPage.dart';
+import 'package:memory_box/screens/subscription.dart';
 
 class CustomNavigationBar extends StatelessWidget {
   const CustomNavigationBar({Key? key}) : super(key: key);

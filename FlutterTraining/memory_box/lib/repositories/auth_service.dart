@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:memory_box/models/userModel.dart';
-import 'package:memory_box/models/verifyAuthModel.dart';
+import 'package:memory_box/models/user_model.dart';
+import 'package:memory_box/models/verify_auth_model.dart';
 
-import 'databaseService.dart';
+import 'database_service.dart';
 
 class AuthService {
   static FirebaseAuth _auth = FirebaseAuth.instance;

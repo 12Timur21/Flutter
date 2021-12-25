@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/customNavigationBar.dart';
+import 'package:memory_box/widgets/custom_navigationBar.dart';
 
 class SubscriptionPage extends StatefulWidget {
   static const routeName = 'SubscriptionPage';

@@ -8,13 +8,13 @@ import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/models/taleModel.dart';
-import 'package:memory_box/repositories/authService.dart';
-import 'package:memory_box/repositories/databaseService.dart';
-import 'package:memory_box/repositories/storageService.dart';
+import 'package:memory_box/models/tale_model.dart';
+import 'package:memory_box/repositories/auth_service.dart';
+import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/repositories/storage_service.dart';
 import 'package:memory_box/services/soundPlayer.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
-import 'package:memory_box/widgets/bottomSheetWrapper.dart';
+import 'package:memory_box/widgets/bottom_sheetWrapper.dart';
 import 'package:memory_box/widgets/soundControlsButtons.dart';
 
 class RecordPreview extends StatefulWidget {

@@ -20,7 +20,7 @@ class StorageService {
   StorageService._();
   static StorageService instance = StorageService._();
 
-  DatabaseService _databaseService = DatabaseService.instance;
+  DatabaseService _database = DatabaseService.instance;
 
   String mapDestination({
     required FileType fileType,
@@ -134,19 +134,15 @@ class StorageService {
       fileName: taleID,
     );
 
-    Map<String, String> taleMetadata = {
-      'taleID': taleID,
-      'title': title,
-      'durationInMS': duration.inMilliseconds.toString(),
-    };
-
     try {
       await _cloud.ref().child('/$destination').putFile(
             file,
-            SettableMetadata(
-              customMetadata: taleMetadata,
-            ),
           );
+      await _database.createTale(
+        taleID: taleID,
+        title: title,
+        duration: duration,
+      );
     } on FirebaseException catch (e) {
       print(e);
     }
@@ -253,21 +249,20 @@ class StorageService {
     return taleModels;
   }
 
-  Future<Map<String, String>?> getTaleMetadata({
-    required String taleID,
-  }) async {
-    final destination = mapDestination(
-      fileType: FileType.tale,
-      uid: AuthService.userID,
-      fileName: taleID,
-    );
+  // Future<Map<String, String>?> getTaleMetadata({
+  //   required String taleID,
+  // }) async {
+  //   final destination = mapDestination(
+  //     fileType: FileType.tale,
+  //     uid: AuthService.userID,
+  //     fileName: taleID,
+  //   );
 
-    try {
-      FullMetadata fullMetaData =
-          await _cloud.ref().child('/$destination').getMetadata();
-      return fullMetaData.customMetadata;
-    } catch (_) {}
-  }
+  //   try {
+  //     FullMetadata fullMetaData =
+  //         await _cloud.ref().child('/$destination').list().
+  //   } catch (_) {}
+  // }
 
   Future<void> deleteTale({
     required String taleID,

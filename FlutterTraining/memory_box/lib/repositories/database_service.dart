@@ -11,6 +11,7 @@ class DatabaseService {
 
   //**[Start] Refs
   final CollectionReference _userCollection = _firestore.collection('users');
+  final CollectionReference _talesCollection = _firestore.collection('tales');
   final CollectionReference _playListsCollection =
       _firestore.collection('playLists');
   //**[Start] Refs
@@ -57,6 +58,26 @@ class DatabaseService {
     return null;
   }
   //??[End] User
+
+  //??[Start] Tale
+
+  Future<void> createTale({
+    required String taleID,
+    required String title,
+    required Duration duration,
+  }) async {
+    String? uid = AuthService.userID;
+    
+     Map<String, String> taleMetadata = {
+      'taleID': taleID,
+      'title': title,
+      'durationInMS': duration.inMilliseconds.toString(),
+    };
+
+    _talesCollection.doc(uid).update(data)
+  }
+
+  //??[End] Tale
 
   //??[Start] PlayList
   Future<void> createPlayList({

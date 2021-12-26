@@ -25,7 +25,8 @@ class SelectSoundPlayList extends StatefulWidget {
 
 class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
   late final PlayListCreationState? _playListState;
-  StreamController<String?> _subscribeSound = StreamController<String>();
+  StreamController<String?> _toogleSubscriptionTale =
+      StreamController<String>();
   List<String>? _taleModels;
 
   @override
@@ -33,7 +34,7 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
     _playListState = widget.collectionCreationState;
     _taleModels = _playListState?.talesIDs ?? [];
 
-    _subscribeSound.stream.listen((String? event) {
+    _toogleSubscriptionTale.stream.listen((String? event) {
       String? taleID = event;
       bool isTaleInList = false;
 
@@ -60,7 +61,7 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
 
   @override
   void dispose() {
-    _subscribeSound.close();
+    _toogleSubscriptionTale.close();
     super.dispose();
   }
 
@@ -155,21 +156,23 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
               ),
               Expanded(
                 child: FutureBuilder(
-                    future: StorageService.instance.getAllTaleModels(),
-                    builder: (
-                      context,
-                      AsyncSnapshot<List<TaleModel?>> snapshot,
-                    ) {
+                  future: DatabaseService.instance.getAllTaleModels(),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<List<TaleModel>> snapshot,
+                  ) {
+                    if (snapshot.connectionState == ConnectionState.done)
                       return ListView.builder(
                         itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index) {
                           return AudioSelectionTile(
-                            subscribeSound: _subscribeSound,
+                            subscribeSound: _toogleSubscriptionTale,
                             taleModel: snapshot.data?[index],
                           );
                         },
                       );
-                    }),
+                  else{}
+                ),
               ),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:uuid/uuid.dart';
 
@@ -65,16 +66,93 @@ class DatabaseService {
     required String taleID,
     required String title,
     required Duration duration,
+    String? taleUrl,
   }) async {
     String? uid = AuthService.userID;
-    
-     Map<String, String> taleMetadata = {
+
+    Map<String, dynamic> taleCollection = {
       'taleID': taleID,
       'title': title,
-      'durationInMS': duration.inMilliseconds.toString(),
+      'durationInMS': duration.inMilliseconds,
+      'isDeleted': false,
+      'taleUrl': taleUrl,
     };
 
-    _talesCollection.doc(uid).update(data)
+    DocumentSnapshot documentSnapshot = await _talesCollection.doc(uid).get();
+    if (documentSnapshot.exists) {
+      await _talesCollection.doc(uid).update({taleID: taleCollection});
+    } else {
+      await _talesCollection.doc(uid).set({taleID: taleCollection});
+    }
+  }
+
+  Future<void> updateTaleData({
+    required String taleID,
+    String? title,
+    bool? isDeleted,
+  }) async {
+    String? uid = AuthService.userID;
+    final documentSnapshot = await _talesCollection.doc(uid).get();
+
+    Map<String, dynamic>? taleCollection =
+        documentSnapshot.data() as Map<String, dynamic>?;
+
+    taleCollection = taleCollection?[taleID];
+
+    if (title != null) taleCollection?['title'] = title;
+    if (isDeleted != null) taleCollection?['isDeleted'] = isDeleted;
+
+    await _talesCollection.doc(uid).update({taleID: taleCollection});
+  }
+
+  Future<TaleModel> getTaleModel({
+    required String taleID,
+  }) async {
+    TaleModel taleModel = TaleModel();
+
+    String? uid = AuthService.userID;
+    final documentSnapshot = await _talesCollection.doc(uid).get();
+
+    Map<String, dynamic>? taleCollection =
+        documentSnapshot.data() as Map<String, dynamic>?;
+
+    taleCollection = taleCollection?[taleID];
+
+    taleModel.duration = Duration(
+      milliseconds: taleCollection?['durationInMS'],
+    );
+    taleModel.title = taleCollection?['title'];
+    taleModel.ID = taleID;
+    taleModel.url = taleCollection?['taleUrl'];
+    taleModel.isDeleted = taleCollection?['isDeleted'];
+
+    return taleModel;
+  }
+
+  //List<TaleModel>
+  Future<List<TaleModel>> getAllTaleModels() async {
+    List<TaleModel> listTaleModels = [];
+
+    String? uid = AuthService.userID;
+    final documentSnapshot = await _talesCollection.doc(uid).get();
+
+    Map<String, dynamic>? taleCollection =
+        documentSnapshot.data() as Map<String, dynamic>?;
+
+    taleCollection?.forEach((key, value) {
+      listTaleModels.add(
+        TaleModel(
+          isDeleted: value['isDeleted'],
+          ID: value['taleID'],
+          duration: Duration(
+            milliseconds: value['durationInMS'],
+          ),
+          title: value['title'],
+          url: value['taleUrl'],
+        ),
+      );
+    });
+    return listTaleModels;
   }
 
   //??[End] Tale

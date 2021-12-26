@@ -3,20 +3,23 @@ class TaleModel {
   String? title;
   String? url;
   Duration? duration;
+  bool? isDeleted = false;
 
   TaleModel({
     this.ID,
     this.duration,
     this.title,
     this.url,
+    this.isDeleted,
   });
 
-  Map<String, String> toMap() {
+  Map<String, dynamic> toMap() {
     print(duration?.inMilliseconds.toString());
     return {
       'title': title ?? '',
-      'id': ID ?? '',
-      'duration': duration?.inMilliseconds.toString() ?? '',
+      'id': ID ?? 0,
+      'duration': duration?.inMilliseconds.toString() ?? Duration.zero,
+      'isDeleted': isDeleted ?? false,
     };
   }
 
@@ -26,8 +29,9 @@ class TaleModel {
       ID: json['id'],
       url: json['url'],
       duration: Duration(
-        milliseconds: int.parse(json['duration']),
+        milliseconds: json['duration'],
       ),
+      isDeleted: json['isDeleted'],
     );
   }
 }

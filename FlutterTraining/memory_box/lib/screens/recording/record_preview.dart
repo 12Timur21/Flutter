@@ -84,9 +84,9 @@ class _RecordPreviewState extends State<RecordPreview> {
   void saveChanges() async {
     String? ID = _audioBloc?.state.soundModel?.ID;
     if (ID != null && audioLabel != null) {
-      await StorageService.instance.updateTaleTitle(
+      await DatabaseService.instance.updateTaleData(
         taleID: ID,
-        newTitle: _textEditingController.text,
+        title: _textEditingController.text,
       );
     }
     changeEditMode();

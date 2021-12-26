@@ -95,29 +95,25 @@ class StorageService {
     return downloadUrl;
   }
 
-  Future<void> uploadFile({
-    required File file,
-    required FileType fileType,
-    String? fileName,
-    TaleModel? soundModel,
-  }) async {
-    final destination = mapDestination(
-      fileType: fileType,
-      uid: AuthService.userID,
-      fileName: fileName ?? soundModel?.ID,
-    );
+  // Future<void> uploadFile({
+  //   required File file,
+  //   required FileType fileType,
+  //   String? fileName,
+  // }) async {
+  //   final destination = mapDestination(
+  //     fileType: fileType,
+  //     uid: AuthService.userID,
+  //     fileName: fileNa
+  //   );
 
-    try {
-      await _cloud.ref().child('/$destination').putFile(
-            file,
-            SettableMetadata(
-              customMetadata: soundModel?.toMap(),
-            ),
-          );
-    } on FirebaseException catch (e) {
-      print(e);
-    }
-  }
+  //   try {
+  //     await _cloud.ref().child('/$destination').putFile(
+  //           file,
+  //         );
+  //   } on FirebaseException catch (e) {
+  //     print(e);
+  //   }
+  // }
   //??[End] File
 
   //??[Start] Tale
@@ -135,78 +131,78 @@ class StorageService {
     );
 
     try {
-      await _cloud.ref().child('/$destination').putFile(
-            file,
-          );
+      await _cloud.ref().child('/$destination').putFile(file);
+      String url = await _cloud.ref().child('/$destination').getDownloadURL();
       await _database.createTale(
         taleID: taleID,
         title: title,
         duration: duration,
+        taleUrl: url,
       );
     } on FirebaseException catch (e) {
       print(e);
     }
   }
 
-  Future<void> updateTaleTitle({
-    required String taleID,
-    required String newTitle,
-  }) async {
-    final destination = mapDestination(
-      fileType: FileType.tale,
-      uid: AuthService.userID,
-      fileName: taleID,
-    );
+  // Future<void> updateTaleTitle({
+  //   required String taleID,
+  //   required String newTitle,
+  // }) async {
+  //   final destination = mapDestination(
+  //     fileType: FileType.tale,
+  //     uid: AuthService.userID,
+  //     fileName: taleID,
+  //   );
 
-    try {
-      FullMetadata fullMetaData =
-          await _cloud.ref().child('/$destination').getMetadata();
-      Map<String, String>? customMetaData = fullMetaData.customMetadata;
-      customMetaData?['title'] = newTitle;
+  //   try {
+  //     FullMetadata fullMetaData =
+  //         await _cloud.ref().child('/$destination').getMetadata();
+  //     Map<String, String>? customMetaData = fullMetaData.customMetadata;
+  //     customMetaData?['title'] = newTitle;
 
-      if (customMetaData != null) {
-        await _cloud.ref().child('/$destination').updateMetadata(
-              SettableMetadata(
-                customMetadata: customMetaData,
-              ),
-            );
-      }
-    } catch (_) {}
-  }
+  //     if (customMetaData != null) {
+  //       await _cloud.ref().child('/$destination').updateMetadata(
+  //             SettableMetadata(
+  //               customMetadata: customMetaData,
+  //             ),
+  //           );
+  //     }
+  //   } catch (_) {}
+  // }
 
-  Future<TaleModel> getTaleModel({
-    required String taleID,
-  }) async {
-    TaleModel taleModel = TaleModel();
+  // Future<TaleModel> getTaleModel({
+  //   required String taleID,
+  // }) async {
+  //   TaleModel taleModel = TaleModel();
 
-    final destination = mapDestination(
-      fileType: FileType.tale,
-      uid: AuthService.userID,
-      fileName: taleID,
-    );
+  //   final destination = mapDestination(
+  //     fileType: FileType.tale,
+  //     uid: AuthService.userID,
+  //     fileName: taleID,
+  //   );
 
-    try {
-      String? url = await _cloud.ref().child('/$destination').getDownloadURL();
+  //   try {
+  //     String? url = await _cloud.ref().child('/$destination').getDownloadURL();
 
-      FullMetadata fullMetaData =
-          await _cloud.ref().child('/$destination').getMetadata();
+  //     FullMetadata fullMetaData =
+  //         await _cloud.ref().child('/$destination').getMetadata();
 
-      Map<String, dynamic>? customMetadata =
-          fullMetaData.customMetadata as Map<String, dynamic>?;
+  //     Map<String, dynamic>? customMetadata =
+  //         fullMetaData.customMetadata as Map<String, dynamic>?;
 
-      taleModel.duration = Duration(
-        milliseconds: int.parse(
-          customMetadata?['durationInMS'],
-        ),
-      );
-      taleModel.title = customMetadata?['title'];
-      taleModel.ID = taleID;
-      taleModel.url = url;
-    } catch (e) {
-      print(e);
-    }
-    return taleModel;
-  }
+  //     taleModel.duration = Duration(
+  //       milliseconds: int.parse(
+  //         customMetadata?['durationInMS'],
+  //       ),
+  //     );
+  //     taleModel.title = customMetadata?['title'];
+  //     taleModel.ID = taleID;
+  //     taleModel.url = url;
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //   return taleModel;
+  // }
 
   Future<List<TaleModel?>> getAllTaleModels() async {
     final destination = mapDestination(

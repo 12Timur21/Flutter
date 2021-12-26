@@ -23,7 +23,6 @@ class PlayListNavigationBloc
       event,
       Emitter<PlayListNavigationState> emit,
     ) {
-      print(event.playListCreationState?.talesIDs);
       emit(
         PlayListCreationScreen(
           playListCreationState: event.playListCreationState,

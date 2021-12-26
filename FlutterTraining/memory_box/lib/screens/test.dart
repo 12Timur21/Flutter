@@ -20,14 +20,6 @@ class _TestState extends State<Test> {
     super.initState();
   }
 
-  void getFile() {
-    storageService.uploadFile(
-      file: File(''),
-      fileType: FileType.tale,
-      fileName: '',
-    );
-  }
-
   void createCollection() {
     DatabaseService.instance.createPlayList(
       playListID: Uuid().v4(),
@@ -105,14 +97,46 @@ class _TestState extends State<Test> {
   }
 
   void getAudioModel() async {
-    TaleModel? taleModel = await StorageService.instance.getTaleModel(
-      taleID: '312312',
+    TaleModel taleModel = await DatabaseService.instance.getTaleModel(
+      taleID: '13221321321321312',
+    );
+    print(taleModel);
+  }
+
+  void createTale() async {
+    await DatabaseService.instance.createTale(
+      duration: Duration(
+        seconds: 1,
+      ),
+      taleID: Uuid().v4(),
+      title: 'Sound title',
+      taleUrl:
+          'https://static.wikia.nocookie.net/memes9731/images/c/c5/S1200.jpg/revision/latest?cb=20200601181627&path-prefix=ru',
     );
   }
 
-  void getAllTaleModels() async {
-    await StorageService.instance.getAllTaleModels();
+  void updateTaleTitle() async {
+    await DatabaseService.instance.updateTaleData(
+      taleID: '13221321321321312',
+      isDeleted: true,
+      title: 'xyz',
+    );
   }
+
+  void getTaleModel() async {
+    TaleModel tm = await DatabaseService.instance.getTaleModel(
+      taleID: '13221321321321312',
+    );
+    print(tm);
+  }
+
+  Future<void> getAllTalesModels() async {
+    List<TaleModel> tm = await DatabaseService.instance.getAllTaleModels();
+  }
+
+  void changeDeletedStatus() async {}
+
+  void removeTale() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +146,6 @@ class _TestState extends State<Test> {
         width: double.infinity,
         child: ListView(
           children: [
-            TextButton(
-              onPressed: getFile,
-              child: Text(
-                'GetFile',
-                style: TextStyle(fontSize: 24),
-              ),
-            ),
             TextButton(
               onPressed: createCollection,
               child: Text(
@@ -214,9 +231,51 @@ class _TestState extends State<Test> {
               ),
             ),
             TextButton(
-              onPressed: getAllTaleModels,
+              onPressed: getAllTalesModels,
               child: Text(
                 'get all tales models',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: createTale,
+              child: Text(
+                'create tale',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: updateTaleTitle,
+              child: Text(
+                'update tale title',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: changeDeletedStatus,
+              child: Text(
+                'change status on "deleted"',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: removeTale,
+              child: Text(
+                'remove tile',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: getTaleModel,
+              child: Text(
+                'getTaleModel',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: getAllTalesModels,
+              child: Text(
+                'getAllTaleModels',
                 style: TextStyle(fontSize: 24),
               ),
             )

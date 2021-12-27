@@ -108,7 +108,7 @@ class _TestState extends State<Test> {
       duration: const Duration(
         seconds: 1,
       ),
-      taleID: const Uuid().v4(),
+      taleID: '5cb206b3-f00f-4178-9dda-7a0f5e89e6a8',
       title: 'Sound title',
       taleUrl:
           'https://static.wikia.nocookie.net/memes9731/images/c/c5/S1200.jpg/revision/latest?cb=20200601181627&path-prefix=ru',
@@ -117,7 +117,7 @@ class _TestState extends State<Test> {
 
   void updateTaleTitle() async {
     await DatabaseService.instance.updateTaleData(
-      taleID: '13221321321321312',
+      taleID: '5cb206b3-f00f-4178-9dda-7a0f5e89e6a8',
       isDeleted: true,
       title: 'xyz',
     );
@@ -125,20 +125,26 @@ class _TestState extends State<Test> {
 
   void getTaleModel() async {
     TaleModel tm = await DatabaseService.instance.getTaleModel(
-      taleID: '13221321321321312',
+      taleID: '5cb206b3-f00f-4178-9dda-7a0f5e89e6a8',
     );
-    print(tm);
+    print(tm.toMap());
   }
 
   Future<void> getAllTalesModels() async {
     List<TaleModel> tm = await DatabaseService.instance.getAllTaleModels();
+    tm.forEach((element) {
+      print(element.ID);
+    });
   }
 
   void removeTale() async {}
 
   void getFilteredTales() async {
-    List<TaleModel> lt = await DatabaseService.instance.getFilteringTales('f');
-    print(lt);
+    List<TaleModel> lt =
+        await DatabaseService.instance.getFilteringTales('Sound');
+    lt.forEach((element) {
+      print(element.ID);
+    });
   }
 
   @override
@@ -227,9 +233,9 @@ class _TestState extends State<Test> {
               ),
             ),
             TextButton(
-              onPressed: getAudioModel,
+              onPressed: getTaleModel,
               child: const Text(
-                'get audio model',
+                'getTaleModel',
                 style: TextStyle(fontSize: 24),
               ),
             ),

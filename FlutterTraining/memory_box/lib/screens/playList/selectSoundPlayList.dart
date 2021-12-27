@@ -65,6 +65,9 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
     super.dispose();
   }
 
+  Future<List<TaleModel>> futureLoaderTales =
+      DatabaseService.instance.getAllTaleModels();
+
   @override
   Widget build(BuildContext context) {
     void _undoChanges() {
@@ -85,6 +88,15 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
           playListCreationState: _playListState,
         ),
       );
+    }
+
+    void search(String value) async {
+      futureLoaderTales = DatabaseService.instance.getFilteringTales(value);
+      final q = await futureLoaderTales;
+      q.forEach((element) {
+        print(element.title);
+      });
+      setState(() {});
     }
 
     return BackgroundPattern(
@@ -150,24 +162,35 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
               const SizedBox(
                 height: 15,
               ),
-              const Search(),
+              Search(
+                onChange: search,
+              ),
               const SizedBox(
                 height: 45,
               ),
               Expanded(
                 child: FutureBuilder(
-                  future: DatabaseService.instance.getAllTaleModels(),
+                  future: futureLoaderTales,
                   builder: (
                     BuildContext context,
                     AsyncSnapshot<List<TaleModel>> snapshot,
                   ) {
+                    print('------');
+                    snapshot.data?.forEach((element) {
+                      print(element.title);
+                    });
                     if (snapshot.connectionState == ConnectionState.done) {
                       return ListView.builder(
                         itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index) {
+                          String id = snapshot.data?[index].ID ?? '';
+
                           return AudioSelectionTile(
                             subscribeSound: _toogleSubscriptionTale,
                             taleModel: snapshot.data?[index],
+                            isSelected: _taleModels?.contains(id) == true
+                                ? true
+                                : false,
                           );
                         },
                       );
@@ -190,17 +213,25 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
 class AudioSelectionTile extends StatefulWidget {
   const AudioSelectionTile({
     required this.subscribeSound,
+    this.isSelected = false,
     this.taleModel,
     Key? key,
   }) : super(key: key);
   final StreamController<String?> subscribeSound;
   final TaleModel? taleModel;
+  final bool isSelected;
   @override
   _AudioSelectionTileState createState() => _AudioSelectionTileState();
 }
 
 class _AudioSelectionTileState extends State<AudioSelectionTile> {
   bool isSelected = false;
+
+  @override
+  void initState() {
+    isSelected = widget.isSelected;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

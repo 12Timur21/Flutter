@@ -80,12 +80,11 @@ class DatabaseService {
       'taleUrl': taleUrl,
     };
 
-    DocumentSnapshot documentSnapshot = await _talesCollection.doc(uid).get();
-    if (documentSnapshot.exists) {
-      await _talesCollection.doc(uid).update({taleID: taleCollection});
-    } else {
-      await _talesCollection.doc(uid).set({taleID: taleCollection});
-    }
+    await _talesCollection
+        .doc(uid)
+        .collection('allTales')
+        .doc(taleID)
+        .set(taleCollection);
   }
 
   Future<void> updateTaleData({
@@ -99,36 +98,40 @@ class DatabaseService {
     Map<String, dynamic>? taleCollection =
         documentSnapshot.data() as Map<String, dynamic>?;
 
-    taleCollection = taleCollection?[taleID];
-
     if (title != null) taleCollection?['title'] = title;
     if (isDeleted != null) taleCollection?['isDeleted'] = isDeleted;
 
-    await _talesCollection.doc(uid).update({taleID: taleCollection});
+    if (taleCollection != null) {
+      await _talesCollection
+          .doc(uid)
+          .collection('allTales')
+          .doc(taleID)
+          .update(taleCollection);
+    }
   }
 
   Future<TaleModel> getTaleModel({
     required String taleID,
   }) async {
-    TaleModel taleModel = TaleModel();
-
     String? uid = AuthService.userID;
-    final documentSnapshot = await _talesCollection.doc(uid).get();
+    final documentSnapshot = await _talesCollection
+        .doc(uid)
+        .collection('allTales')
+        .doc(taleID)
+        .get();
 
-    Map<String, dynamic>? taleCollection =
+    Map<String, dynamic>? tale =
         documentSnapshot.data() as Map<String, dynamic>?;
 
-    taleCollection = taleCollection?[taleID];
-
-    taleModel.duration = Duration(
-      milliseconds: taleCollection?['durationInMS'],
+    return TaleModel(
+      ID: tale?['taleID'],
+      title: tale?['title'],
+      url: tale?['taleUrl'],
+      isDeleted: tale?['isDeleted'],
+      duration: Duration(
+        milliseconds: tale?['durationInMS'],
+      ),
     );
-    taleModel.title = taleCollection?['title'];
-    taleModel.ID = taleID;
-    taleModel.url = taleCollection?['taleUrl'];
-    taleModel.isDeleted = taleCollection?['isDeleted'];
-
-    return taleModel;
   }
 
   //List<TaleModel>
@@ -136,12 +139,12 @@ class DatabaseService {
     List<TaleModel> listTaleModels = [];
 
     String? uid = AuthService.userID;
-    final documentSnapshot = await _talesCollection.doc(uid).get();
+    final documentSnapshot =
+        await _talesCollection.doc(uid).collection('allTales').get();
 
-    Map<String, dynamic>? taleCollection =
-        documentSnapshot.data() as Map<String, dynamic>?;
+    final taleCollection = documentSnapshot.docs;
 
-    taleCollection?.forEach((key, value) {
+    taleCollection.asMap().forEach((key, value) {
       listTaleModels.add(
         TaleModel(
           isDeleted: value['isDeleted'],
@@ -154,37 +157,39 @@ class DatabaseService {
         ),
       );
     });
+
     return listTaleModels;
   }
 
   Future<List<TaleModel>> getFilteringTales(String taleTitle) async {
     List<TaleModel> listTaleModels = [];
 
+    //!учитывать регистр
     String? uid = AuthService.userID;
-    final x = _talesCollection.doc(uid).collection('mas').orderBy('qqq');
-    final z = await x.get();
-    print(x);
-    // final z = await _talesCollection.doc(uid).snapshots().forEach((element) {
-    //   print(element);
-    //   print(element.data());
-    // });
-    // print(z);
+    final collectionReference = _talesCollection
+        .doc(uid)
+        .collection('allTales')
+        .where('title', isGreaterThanOrEqualTo: taleTitle)
+        .where(
+          'title',
+          isLessThanOrEqualTo: taleTitle + '\uf8ff',
+        );
 
-    //     .where(
-    //       'qqq',
-    //       isEqualTo: '222',
-    //     )
-    //     .get();
-    // final data = z.docs.forEach((element) {
-    //   print(element.data());
-    // });
-    // final x = await z;
-    // x.docs.forEach((element) {
-    //   print(element.data());
-    // });
-    // QuerySnapshot<Map<String, dynamic>> mp = await documentSnapshot.get();
+    final snapshot = await collectionReference.get();
 
-    // mp.docChanges.map((e) => print(e.doc));
+    snapshot.docs.asMap().forEach((key, value) {
+      listTaleModels.add(
+        TaleModel(
+          isDeleted: value['isDeleted'],
+          ID: value['taleID'],
+          duration: Duration(
+            milliseconds: value['durationInMS'],
+          ),
+          title: value['title'],
+          url: value['taleUrl'],
+        ),
+      );
+    });
 
     return listTaleModels;
   }

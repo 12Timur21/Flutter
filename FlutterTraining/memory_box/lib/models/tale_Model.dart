@@ -18,7 +18,7 @@ class TaleModel {
     return {
       'title': title ?? '',
       'id': ID ?? 0,
-      'duration': duration?.inMilliseconds.toString() ?? Duration.zero,
+      'duration': duration ?? Duration.zero,
       'isDeleted': isDeleted ?? false,
     };
   }

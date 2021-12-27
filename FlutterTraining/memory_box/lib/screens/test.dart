@@ -22,7 +22,7 @@ class _TestState extends State<Test> {
 
   void createCollection() {
     DatabaseService.instance.createPlayList(
-      playListID: Uuid().v4(),
+      playListID: const Uuid().v4(),
       title: 'Colec',
       description: 'dsadsadsasa',
     );
@@ -58,9 +58,9 @@ class _TestState extends State<Test> {
   void uploadAudioFile() {
     StorageService.instance.uploadTaleFIle(
       file: File('sdcard/download/test2.aac'),
-      taleID: Uuid().v4(),
+      taleID: const Uuid().v4(),
       title: '2132121',
-      duration: Duration(milliseconds: 35000),
+      duration: const Duration(milliseconds: 35000),
     );
   }
 
@@ -105,10 +105,10 @@ class _TestState extends State<Test> {
 
   void createTale() async {
     await DatabaseService.instance.createTale(
-      duration: Duration(
+      duration: const Duration(
         seconds: 1,
       ),
-      taleID: Uuid().v4(),
+      taleID: const Uuid().v4(),
       title: 'Sound title',
       taleUrl:
           'https://static.wikia.nocookie.net/memes9731/images/c/c5/S1200.jpg/revision/latest?cb=20200601181627&path-prefix=ru',
@@ -134,9 +134,12 @@ class _TestState extends State<Test> {
     List<TaleModel> tm = await DatabaseService.instance.getAllTaleModels();
   }
 
-  void changeDeletedStatus() async {}
-
   void removeTale() async {}
+
+  void getFilteredTales() async {
+    List<TaleModel> lt = await DatabaseService.instance.getFilteringTales('f');
+    print(lt);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,135 +151,135 @@ class _TestState extends State<Test> {
           children: [
             TextButton(
               onPressed: createCollection,
-              child: Text(
+              child: const Text(
                 'Create collection',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: updateCollection,
-              child: Text(
+              child: const Text(
                 'Update collection',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: deleteCollection,
-              child: Text(
+              child: const Text(
                 'Delete collection',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: uploadCoverFile,
-              child: Text(
+              child: const Text(
                 'Upload play list cover file',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: deletePlayListCovereCover,
-              child: Text(
+              child: const Text(
                 'Delete play list cover file',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: uploadAudioFile,
-              child: Text(
+              child: const Text(
                 'Upload audio fIle',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: deleteAudioFile,
-              child: Text(
+              child: const Text(
                 'Delete audio file',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: addTalesToPlayList,
-              child: Text(
+              child: const Text(
                 'Add tales to play list',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: getPlayList,
-              child: Text(
+              child: const Text(
                 'Get play list',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: removeTalesFromPlayList,
-              child: Text(
+              child: const Text(
                 'Remove tales from play list',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: getTaleMetadata,
-              child: Text(
+              child: const Text(
                 'Get tale Metadata',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: getAudioModel,
-              child: Text(
+              child: const Text(
                 'get audio model',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: getAllTalesModels,
-              child: Text(
+              child: const Text(
                 'get all tales models',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: createTale,
-              child: Text(
+              child: const Text(
                 'create tale',
-                style: TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: updateTaleTitle,
-              child: Text(
+              child: const Text(
                 'update tale title',
                 style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
-              onPressed: changeDeletedStatus,
-              child: Text(
-                'change status on "deleted"',
-                style: TextStyle(fontSize: 24),
-              ),
-            ),
-            TextButton(
               onPressed: removeTale,
-              child: Text(
+              child: const Text(
                 'remove tile',
-                style: TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: getTaleModel,
-              child: Text(
+              child: const Text(
                 'getTaleModel',
-                style: TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: getAllTalesModels,
-              child: Text(
+              child: const Text(
                 'getAllTaleModels',
                 style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: getFilteredTales,
+              child: const Text(
+                'get Filtered Tales',
+                style: const TextStyle(fontSize: 24),
               ),
             )
           ],

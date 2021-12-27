@@ -161,7 +161,7 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
                     BuildContext context,
                     AsyncSnapshot<List<TaleModel>> snapshot,
                   ) {
-                    if (snapshot.connectionState == ConnectionState.done)
+                    if (snapshot.connectionState == ConnectionState.done) {
                       return ListView.builder(
                         itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index) {
@@ -171,7 +171,12 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
                           );
                         },
                       );
-                  else{}
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
                 ),
               ),
             ],

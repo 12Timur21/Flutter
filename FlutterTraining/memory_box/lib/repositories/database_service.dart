@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/models/user_model.dart';
@@ -6,15 +8,15 @@ import 'package:uuid/uuid.dart';
 import 'auth_service.dart';
 
 class DatabaseService {
-  static FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static FirebaseFirestore _firebase = FirebaseFirestore.instance;
   DatabaseService._();
   static DatabaseService instance = DatabaseService._();
 
   //**[Start] Refs
-  final CollectionReference _userCollection = _firestore.collection('users');
-  final CollectionReference _talesCollection = _firestore.collection('tales');
+  final CollectionReference _userCollection = _firebase.collection('users');
+  final CollectionReference _talesCollection = _firebase.collection('tales');
   final CollectionReference _playListsCollection =
-      _firestore.collection('playLists');
+      _firebase.collection('playLists');
   //**[Start] Refs
 
   //??[Start] User
@@ -152,6 +154,38 @@ class DatabaseService {
         ),
       );
     });
+    return listTaleModels;
+  }
+
+  Future<List<TaleModel>> getFilteringTales(String taleTitle) async {
+    List<TaleModel> listTaleModels = [];
+
+    String? uid = AuthService.userID;
+    final x = _talesCollection.doc(uid).collection('mas').orderBy('qqq');
+    final z = await x.get();
+    print(x);
+    // final z = await _talesCollection.doc(uid).snapshots().forEach((element) {
+    //   print(element);
+    //   print(element.data());
+    // });
+    // print(z);
+
+    //     .where(
+    //       'qqq',
+    //       isEqualTo: '222',
+    //     )
+    //     .get();
+    // final data = z.docs.forEach((element) {
+    //   print(element.data());
+    // });
+    // final x = await z;
+    // x.docs.forEach((element) {
+    //   print(element.data());
+    // });
+    // QuerySnapshot<Map<String, dynamic>> mp = await documentSnapshot.get();
+
+    // mp.docChanges.map((e) => print(e.doc));
+
     return listTaleModels;
   }
 

@@ -1,12 +1,7 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:math';
-
 import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/services/soundPlayer.dart';
-import 'package:meta/meta.dart';
 
 part 'audioplayer_event.dart';
 part 'audioplayer_state.dart';
@@ -40,7 +35,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
         );
 
         timerController = Stream.periodic(
-          Duration(seconds: 1),
+          const Duration(seconds: 1),
         ).listen((event) {
           add(UpdatePlayDuration());
         });

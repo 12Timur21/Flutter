@@ -4,9 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_event.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
-import 'package:memory_box/screens/audio_list.dart';
-import 'package:memory_box/screens/mainPage.dart';
-import 'package:memory_box/screens/subscription.dart';
 
 class CustomNavigationBar extends StatelessWidget {
   const CustomNavigationBar({Key? key}) : super(key: key);
@@ -88,7 +85,9 @@ class CustomNavigationBar extends StatelessWidget {
               svgUrl: 'assets/icons/Profile.svg',
               callback: () {
                 navigationBloc.add(
-                  NavigateTo(NavigationPages.ProfilePage),
+                  const NavigateTo(
+                    NavigationPages.profilePage,
+                  ),
                 );
               },
             ),
@@ -97,7 +96,7 @@ class CustomNavigationBar extends StatelessWidget {
               svgUrl: 'assets/icons/Category.svg',
               callback: () {
                 navigationBloc.add(
-                  NavigateTo(NavigationPages.CollectionsListPage),
+                  const NavigateTo(NavigationPages.collectionsListPage),
                 );
               },
             ),
@@ -106,7 +105,7 @@ class CustomNavigationBar extends StatelessWidget {
               svgUrl: 'assets/icons/Paper.svg',
               callback: () {
                 navigationBloc.add(
-                  NavigateTo(NavigationPages.AudioListPage),
+                  const NavigateTo(NavigationPages.audioListPage),
                 );
               },
             ),
@@ -128,7 +127,7 @@ class CustomNavigationBar extends StatelessWidget {
               svgUrl: 'assets/icons/Wallet.svg',
               callback: () {
                 navigationBloc.add(
-                  NavigateTo(NavigationPages.SubscriptionPage),
+                  const NavigateTo(NavigationPages.subscriptionPage),
                 );
                 // Navigator.pushNamed(
                 //   context,

@@ -147,6 +147,22 @@ class _TestState extends State<Test> {
     });
   }
 
+  void getFewTales() async {
+    List<TaleModel> z = await DatabaseService.instance.getFewTaleModels(
+      taleIDs: [
+        '5cb206b3-f00f-4178-9dda-7a0f5e89e6a8',
+        '4ae16325-8934-4286-91d8-1c29b5786c56,'
+      ],
+    );
+  }
+
+  void getAllPlaylists() async {
+    final result = await DatabaseService.instance.getAllPlayList();
+    result?.forEach((key, value) {
+      print('$key, $value');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -250,7 +266,7 @@ class _TestState extends State<Test> {
               onPressed: createTale,
               child: const Text(
                 'create tale',
-                style: const TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
@@ -264,14 +280,14 @@ class _TestState extends State<Test> {
               onPressed: removeTale,
               child: const Text(
                 'remove tile',
-                style: const TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
               onPressed: getTaleModel,
               child: const Text(
                 'getTaleModel',
-                style: const TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 24),
               ),
             ),
             TextButton(
@@ -285,7 +301,21 @@ class _TestState extends State<Test> {
               onPressed: getFilteredTales,
               child: const Text(
                 'get Filtered Tales',
-                style: const TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: getFewTales,
+              child: const Text(
+                'get few Tales',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: getAllPlaylists,
+              child: const Text(
+                'get all playslits',
+                style: TextStyle(fontSize: 24),
               ),
             )
           ],

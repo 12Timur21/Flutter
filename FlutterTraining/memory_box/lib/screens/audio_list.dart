@@ -13,7 +13,6 @@ class AudioListPage extends StatefulWidget {
 }
 
 class _AudioListPageState extends State<AudioListPage> {
-  @override
   bool isRepitMode = false;
 
   @override
@@ -118,7 +117,7 @@ class _AudioListPageState extends State<AudioListPage> {
                                     'assets/icons/Play.svg',
                                     width: 50,
                                   ),
-                                  Text('Запустить все'),
+                                  const Text('Запустить все'),
                                 ],
                               ),
                             ),
@@ -163,11 +162,11 @@ class _AudioListPageState extends State<AudioListPage> {
                         children: [
                           SvgPicture.asset(
                             'assets/icons/Play.svg',
-                            color: Color.fromRGBO(94, 119, 206, 1),
+                            color: const Color.fromRGBO(94, 119, 206, 1),
                             width: 60,
                           ),
                           Container(
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                               left: 20,
                             ),
                             child: Column(

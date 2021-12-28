@@ -1,18 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';
-import 'package:memory_box/repositories/storage_service.dart';
-import 'package:memory_box/services/soundPlayer.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
 import 'package:memory_box/widgets/bottom_sheetWrapper.dart';
 import 'package:memory_box/widgets/soundControlsButtons.dart';
@@ -66,8 +59,8 @@ class _RecordPreviewState extends State<RecordPreview> {
   void changeRecordingButton() {
     final recorderButtomBloc = BlocProvider.of<RecorderButtomBloc>(context);
     recorderButtomBloc.add(
-      ChangeIcon(
-        RecorderButtonStates.WithIcon,
+      const ChangeIcon(
+        RecorderButtonStates.withIcon,
       ),
     );
   }
@@ -253,8 +246,8 @@ class _RecordPreviewState extends State<RecordPreview> {
               height: 5,
             ),
             Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(
                   Radius.circular(25),
                 ),
               ),
@@ -272,7 +265,7 @@ class _RecordPreviewState extends State<RecordPreview> {
                 width: 270,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Text(
@@ -284,7 +277,7 @@ class _RecordPreviewState extends State<RecordPreview> {
                 fontSize: 24,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Container(
@@ -302,7 +295,7 @@ class _RecordPreviewState extends State<RecordPreview> {
                   fontSize: 14,
                 ),
                 decoration: InputDecoration(
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                     color: Colors.black,
                   ),
                   isDense: true,

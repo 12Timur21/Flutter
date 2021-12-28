@@ -14,7 +14,6 @@ class PlayListCreationState {
   });
 }
 
-@immutable
 abstract class PlayListNavigationState {}
 
 class PlayListPreviewScreen extends PlayListNavigationState {}

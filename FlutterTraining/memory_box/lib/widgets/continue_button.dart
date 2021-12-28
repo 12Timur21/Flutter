@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ContinueButton extends StatefulWidget {
-  ContinueButton({required this.onPress, Key? key}) : super(key: key);
+  ContinueButton({
+    required this.onPress,
+    Key? key,
+  }) : super(key: key);
 
   VoidCallback onPress;
   @override
@@ -11,7 +14,7 @@ class ContinueButton extends StatefulWidget {
 class _ContinueButtonState extends State<ContinueButton> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: widget.onPress,
@@ -19,7 +22,7 @@ class _ContinueButtonState extends State<ContinueButton> {
           padding: const EdgeInsets.symmetric(
             vertical: 20,
           ),
-          primary: Color.fromRGBO(241, 180, 136, 1),
+          primary: const Color.fromRGBO(241, 180, 136, 1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),

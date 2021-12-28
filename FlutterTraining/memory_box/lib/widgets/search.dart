@@ -13,7 +13,7 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     return Container(
       height: 60,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(
           Radius.circular(41),
         ),
@@ -39,7 +39,7 @@ class _SearchState extends State<Search> {
                       color: Color.fromRGBO(58, 58, 85, 0.5),
                     ),
                   ),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'TTNorms',
                     fontWeight: FontWeight.w500,
                     fontSize: 20,

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_event.dart';
-import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
@@ -29,7 +28,7 @@ class _RecordingScreenState extends State<RecordingPage> {
   SoundRecorder recorder = SoundRecorder();
   StreamSubscription<RecordingDisposition>? recorderSubscription;
   Timer? _timer;
-  Duration _audioDuration = Duration(
+  Duration _audioDuration = const Duration(
     hours: 0,
     minutes: 0,
     seconds: 0,
@@ -127,8 +126,8 @@ class _RecordingScreenState extends State<RecordingPage> {
   void changeRecordingButton() {
     final recorderButtomBloc = BlocProvider.of<RecorderButtomBloc>(context);
     recorderButtomBloc.add(
-      ChangeIcon(
-        RecorderButtonStates.WithLine,
+      const ChangeIcon(
+        RecorderButtonStates.withLine,
       ),
     );
   }
@@ -236,7 +235,7 @@ class _RecordingScreenState extends State<RecordingPage> {
               Text(
                 printDurationTime(
                   duration: _audioDuration,
-                  formattingType: FormattingType.HourMinuteSecond,
+                  formattingType: FormattingType.hourMinuteSecond,
                 ),
                 style: const TextStyle(
                   fontFamily: 'TTNorms',

@@ -11,7 +11,7 @@ class UndoButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 20, left: 10),
+      margin: const EdgeInsets.only(top: 20, left: 10),
       width: 60,
       height: 60,
       decoration: const BoxDecoration(

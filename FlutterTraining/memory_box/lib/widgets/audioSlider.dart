@@ -1,9 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/services/soundPlayer.dart';
 import 'package:memory_box/utils/formatting.dart';
 
 class AudioSlider extends StatefulWidget {
@@ -73,13 +68,13 @@ class _AudioSliderState extends State<AudioSlider> {
               Text(
                 printDurationTime(
                   duration: widget.currentPlayDuration,
-                  formattingType: FormattingType.HourMinute,
+                  formattingType: FormattingType.hourMinute,
                 ),
               ),
               Text(
                 printDurationTime(
                   duration: widget.soundDuration,
-                  formattingType: FormattingType.HourMinute,
+                  formattingType: FormattingType.hourMinute,
                 ),
               ),
             ],

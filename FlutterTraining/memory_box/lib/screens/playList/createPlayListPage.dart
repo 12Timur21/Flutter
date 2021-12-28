@@ -5,10 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
+import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/repositories/storage_service.dart';
-import 'package:memory_box/screens/test.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/tale_selection_tile.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 import 'package:uuid/uuid.dart';
 
@@ -82,7 +83,7 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
       bool isTitleValidate = _formKey.currentState?.validate() ?? false;
       bool isPhotoValidate = validateImageField();
       if (isTitleValidate && isPhotoValidate) {
-        String uuid = Uuid().v4();
+        String uuid = const Uuid().v4();
         _databaseService.createPlayList(
           playListID: uuid,
           title: collectionState.title ?? '',
@@ -131,7 +132,7 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
     }
 
     return BackgroundPattern(
-      patternColor: Color.fromRGBO(113, 165, 159, 1),
+      patternColor: const Color.fromRGBO(113, 165, 159, 1),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
@@ -212,53 +213,51 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
                 const SizedBox(
                   height: 15,
                 ),
-                Container(
-                  child: GestureDetector(
-                    onTap: () {
-                      _pickImage();
-                    },
-                    child: Container(
-                      height: 240,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(246, 246, 246, 0.9),
-                        borderRadius: BorderRadius.circular(15),
-                        border: isImageValid
-                            ? null
-                            : Border.all(
-                                width: 2,
-                                color: Colors.red,
-                              ),
-                        boxShadow: const [
-                          BoxShadow(
-                            offset: Offset(0, 4),
-                            blurRadius: 20,
-                            // spreadRadius: 1,
-                            color: Color.fromRGBO(0, 0, 0, 0.25),
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: collectionState.photo != null
-                                  ? Image.file(
-                                      collectionState.photo ?? File(''),
-                                      fit: BoxFit.fitWidth,
-                                    )
-                                  : Container(),
+                GestureDetector(
+                  onTap: () {
+                    _pickImage();
+                  },
+                  child: Container(
+                    height: 240,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(246, 246, 246, 0.9),
+                      borderRadius: BorderRadius.circular(15),
+                      border: isImageValid
+                          ? null
+                          : Border.all(
+                              width: 2,
+                              color: Colors.red,
                             ),
+                      boxShadow: const [
+                        BoxShadow(
+                          offset: Offset(0, 4),
+                          blurRadius: 20,
+                          // spreadRadius: 1,
+                          color: Color.fromRGBO(0, 0, 0, 0.25),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: collectionState.photo != null
+                                ? Image.file(
+                                    collectionState.photo ?? File(''),
+                                    fit: BoxFit.fitWidth,
+                                  )
+                                : Container(),
                           ),
-                          Center(
-                            child: SvgPicture.asset(
-                              'assets/icons/ChosePhoto.svg',
-                              color: Colors.black,
-                            ),
+                        ),
+                        Center(
+                          child: SvgPicture.asset(
+                            'assets/icons/ChosePhoto.svg',
+                            color: Colors.black,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -292,11 +291,31 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
                 ),
                 //!TEST
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: _test.length,
-                    itemBuilder: (context, index) {
-                      print(_test[index]);
-                      return Text(_test[index]);
+                  child: FutureBuilder(
+                    future: DatabaseService.instance
+                        .getFewTaleModels(taleIDs: ['']),
+                    builder: (
+                      BuildContext context,
+                      AsyncSnapshot<List<TaleModel>> snapshot,
+                    ) {
+                      print('------');
+                      snapshot.data?.forEach((element) {
+                        print(element.title);
+                      });
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return ListView.builder(
+                          itemCount: snapshot.data?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            return TaleSelectionTile(
+                              taleModel: snapshot.data?[index],
+                            );
+                          },
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
                     },
                   ),
                 ),

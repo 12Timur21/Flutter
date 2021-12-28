@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
-import 'dart:ui';
 
 class Visualizer extends StatefulWidget {
   Visualizer({

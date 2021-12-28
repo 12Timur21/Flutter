@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:core';
 import 'dart:io';
 
@@ -20,7 +19,7 @@ class StorageService {
   StorageService._();
   static StorageService instance = StorageService._();
 
-  DatabaseService _database = DatabaseService.instance;
+  final DatabaseService _database = DatabaseService.instance;
 
   String mapDestination({
     required FileType fileType,
@@ -225,7 +224,7 @@ class StorageService {
 
         url = await item.getDownloadURL();
         fullMetadata = await item.getMetadata();
-        customMetadata = fullMetadata.customMetadata as Map<String, dynamic>?;
+        customMetadata = fullMetadata.customMetadata;
 
         taleModel.duration = Duration(
           milliseconds: int.parse(
@@ -298,6 +297,18 @@ class StorageService {
     );
 
     await _cloud.ref().child('/$destination').delete();
+  }
+
+  Future<void> getPlayListCoverURL({
+    required String coverID,
+  }) async {
+    final destination = mapDestination(
+      uid: AuthService.userID,
+      fileName: coverID,
+      fileType: FileType.playListCover,
+    );
+
+    await _cloud.ref().child('/$destination').getDownloadURL();
   }
   //??[End] PlayList
 }

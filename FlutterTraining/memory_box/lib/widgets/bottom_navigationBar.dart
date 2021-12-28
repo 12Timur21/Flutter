@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_event.dart';
 import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
 import 'package:memory_box/widgets/RecorderButtons/default_recorder_button.dart';
@@ -34,14 +33,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
     final navigationBloc = BlocProvider.of<NavigationBloc>(context);
     NavigationPages? navigationPage;
 
-    if (index == 0) navigationPage = NavigationPages.HomePage;
-    if (index == 1) navigationPage = NavigationPages.CollectionsListPage;
+    if (index == 0) navigationPage = NavigationPages.homePage;
+    if (index == 1) navigationPage = NavigationPages.collectionsListPage;
     if (index == 2) {
       widget.openButtomSheet();
       return;
     }
-    if (index == 3) navigationPage = NavigationPages.AudioListPage;
-    if (index == 4) navigationPage = NavigationPages.ProfilePage;
+    if (index == 3) navigationPage = NavigationPages.audioListPage;
+    if (index == 4) navigationPage = NavigationPages.profilePage;
 
     setState(() {
       _selectedIndex = index;
@@ -102,21 +101,21 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationBarItem(
             icon: BlocBuilder<RecorderButtomBloc, RecorderButtonState>(
               builder: (BuildContext context, RecorderButtonState state) {
-                if (state.selectedIcon == RecorderButtonStates.WithIcon) {
-                  return RecorderButtonWithIcon();
+                if (state.selectedIcon == RecorderButtonStates.withIcon) {
+                  return const RecorderButtonWithIcon();
                 }
-                if (state.selectedIcon == RecorderButtonStates.WithLine) {
-                  return RecorderButtonWithLine();
+                if (state.selectedIcon == RecorderButtonStates.withLine) {
+                  return const RecorderButtonWithLine();
                 }
-                if (state.selectedIcon == RecorderButtonStates.Default) {
-                  return DefaultRecorderButton();
+                if (state.selectedIcon == RecorderButtonStates.defaultIcon) {
+                  return const DefaultRecorderButton();
                 }
                 return Container();
               },
             ),
             title: Text(
               'Запись',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color.fromRGBO(241, 180, 136, 1),
               ).merge(bottomNavigationBarTextStyle),
             ),

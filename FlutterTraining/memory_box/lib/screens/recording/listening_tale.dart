@@ -64,7 +64,7 @@ class _ListeningPageState extends State<ListeningPage> {
     final recorderButtomBloc = BlocProvider.of<RecorderButtomBloc>(context);
     recorderButtomBloc.add(
       const ChangeIcon(
-        RecorderButtonStates.Default,
+        RecorderButtonStates.defaultIcon,
       ),
     );
   }
@@ -166,26 +166,23 @@ class _ListeningPageState extends State<ListeningPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  child: Row(
-                    children: [
-                      IconButton(
-                        padding: const EdgeInsets.only(right: 20),
-                        onPressed: shareSound,
-                        icon: SvgPicture.asset('assets/icons/Share.svg'),
-                      ),
-                      IconButton(
-                        onPressed: localDownloadSound,
-                        icon:
-                            SvgPicture.asset('assets/icons/PaperDownload.svg'),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.only(left: 20),
-                        onPressed: deleteSound,
-                        icon: SvgPicture.asset('assets/icons/Delete.svg'),
-                      ),
-                    ],
-                  ),
+                Row(
+                  children: [
+                    IconButton(
+                      padding: const EdgeInsets.only(right: 20),
+                      onPressed: shareSound,
+                      icon: SvgPicture.asset('assets/icons/Share.svg'),
+                    ),
+                    IconButton(
+                      onPressed: localDownloadSound,
+                      icon: SvgPicture.asset('assets/icons/PaperDownload.svg'),
+                    ),
+                    IconButton(
+                      padding: const EdgeInsets.only(left: 20),
+                      onPressed: deleteSound,
+                      icon: SvgPicture.asset('assets/icons/Delete.svg'),
+                    ),
+                  ],
                 ),
                 TextButton(
                   onPressed: saveSound,

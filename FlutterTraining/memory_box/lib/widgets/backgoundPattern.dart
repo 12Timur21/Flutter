@@ -6,7 +6,7 @@ class BackgroundPattern extends StatelessWidget {
     this.patternColor = const Color.fromRGBO(140, 132, 226, 1),
     this.height = 275,
     Key? key,
-  });
+  }) : super(key: key);
 
   final Widget child;
   final Color patternColor;

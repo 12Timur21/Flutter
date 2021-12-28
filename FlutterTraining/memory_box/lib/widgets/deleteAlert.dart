@@ -15,16 +15,16 @@ class DeleteAlert extends StatelessWidget {
     return Align(
       alignment: Alignment.center,
       child: AlertDialog(
-        contentPadding: EdgeInsets.symmetric(vertical: 30),
+        contentPadding: const EdgeInsets.symmetric(vertical: 30),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(30),
           ),
         ),
-        titlePadding: EdgeInsets.only(
+        titlePadding: const EdgeInsets.only(
           top: 55,
         ),
-        actionsPadding: EdgeInsets.only(
+        actionsPadding: const EdgeInsets.only(
           bottom: 15,
         ),
         title: Text(
@@ -55,11 +55,11 @@ class DeleteAlert extends StatelessWidget {
                   Navigator.pop(context, true);
                 },
                 style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     vertical: 12,
                     horizontal: 40,
                   ),
-                  backgroundColor: Color.fromRGBO(226, 119, 119, 1),
+                  backgroundColor: const Color.fromRGBO(226, 119, 119, 1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),
                   ),
@@ -79,12 +79,12 @@ class DeleteAlert extends StatelessWidget {
                   Navigator.pop(context, false);
                 },
                 style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     vertical: 12,
                     horizontal: 40,
                   ),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(
+                    side: const BorderSide(
                       color: Color.fromRGBO(140, 132, 226, 1),
                       width: 2.0,
                     ),

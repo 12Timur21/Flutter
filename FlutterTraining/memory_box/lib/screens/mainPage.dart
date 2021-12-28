@@ -27,7 +27,7 @@ import 'recording/recording_page.dart';
 class MainPage extends StatefulWidget {
   static const routeName = 'MainPage';
 
-  MainPage({Key? key}) : super(key: key);
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -70,7 +70,7 @@ class _MainPageState extends State<MainPage> {
                     return const ListeningPage();
                   }
                   if (state is PreviewPageState) {
-                    return RecordPreview();
+                    return const RecordPreview();
                   }
                   return Container();
                 },
@@ -95,8 +95,8 @@ class _MainPageState extends State<MainPage> {
   void changeRecoringButtonToDefault() {
     final recorderButtomBloc = BlocProvider.of<RecorderButtomBloc>(context);
     recorderButtomBloc.add(
-      ChangeIcon(
-        RecorderButtonStates.WithIcon,
+      const ChangeIcon(
+        RecorderButtonStates.withIcon,
       ),
     );
   }
@@ -109,10 +109,10 @@ class _MainPageState extends State<MainPage> {
       drawer: const CustomNavigationBar(),
       body: BlocBuilder<NavigationBloc, NavigationState>(
         builder: (context, state) {
-          if (state.selectedItem == NavigationPages.HomePage) {
+          if (state.selectedItem == NavigationPages.homePage) {
             return const Test();
           }
-          if (state.selectedItem == NavigationPages.CollectionsListPage) {
+          if (state.selectedItem == NavigationPages.collectionsListPage) {
             return BlocBuilder<PlayListNavigationBloc, PlayListNavigationState>(
               builder: (context, state) {
                 if (state is PlayListCreationScreen) {
@@ -129,14 +129,14 @@ class _MainPageState extends State<MainPage> {
               },
             );
           }
-          if (state.selectedItem == NavigationPages.AudioListPage) {
+          if (state.selectedItem == NavigationPages.audioListPage) {
             return const AudioListPage();
           }
-          if (state.selectedItem == NavigationPages.ProfilePage) {
+          if (state.selectedItem == NavigationPages.profilePage) {
             return ProfilePage();
           }
-          if (state.selectedItem == NavigationPages.SubscriptionPage) {
-            return SubscriptionPage();
+          if (state.selectedItem == NavigationPages.subscriptionPage) {
+            return const SubscriptionPage();
           }
 
           return Container();

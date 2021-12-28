@@ -1,4 +1,4 @@
-enum FormattingType { HourMinute, HourMinuteWithOneDigits, HourMinuteSecond }
+enum FormattingType { hourMinute, hourMinuteWithOneDigits, hourMinuteSecond }
 
 String printDurationTime({
   required Duration? duration,
@@ -10,9 +10,9 @@ String printDurationTime({
     String oneDigitHours = duration.inHours.remainder(60).toString();
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
 
-    if (formattingType == FormattingType.HourMinute) {
+    if (formattingType == FormattingType.hourMinute) {
       return "$twoDigitMinutes:$twoDigitSeconds";
-    } else if (formattingType == FormattingType.HourMinuteWithOneDigits) {
+    } else if (formattingType == FormattingType.hourMinuteWithOneDigits) {
       return "$oneDigitHours:$twoDigitMinutes";
     } else {
       return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";

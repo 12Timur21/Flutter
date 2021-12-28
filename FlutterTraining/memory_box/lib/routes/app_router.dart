@@ -4,7 +4,6 @@ import 'package:memory_box/screens/registration/gratitudePage.dart';
 import 'package:memory_box/screens/registration/registrationPage.dart';
 import 'package:memory_box/screens/registration/verifyOTPPage.dart';
 import 'package:memory_box/screens/root.dart';
-import 'package:memory_box/screens/subscription.dart';
 
 class AppRouter {
   const AppRouter._();
@@ -37,7 +36,7 @@ class AppRouter {
         break;
 
       case MainPage.routeName:
-        builder = (_) => MainPage();
+        builder = (_) => const MainPage();
         break;
 
       default:

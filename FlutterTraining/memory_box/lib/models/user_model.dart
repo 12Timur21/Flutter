@@ -32,7 +32,6 @@ class UserModel {
       String enumValue = value.toString().split('.').last;
 
       if (enumValue == json['subscriptionType']) {
-        print(value);
         subscriptionType = value;
       }
     }

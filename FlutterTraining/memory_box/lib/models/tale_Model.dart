@@ -14,7 +14,6 @@ class TaleModel {
   });
 
   Map<String, dynamic> toMap() {
-    print(duration?.inMilliseconds.toString());
     return {
       'title': title ?? '',
       'id': ID ?? 0,

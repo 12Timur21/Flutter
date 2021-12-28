@@ -1,11 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/models/verify_auth_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
-import 'package:meta/meta.dart';
-
 part 'registration_event.dart';
 part 'registration_state.dart';
 
@@ -40,8 +36,6 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
       }
     }
     if (event is VerifyOTPCode) {
-      print(event.smsCode);
-      print(event.verifictionId);
       UserModel? userModel = await _authService.verifyOTPCode(
         smsCode: event.smsCode,
         verifictionId: event.verifictionId,

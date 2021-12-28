@@ -1,14 +1,11 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/models/user_model.dart';
-import 'package:uuid/uuid.dart';
 
 import 'auth_service.dart';
 
 class DatabaseService {
-  static FirebaseFirestore _firebase = FirebaseFirestore.instance;
+  static final FirebaseFirestore _firebase = FirebaseFirestore.instance;
   DatabaseService._();
   static DatabaseService instance = DatabaseService._();
 
@@ -120,8 +117,7 @@ class DatabaseService {
         .doc(taleID)
         .get();
 
-    Map<String, dynamic>? tale =
-        documentSnapshot.data() as Map<String, dynamic>?;
+    Map<String, dynamic>? tale = documentSnapshot.data();
 
     return TaleModel(
       ID: tale?['taleID'],
@@ -134,7 +130,43 @@ class DatabaseService {
     );
   }
 
-  //List<TaleModel>
+  Future<List<TaleModel>> getFewTaleModels({
+    required List<String> taleIDs,
+  }) async {
+    List<TaleModel> listTaleModels = [];
+
+    String? uid = AuthService.userID;
+
+    final documentSnapshot =
+        _talesCollection.doc(uid).collection('allTales').where(
+              'taleID',
+              whereIn: taleIDs,
+            );
+
+    QuerySnapshot<Map<String, dynamic>> taleCollection =
+        await documentSnapshot.get();
+
+    print(taleCollection.docs.length);
+    final value = taleCollection.docs.map((e) {
+      print(e.data());
+    });
+
+    // listTaleModels.add(
+    //   TaleModel(
+    //     isDeleted: value['isDeleted'],
+    //     ID: value['taleID'],
+    //     duration: Duration(
+    //       milliseconds: value['durationInMS'],
+    //     ),
+    //     title: value['title'],
+    //     url: value['taleUrl'],
+    //   ),
+    // );
+
+    // print(listTaleModels);
+    return listTaleModels;
+  }
+
   Future<List<TaleModel>> getAllTaleModels() async {
     List<TaleModel> listTaleModels = [];
 
@@ -256,7 +288,7 @@ class DatabaseService {
         documentSnapshot.data() as Map<String, dynamic>?;
 
     List<dynamic>? tilesIDSList = collection?[playListID]['tilesIDSList'] ?? [];
-    tilesIDSList?..addAll(talesIDs);
+    tilesIDSList?.addAll(talesIDs);
 
     collection?[playListID]['tilesIDSList'] = tilesIDSList;
 
@@ -304,6 +336,19 @@ class DatabaseService {
         documentSnapshot.data() as Map<String, dynamic>?;
 
     return collection?[playListID];
+  }
+
+  Future<Map<String, dynamic>?> getAllPlayList() async {
+    String? uid = AuthService.userID;
+
+    DocumentSnapshot documentSnapshot =
+        await _playListsCollection.doc(uid).get();
+
+    Map<String, dynamic>? collection =
+        documentSnapshot.data() as Map<String, dynamic>?;
+
+    print(collection);
+    return collection;
   }
 
   Future<void> deletePlayList({

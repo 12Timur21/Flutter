@@ -1,15 +1,13 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/models/verify_auth_model.dart';
 
 import 'database_service.dart';
 
 class AuthService {
-  static FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
   const AuthService._();
   static const AuthService instance = AuthService._();
 
@@ -45,8 +43,6 @@ class AuthService {
         completer.completeError(e.message ?? '');
       },
       codeSent: (verficationIds, resendingToken) {
-        print(resendingToken);
-        print('qeqeqeq');
         completer.complete(verficationIds);
       },
       codeAutoRetrievalTimeout: (String e) {

@@ -30,7 +30,7 @@ class CustomSliderThumbRhombus extends SliderComponentShape {
       ..style = PaintingStyle.fill
       ..strokeWidth = 1.0;
 
-    Size size = Size(10, 10);
+    Size size = const Size(10, 10);
 
     Path path0 = Path();
     path0.moveTo(0, size.height * 0.5001000);

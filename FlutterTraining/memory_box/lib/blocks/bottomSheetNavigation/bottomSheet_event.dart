@@ -1,7 +1,3 @@
-import 'package:memory_box/models/tale_model.dart';
-
-import 'bottomSheet_state.dart';
-
 class BottomSheet {}
 
 class OpenRecoderPage extends BottomSheet {

@@ -1,9 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:memory_box/screens/mainPage.dart';
-import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/hintPlate.dart';
 
@@ -88,7 +84,7 @@ class WelcomeScreen extends StatelessWidget {
                   height: 50,
                 ),
                 SvgPicture.asset('assets/icons/Heart.svg'),
-                Spacer(),
+                const Spacer(),
                 const HintPlate(
                   label:
                       'Взрослые иногда нуждаются в \n сказке даже больше, чем дети',

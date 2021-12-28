@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
@@ -11,19 +10,17 @@ import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/repositories/storage_service.dart';
-import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circle_textField.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
 import 'package:memory_box/widgets/custom_navigationBar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memory_box/widgets/undoButton.dart';
-import 'package:provider/single_child_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = 'ProfilePage';
 
-  ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -161,7 +158,7 @@ class _ProfileState extends State<ProfilePage> {
                   },
                 )
               : Container(
-                  margin: EdgeInsets.only(left: 6),
+                  margin: const EdgeInsets.only(left: 6),
                   child: IconButton(
                     icon: SvgPicture.asset(
                       'assets/icons/Burger.svg',
@@ -233,7 +230,7 @@ class _ProfileState extends State<ProfilePage> {
                               _pickImage();
                             },
                             child: Container(
-                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                              color: const Color.fromRGBO(0, 0, 0, 0.5),
                               height: 228,
                               width: 228,
                               child: Center(
@@ -250,7 +247,7 @@ class _ProfileState extends State<ProfilePage> {
                 const SizedBox(
                   height: 5,
                 ),
-                Container(
+                SizedBox(
                   width: 180,
                   child: TextField(
                     controller: _nameInputController,
@@ -331,8 +328,8 @@ class _ProfileState extends State<ProfilePage> {
                 const SizedBox(
                   height: 5,
                 ),
-                if (!_isEditMode) Text('150/500 мб'),
-                Spacer(),
+                if (!_isEditMode) const Text('150/500 мб'),
+                const Spacer(),
                 if (!_isEditMode)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -346,7 +343,7 @@ class _ProfileState extends State<ProfilePage> {
                           //   Root.routeName,
                           // );
                         },
-                        child: Text('Выйти из приложения'),
+                        child: const Text('Выйти из приложения'),
                       ),
                       TextButton(
                         onPressed: () {

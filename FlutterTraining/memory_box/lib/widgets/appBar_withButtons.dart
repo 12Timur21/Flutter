@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -13,7 +12,7 @@ PreferredSizeWidget appBarWithButtons({
     backgroundColor: Colors.transparent,
     centerTitle: true,
     leading: Container(
-      margin: EdgeInsets.only(left: 6),
+      margin: const EdgeInsets.only(left: 6),
       child: IconButton(
         icon: SvgPicture.asset(
           'assets/icons/Burger.svg',

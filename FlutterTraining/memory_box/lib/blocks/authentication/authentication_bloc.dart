@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
@@ -11,7 +10,7 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc() : super(AuthenticationState());
+  AuthenticationBloc() : super(const AuthenticationState());
 
   final AuthService _authService = AuthService.instance;
   final DatabaseService _databaseService = DatabaseService.instance;
@@ -22,7 +21,6 @@ class AuthenticationBloc
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
-    print(event);
     if (event is InitAuth) {
       currentUser = await _authService.currentUser();
       if (currentUser != null) {
@@ -31,7 +29,7 @@ class AuthenticationBloc
           user: currentUser,
         );
       } else {
-        yield AuthenticationState(
+        yield const AuthenticationState(
           status: AuthenticationStatus.notAuthenticated,
           user: null,
         );
@@ -49,7 +47,7 @@ class AuthenticationBloc
     if (event is LogOut) {
       currentUser = null;
       await _authService.signOut();
-      yield AuthenticationState(
+      yield const AuthenticationState(
         status: AuthenticationStatus.notAuthenticated,
         user: null,
       );
@@ -60,7 +58,7 @@ class AuthenticationBloc
       await _databaseService.deleteUserFromFirebase();
       await _authService.deleteAccount();
 
-      yield AuthenticationState(
+      yield const AuthenticationState(
         status: AuthenticationStatus.notAuthenticated,
         user: null,
       );

@@ -18,11 +18,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     Widget subscriptionType(bool isActive) {
       return Container(
         // height: 200,
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: 50,
           bottom: 10,
         ),
-        margin: EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10),
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(
             Radius.circular(25),
@@ -49,7 +49,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 letterSpacing: 0.1,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             const Text(
@@ -60,10 +60,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 fontSize: 16,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            Container(
+            SizedBox(
               width: 100,
               height: 100,
               child: IconButton(
@@ -91,7 +91,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           // backgroundColor: Colors.transparent,
           centerTitle: true,
           leading: Container(
-            margin: EdgeInsets.only(left: 6),
+            margin: const EdgeInsets.only(left: 6),
             child: IconButton(
               icon: SvgPicture.asset(
                 'assets/icons/Burger.svg',
@@ -156,7 +156,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             ),
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 25,
                 ),
                 const Text(
@@ -168,7 +168,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     fontSize: 24,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Row(
@@ -181,7 +181,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Padding(
@@ -204,37 +204,38 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       ),
                       Column(
                         children: <Widget>[
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             children: [
                               SvgPicture.asset(
                                 'assets/icons/Infinite.svg',
                                 width: 25,
                               ),
-                              SizedBox(width: 10),
-                              Text('Неограниченая память'),
+                              const SizedBox(width: 10),
+                              const Text('Неограниченая память'),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Row(
                             children: [
                               SvgPicture.asset(
                                 'assets/icons/CloudUpload.svg',
                                 width: 25,
                               ),
-                              SizedBox(width: 10),
-                              Text('Все файлы хранятся в облаке'),
+                              const SizedBox(width: 10),
+                              const Text('Все файлы хранятся в облаке'),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Row(
                             children: [
                               SvgPicture.asset(
                                 'assets/icons/PaperDownload.svg',
                                 width: 25,
                               ),
-                              SizedBox(width: 10),
-                              Text('Возможность скачивать без ограничений'),
+                              const SizedBox(width: 10),
+                              const Text(
+                                  'Возможность скачивать без ограничений'),
                             ],
                           ),
                         ],
@@ -242,9 +243,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     ],
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 TextButton(
-                  child: Text(
+                  child: const Text(
                     'Подписаться на месяц',
                     style: TextStyle(
                       color: Colors.white,
@@ -257,10 +258,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       ),
                     ),
                     backgroundColor: MaterialStateProperty.all<Color>(
-                      Color.fromRGBO(241, 180, 136, 1),
+                      const Color.fromRGBO(241, 180, 136, 1),
                     ),
                     padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(
+                      const EdgeInsets.symmetric(
                         vertical: 20,
                         horizontal: 100,
                       ),
@@ -268,7 +269,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   ),
                   onPressed: () {},
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
               ],

@@ -22,7 +22,7 @@ Future<void> main() async {
         BlocProvider<NavigationBloc>(
           create: (context) => NavigationBloc(
             const NavigationState(
-              selectedItem: NavigationPages.HomePage,
+              selectedItem: NavigationPages.homePage,
             ),
           ),
         ),
@@ -30,7 +30,7 @@ Future<void> main() async {
           create: (BuildContext context) {
             return RecorderButtomBloc(
               const RecorderButtonState(
-                selectedIcon: RecorderButtonStates.WithIcon,
+                selectedIcon: RecorderButtonStates.withIcon,
               ),
             );
           },

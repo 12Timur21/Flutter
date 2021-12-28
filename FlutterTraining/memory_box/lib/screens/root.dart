@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
 import 'package:memory_box/blocks/registration/registration_bloc.dart';
-import 'package:memory_box/repositories/auth_service.dart';
-import 'package:memory_box/screens/splash_screen.dart';
 import 'mainPage.dart';
 import 'registration/gratitudePage.dart';
 import 'registration/registrationPage.dart';
 import 'registration/registrationSplash.dart';
 import 'registration/verifyOTPPage.dart';
+import 'splash_screen.dart';
 
 class Root extends StatefulWidget {
   static const routeName = 'RootPage';
@@ -36,13 +35,12 @@ class _RootState extends State<Root> {
           // Timer(const Duration(seconds: 3), () {
           //         _authenticationBloc.add(LogIn());
           //       });
-          return MainPage();
+          return const MainPage();
         }
         if (state.status == AuthenticationStatus.notAuthenticated) {
           //--Not auth --//
           return BlocListener<RegistrationBloc, RegistrationState>(
             listener: (context, state) {
-              print(state);
               final _authenticationBloc =
                   BlocProvider.of<AuthenticationBloc>(context);
               if (state is LoginPageLoaded) {
@@ -78,11 +76,11 @@ class _RootState extends State<Root> {
                 _authenticationBloc.add(LogIn());
               }
             },
-            child: LoginSpash(),
+            child: const LoginSpash(),
           );
           //--End not auth --//
         }
-        return SplashScreen();
+        return const SplashScreen();
       },
     );
   }

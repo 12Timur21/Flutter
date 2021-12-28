@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 
 class CircleTextField extends StatelessWidget {
   const CircleTextField({
-    required TextEditingController this.controller,
-    List<TextInputFormatter>? this.inputFormatters,
+    required this.controller,
+    this.inputFormatters,
     this.editable = true,
     Key? key,
   }) : super(key: key);

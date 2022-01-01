@@ -10,6 +10,7 @@ import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
 import 'package:memory_box/screens/audio_list.dart';
+import 'package:memory_box/screens/deletedTales/deleted_tales_list.dart';
 import 'package:memory_box/screens/playList/createPlayListPage.dart';
 import 'package:memory_box/screens/playList/playListPage.dart';
 import 'package:memory_box/screens/playList/selectSoundPlayList.dart';
@@ -137,6 +138,9 @@ class _MainPageState extends State<MainPage> {
           }
           if (state.selectedItem == NavigationPages.subscriptionPage) {
             return const SubscriptionPage();
+          }
+          if (state.selectedItem == NavigationPages.deletedTalesListPage) {
+            return DeletedTalesList();
           }
 
           return Container();

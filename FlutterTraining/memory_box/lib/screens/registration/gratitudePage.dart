@@ -4,6 +4,7 @@ import 'package:memory_box/widgets/backgoundPattern.dart';
 
 class GratitudePage extends StatelessWidget {
   static const routeName = 'GraitudePage';
+
   const GratitudePage({Key? key}) : super(key: key);
 
   @override

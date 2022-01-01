@@ -203,46 +203,46 @@ class StorageService {
   //   return taleModel;
   // }
 
-  Future<List<TaleModel?>> getAllTaleModels() async {
-    final destination = mapDestination(
-      fileType: FileType.tale,
-      uid: AuthService.userID,
-    );
+  // Future<List<TaleModel?>> getAllTaleModels() async {
+  //   final destination = mapDestination(
+  //     fileType: FileType.tale,
+  //     uid: AuthService.userID,
+  //   );
 
-    List<TaleModel> taleModels = [];
+  //   List<TaleModel> taleModels = [];
 
-    try {
-      ListResult listResult =
-          await _cloud.ref().child('/$destination').listAll();
+  //   try {
+  //     ListResult listResult =
+  //         await _cloud.ref().child('/$destination').listAll();
 
-      String? url;
-      FullMetadata fullMetadata;
-      Map<String, dynamic>? customMetadata;
+  //     String? url;
+  //     FullMetadata fullMetadata;
+  //     Map<String, dynamic>? customMetadata;
 
-      for (Reference item in listResult.items) {
-        TaleModel taleModel = TaleModel();
+  //     for (Reference item in listResult.items) {
+  //       TaleModel taleModel = TaleModel();
 
-        url = await item.getDownloadURL();
-        fullMetadata = await item.getMetadata();
-        customMetadata = fullMetadata.customMetadata;
+  //       url = await item.getDownloadURL();
+  //       fullMetadata = await item.getMetadata();
+  //       customMetadata = fullMetadata.customMetadata;
 
-        taleModel.duration = Duration(
-          milliseconds: int.parse(
-            customMetadata?['durationInMS'],
-          ),
-        );
-        taleModel.title = customMetadata?['title'];
-        taleModel.ID = customMetadata?['taleID'];
-        taleModel.url = url;
+  //       taleModel.duration = Duration(
+  //         milliseconds: int.parse(
+  //           customMetadata?['durationInMS'],
+  //         ),
+  //       );
+  //       taleModel.title = customMetadata?['title'];
+  //       taleModel.ID = customMetadata?['taleID'];
+  //       taleModel.url = url;
 
-        taleModels.add(taleModel);
-      }
-    } catch (e) {
-      print(e);
-    }
+  //       taleModels.add(taleModel);
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
 
-    return taleModels;
-  }
+  //   return taleModels;
+  // }
 
   // Future<Map<String, String>?> getTaleMetadata({
   //   required String taleID,

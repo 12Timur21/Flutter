@@ -233,9 +233,9 @@ class _RecordingScreenState extends State<RecordingPage> {
               ),
               //!Преобразовать
               Text(
-                printDurationTime(
+                convertDurationToString(
                   duration: _audioDuration,
-                  formattingType: FormattingType.hourMinuteSecond,
+                  formattingType: TimeFormattingType.hourMinuteSecond,
                 ),
                 style: const TextStyle(
                   fontFamily: 'TTNorms',

@@ -11,4 +11,5 @@ enum NavigationPages {
   profilePage,
   subscriptionPage,
   selectionsPage,
+  deletedTalesListPage
 }

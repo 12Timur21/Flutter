@@ -97,10 +97,10 @@ class _TestState extends State<Test> {
   }
 
   void getAudioModel() async {
-    TaleModel taleModel = await DatabaseService.instance.getTaleModel(
-      taleID: '13221321321321312',
-    );
-    print(taleModel);
+    // TaleModel taleModel = await DatabaseService.instance.getTaleModel(
+    //   taleID: '13221321321321312',
+    // );
+    // print(taleModel);
   }
 
   void createTale() async {
@@ -124,27 +124,27 @@ class _TestState extends State<Test> {
   }
 
   void getTaleModel() async {
-    TaleModel tm = await DatabaseService.instance.getTaleModel(
-      taleID: '5cb206b3-f00f-4178-9dda-7a0f5e89e6a8',
-    );
-    print(tm.toMap());
+    // TaleModel tm = await DatabaseService.instance.getTaleModel(
+    //   taleID: '5cb206b3-f00f-4178-9dda-7a0f5e89e6a8',
+    // );
+    // print(tm.toMap());
   }
 
   Future<void> getAllTalesModels() async {
-    List<TaleModel> tm = await DatabaseService.instance.getAllTaleModels();
-    tm.forEach((element) {
-      print(element.ID);
-    });
+    // List<TaleModel> tm = await DatabaseService.instance.getAllTaleModels();
+    // tm.forEach((element) {
+    //   print(element.ID);
+    // });
   }
 
   void removeTale() async {}
 
   void getFilteredTales() async {
-    List<TaleModel> lt =
-        await DatabaseService.instance.getFilteringTales('Sound');
-    lt.forEach((element) {
-      print(element.ID);
-    });
+    // List<TaleModel> lt =
+    //     await DatabaseService.instance.searchTalesByTitle('Sound');
+    // lt.forEach((element) {
+    //   print(element.ID);
+    // });
   }
 
   void getFewTales() async {
@@ -161,6 +161,16 @@ class _TestState extends State<Test> {
     result?.forEach((key, value) {
       print('$key, $value');
     });
+  }
+
+  void getDeletedTales() {
+    // final result = DatabaseService.instance.getDeletedTales;
+    // result.listen((event) {
+    //   print(event);
+    // });
+    // result?.forEach((key, value) {
+    //   print('$key, $value');
+    // });
   }
 
   @override
@@ -315,6 +325,13 @@ class _TestState extends State<Test> {
               onPressed: getAllPlaylists,
               child: const Text(
                 'get all playslits',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            TextButton(
+              onPressed: getDeletedTales,
+              child: const Text(
+                'get deleted tales',
                 style: TextStyle(fontSize: 24),
               ),
             )

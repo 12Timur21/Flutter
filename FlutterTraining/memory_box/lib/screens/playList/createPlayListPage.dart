@@ -9,7 +9,7 @@ import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/repositories/storage_service.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/tale_selection_tile.dart';
+import 'package:memory_box/widgets/audio_tale_tile.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 import 'package:uuid/uuid.dart';
 
@@ -306,9 +306,10 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
                         return ListView.builder(
                           itemCount: snapshot.data?.length ?? 0,
                           itemBuilder: (context, index) {
-                            return TaleSelectionTile(
-                              taleModel: snapshot.data?[index],
-                            );
+                            return Text('');
+                            // TaleSelectionTile(
+                            //   taleModel: snapshot.data?[index],
+                            // );
                           },
                         );
                       } else {

@@ -107,10 +107,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 if (state.selectedIcon == RecorderButtonStates.withLine) {
                   return const RecorderButtonWithLine();
                 }
-                if (state.selectedIcon == RecorderButtonStates.defaultIcon) {
-                  return const DefaultRecorderButton();
-                }
-                return Container();
+                return const DefaultRecorderButton();
               },
             ),
             title: Text(

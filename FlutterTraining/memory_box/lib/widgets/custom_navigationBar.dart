@@ -117,7 +117,11 @@ class CustomNavigationBar extends StatelessWidget {
             CustomListTyle(
               title: 'Недавно удаленные',
               svgUrl: 'assets/icons/Delete.svg',
-              callback: () {},
+              callback: () {
+                navigationBloc.add(
+                  const NavigateTo(NavigationPages.deletedTalesListPage),
+                );
+              },
             ),
             const SizedBox(
               height: 30,

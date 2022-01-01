@@ -118,10 +118,10 @@ class _PlayListPageState extends State<PlayListPage> {
                             height: 7,
                           ),
                           Text(
-                            '${printDurationTime(
+                            '${convertDurationToString(
                               duration: sumAudioDuration,
                               formattingType:
-                                  FormattingType.hourMinuteWithOneDigits,
+                                  TimeFormattingType.hourMinuteWithOneDigits,
                             )} часа',
                             style: const TextStyle(
                               fontFamily: 'TTNorms',

@@ -4,26 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/models/tale_model.dart';
 
-class TaleSelectionTile extends StatefulWidget {
-  const TaleSelectionTile({
-    this.subscribeSound,
-    this.isSelected = false,
+class AudioTaleTile extends StatefulWidget {
+  AudioTaleTile({
+    // this.subscribeSound,
+    // this.isSelected = false,
     this.taleModel,
+    required this.actions,
     Key? key,
   }) : super(key: key);
-  final StreamController<String?>? subscribeSound;
+  // final StreamController<String?>? subscribeSound;
   final TaleModel? taleModel;
-  final bool isSelected;
+  // final bool isSelected;
+  Widget actions;
   @override
-  _TaleSelectionTileState createState() => _TaleSelectionTileState();
+  _AudioTaleTileState createState() => _AudioTaleTileState();
 }
 
-class _TaleSelectionTileState extends State<TaleSelectionTile> {
+class _AudioTaleTileState extends State<AudioTaleTile> {
   bool isSelected = false;
 
   @override
   void initState() {
-    isSelected = widget.isSelected;
+    // isSelected = widget.isSelected;
     super.initState();
   }
 
@@ -31,7 +33,7 @@ class _TaleSelectionTileState extends State<TaleSelectionTile> {
   Widget build(BuildContext context) {
     void selectSound() {
       setState(() {
-        widget.subscribeSound?.add(widget.taleModel?.ID);
+        // widget.subscribeSound?.add(widget.taleModel?.ID);
         isSelected = !isSelected;
       });
     }
@@ -94,16 +96,7 @@ class _TaleSelectionTileState extends State<TaleSelectionTile> {
           SizedBox(
             width: 60,
             height: 60,
-            child: IconButton(
-              onPressed: selectSound,
-              icon: isSelected
-                  ? SvgPicture.asset(
-                      'assets/icons/SubmitCircle.svg',
-                    )
-                  : SvgPicture.asset(
-                      'assets/icons/Circle.svg',
-                    ),
-            ),
+            child: widget.actions,
           ),
         ],
       ),

@@ -66,15 +66,15 @@ class _AudioSliderState extends State<AudioSlider> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                printDurationTime(
+                convertDurationToString(
                   duration: widget.currentPlayDuration,
-                  formattingType: FormattingType.hourMinute,
+                  formattingType: TimeFormattingType.hourMinute,
                 ),
               ),
               Text(
-                printDurationTime(
+                convertDurationToString(
                   duration: widget.soundDuration,
-                  formattingType: FormattingType.hourMinute,
+                  formattingType: TimeFormattingType.hourMinute,
                 ),
               ),
             ],

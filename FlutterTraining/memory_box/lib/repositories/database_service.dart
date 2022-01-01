@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/models/user_model.dart';
+import 'package:memory_box/utils/formatting.dart';
 
 import 'auth_service.dart';
 
@@ -107,28 +110,28 @@ class DatabaseService {
     }
   }
 
-  Future<TaleModel> getTaleModel({
-    required String taleID,
-  }) async {
-    String? uid = AuthService.userID;
-    final documentSnapshot = await _talesCollection
-        .doc(uid)
-        .collection('allTales')
-        .doc(taleID)
-        .get();
+  // Future<TaleModel> getTaleModel({
+  //   required String taleID,
+  // }) async {
+  //   String? uid = AuthService.userID;
+  //   final documentSnapshot = await _talesCollection
+  //       .doc(uid)
+  //       .collection('allTales')
+  //       .doc(taleID)
+  //       .get();
 
-    Map<String, dynamic>? tale = documentSnapshot.data();
+  //   Map<String, dynamic>? tale = documentSnapshot.data();
 
-    return TaleModel(
-      ID: tale?['taleID'],
-      title: tale?['title'],
-      url: tale?['taleUrl'],
-      isDeleted: tale?['isDeleted'],
-      duration: Duration(
-        milliseconds: tale?['durationInMS'],
-      ),
-    );
-  }
+  //   return TaleModel(
+  //     ID: tale?['taleID'],
+  //     title: tale?['title'],
+  //     url: tale?['taleUrl'],
+  //     isDeleted: tale?['isDeleted'],
+  //     duration: Duration(
+  //       milliseconds: tale?['durationInMS'],
+  //     ),
+  //   );
+  // }
 
   Future<List<TaleModel>> getFewTaleModels({
     required List<String> taleIDs,
@@ -167,64 +170,117 @@ class DatabaseService {
     return listTaleModels;
   }
 
-  Future<List<TaleModel>> getAllTaleModels() async {
-    List<TaleModel> listTaleModels = [];
+  // Future<List<TaleModel>> getAllTaleModels() async {
+  //   List<TaleModel> listTaleModels = [];
 
-    String? uid = AuthService.userID;
-    final documentSnapshot =
-        await _talesCollection.doc(uid).collection('allTales').get();
+  //   String? uid = AuthService.userID;
+  //   final documentSnapshot =
+  //       await _talesCollection.doc(uid).collection('allTales').get();
 
-    final taleCollection = documentSnapshot.docs;
+  //   final taleCollection = documentSnapshot.docs;
 
-    taleCollection.asMap().forEach((key, value) {
-      listTaleModels.add(
-        TaleModel(
-          isDeleted: value['isDeleted'],
-          ID: value['taleID'],
-          duration: Duration(
-            milliseconds: value['durationInMS'],
-          ),
-          title: value['title'],
-          url: value['taleUrl'],
-        ),
-      );
-    });
+  //   taleCollection.asMap().forEach((key, value) {
+  //     listTaleModels.add(
+  //       TaleModel(
+  //         isDeleted: value['isDeleted'],
+  //         ID: value['taleID'],
+  //         duration: Duration(
+  //           milliseconds: value['durationInMS'],
+  //         ),
+  //         title: value['title'],
+  //         url: value['taleUrl'],
+  //       ),
+  //     );
+  //   });
 
-    return listTaleModels;
-  }
+  //   return listTaleModels;
+  // }
 
-  Future<List<TaleModel>> getFilteringTales(String taleTitle) async {
-    List<TaleModel> listTaleModels = [];
+  // Future<List<TaleModel>> searchTalesByTitle(String taleTitle) async {
+  //   List<TaleModel> listTaleModels = [];
 
-    //!учитывать регистр
-    String? uid = AuthService.userID;
-    final collectionReference = _talesCollection
-        .doc(uid)
-        .collection('allTales')
-        .where('title', isGreaterThanOrEqualTo: taleTitle)
-        .where(
-          'title',
-          isLessThanOrEqualTo: taleTitle + '\uf8ff',
-        );
+  //   //!учитывать регистр
+  //   String? uid = AuthService.userID;
+  //   final collectionReference = _talesCollection
+  //       .doc(uid)
+  //       .collection('allTales')
+  //       .where('title', isGreaterThanOrEqualTo: taleTitle)
+  //       .where(
+  //         'title',
+  //         isLessThanOrEqualTo: taleTitle + '\uf8ff',
+  //       );
 
-    final snapshot = await collectionReference.get();
+  //   final snapshot = await collectionReference.get();
 
-    snapshot.docs.asMap().forEach((key, value) {
-      listTaleModels.add(
-        TaleModel(
-          isDeleted: value['isDeleted'],
-          ID: value['taleID'],
-          duration: Duration(
-            milliseconds: value['durationInMS'],
-          ),
-          title: value['title'],
-          url: value['taleUrl'],
-        ),
-      );
-    });
+  //   snapshot.docs.asMap().forEach(
+  //     (key, value) {
+  //       listTaleModels.add(
+  //         TaleModel(
+  //           isDeleted: value['isDeleted'],
+  //           ID: value['taleID'],
+  //           duration: Duration(
+  //             milliseconds: value['durationInMS'],
+  //           ),
+  //           title: value['title'],
+  //           url: value['taleUrl'],
+  //         ),
+  //       );
+  //     },
+  //   );
+  //   return listTaleModels;
+  // }
 
-    return listTaleModels;
-  }
+  // Future<List<TaleModel>> getDeletedTales() async {
+  //   List<TaleModel> taleModelList = [];
+
+  //   QuerySnapshot<Map<String, dynamic>> queryShapshot = await _talesCollection
+  //       .doc('G5oxe9UbVHa25WsbrLEsuTPscUp2')
+  //       .collection('allTales')
+  //       .where(
+  //         'isDeleted.status',
+  //         isEqualTo: true,
+  //       )
+  //       .get();
+
+  //   queryShapshot.docs.asMap().forEach((_, value) {
+  //     taleModelList.add(
+  //       TaleModel.fromQueryDocumentSnapshot(value),
+  //     );
+  //   });
+
+  //   return taleModelList;
+  // }
+
+  // z.map((element) {
+  //   element.docs.forEach((element) {
+  //     TaleModel.fromJson(element.data());
+  //   });
+  // });
+  // .map(TaleModel.toList);
+
+  // QuerySnapshot<Map<String, dynamic>> snapshot =
+  //     await collectionReference.get();
+
+  // Map<int, QueryDocumentSnapshot<Map<String, dynamic>>> xcc =
+  //     snapshot.docs.map((e) => {
+  //       return
+  //     });
+
+  // print(xcc);
+
+  // .forEach((key, value) {
+  //   listTaleModels.add(
+  //     TaleModel(
+  //       isDeleted: value['isDeleted'],
+  //       ID: value['taleID'],
+  //       duration: Duration(
+  //         milliseconds: value['durationInMS'],
+  //       ),
+  //       title: value['title'],
+  //       url: value['taleUrl'],
+  //     ),
+  //   );
+  // });
 
   //??[End] Tale
 
@@ -358,5 +414,7 @@ class DatabaseService {
 
     await _playListsCollection.doc('$uid/$playListID').delete();
   }
+
+  // getTaleModel({String taleID}) {}
   //??[END] PlayList
 }

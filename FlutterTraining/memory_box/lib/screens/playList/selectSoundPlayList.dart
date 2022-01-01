@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/search.dart';
-import 'package:memory_box/widgets/tale_selection_tile.dart';
+import 'package:memory_box/widgets/audio_tale_tile.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 
 class SelectSoundPlayList extends StatefulWidget {
@@ -62,8 +63,8 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
     super.dispose();
   }
 
-  Future<List<TaleModel>> futureLoaderTales =
-      DatabaseService.instance.getAllTaleModels();
+  // Future<List<TaleModel>> futureLoaderTales =
+  //     DatabaseService.instance.getAllTaleModels();
 
   @override
   Widget build(BuildContext context) {
@@ -87,14 +88,14 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
       );
     }
 
-    void search(String value) async {
-      futureLoaderTales = DatabaseService.instance.getFilteringTales(value);
-      final q = await futureLoaderTales;
-      q.forEach((element) {
-        print(element.title);
-      });
-      setState(() {});
-    }
+    // void search(String value) async {
+    //   futureLoaderTales = DatabaseService.instance.searchTalesByTitle(value);
+    //   final q = await futureLoaderTales;
+    //   q.forEach((element) {
+    //     print(element.title);
+    //   });
+    //   setState(() {});
+    // }
 
     return BackgroundPattern(
       patternColor: const Color.fromRGBO(113, 165, 159, 1),
@@ -159,45 +160,105 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
               const SizedBox(
                 height: 15,
               ),
-              Search(
-                onChange: search,
-              ),
+              // Search(
+              //   onChange: search,
+              // ),
               const SizedBox(
                 height: 45,
               ),
               Expanded(
-                child: FutureBuilder(
-                  future: futureLoaderTales,
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<List<TaleModel>> snapshot,
-                  ) {
-                    print('------');
-                    snapshot.data?.forEach((element) {
-                      print(element.title);
-                    });
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return ListView.builder(
-                        itemCount: snapshot.data?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          String id = snapshot.data?[index].ID ?? '';
-
-                          return TaleSelectionTile(
-                            subscribeSound: _toogleSubscriptionTale,
-                            taleModel: snapshot.data?[index],
-                            isSelected: _taleModels?.contains(id) == true
-                                ? true
-                                : false,
+                child: Column(
+                  children: [
+                    AudioTaleTile(
+                      // subscribeSound: _toogleSubscriptionTale,
+                      taleModel: TaleModel(ID: '22222'),
+                      actions: Builder(
+                        builder: (context) {
+                          bool isSelected3 = false;
+                          return StatefulBuilder(
+                            builder: (context, setState2) {
+                              return IconButton(
+                                onPressed: () {
+                                  setState2(() {
+                                    isSelected3 = !isSelected3;
+                                  });
+                                },
+                                icon: isSelected3
+                                    ? SvgPicture.asset(
+                                        'assets/icons/SubmitCircle.svg',
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/icons/Circle.svg',
+                                      ),
+                              );
+                            },
                           );
                         },
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
+                      ),
+                      // isSelected: _taleModels?.contains(id) == true ? true : false,
+                    ),
+                    AudioTaleTile(
+                      // subscribeSound: _toogleSubscriptionTale,
+                      taleModel: TaleModel(ID: '22222'),
+                      actions: Builder(
+                        builder: (context) {
+                          bool isSelected3 = false;
+                          return StatefulBuilder(
+                            builder: (context, setState2) {
+                              return IconButton(
+                                onPressed: () {
+                                  setState2(() {
+                                    isSelected3 = !isSelected3;
+                                  });
+                                },
+                                icon: isSelected3
+                                    ? SvgPicture.asset(
+                                        'assets/icons/SubmitCircle.svg',
+                                      )
+                                    : SvgPicture.asset(
+                                        'assets/icons/Circle.svg',
+                                      ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      // isSelected: _taleModels?.contains(id) == true ? true : false,
+                    ),
+                  ],
                 ),
+                // FutureBuilder(
+                //   future: futureLoaderTales,
+                //   builder: (
+                //     BuildContext context,
+                //     AsyncSnapshot<List<TaleModel>> snapshot,
+                //   ) {
+                //     // print('------');
+                //     // snapshot.data?.forEach((element) {
+                //     //   print(element.title);
+                //     // });
+                //     if (snapshot.connectionState == ConnectionState.done) {
+                //       return ListView.builder(
+                //         itemCount: snapshot.data?.length ?? 0,
+                //         itemBuilder: (context, index) {
+                //           String id = snapshot.data?[index].ID ?? '';
+
+                //           return TaleSelectionTile(
+                //             subscribeSound: _toogleSubscriptionTale,
+                //             taleModel: snapshot.data?[index],
+                //             isSelected: _taleModels?.contains(id) == true
+                //                 ? true
+                //                 : false,
+                //           );
+                //         },
+                //       );
+                //     } else {
+                //       return const Center(
+                //         child: CircularProgressIndicator(),
+                //       );
+                //     }
+                //   },
+                // ),
               ),
             ],
           ),

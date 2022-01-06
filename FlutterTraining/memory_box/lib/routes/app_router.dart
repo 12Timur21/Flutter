@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:memory_box/screens/login_screen/login_screens/welcome_regular_user_screen.dart';
+import 'package:memory_box/screens/login_screen/registration_screens/gratiude_registration_screen.dart';
+import 'package:memory_box/screens/login_screen/registration_screens/registration_screen.dart';
+import 'package:memory_box/screens/login_screen/registration_screens/verifyOTP_screen.dart';
+import 'package:memory_box/screens/login_screen/registration_screens/welcome_registration_screen.dart';
 import 'package:memory_box/screens/mainPage.dart';
-import 'package:memory_box/screens/registration/gratitudePage.dart';
-import 'package:memory_box/screens/registration/registrationPage.dart';
-import 'package:memory_box/screens/registration/verifyOTPPage.dart';
 import 'package:memory_box/screens/root.dart';
 
 class AppRouter {
@@ -18,27 +20,34 @@ class AppRouter {
         builder = (_) => const Root();
         break;
 
-      case RegistrationPage.routeName:
-        builder = (_) => const RegistrationPage();
+      //*[Start] RegistrationScreen
+      case WelcomeRegistrationScreen.routeName:
+        builder = (_) => const WelcomeRegistrationScreen();
         break;
-
-      case VerifyOTPPage.routeName:
+      case RegistrationScreen.routeName:
+        builder = (_) => const RegistrationScreen();
+        break;
+      case VerifyOTPScreen.routeName:
         {
           final String args = arguments as String;
-          builder = (_) => VerifyOTPPage(
+          builder = (_) => VerifyOTPScreen(
                 verficationId: args,
               );
         }
         break;
-
-      case GratitudePage.routeName:
-        builder = (_) => const GratitudePage();
+      case GratitudeRegistrationScreen.routeName:
+        builder = (_) => const GratitudeRegistrationScreen();
         break;
+      //*[END] Registration screen
 
+      //*[START] Main page
+      case WelcomeRegualrUserScreen.routeName:
+        builder = (_) => const WelcomeRegualrUserScreen();
+        break;
       case MainPage.routeName:
         builder = (_) => const MainPage();
         break;
-
+      //*[END] Main screen
       default:
         throw Exception('Invalid route: ${settings.name}');
     }

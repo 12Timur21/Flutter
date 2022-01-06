@@ -21,11 +21,11 @@ class _TestState extends State<Test> {
   }
 
   void createCollection() {
-    DatabaseService.instance.createPlayList(
-      playListID: const Uuid().v4(),
-      title: 'Colec',
-      description: 'dsadsadsasa',
-    );
+    // DatabaseService.instance.createPlayList(
+    //   playListID: const Uuid().v4(),
+    //   title: 'Colec',
+    //   description: 'dsadsadsasa',
+    // );
   }
 
   void updateCollection() {
@@ -156,12 +156,7 @@ class _TestState extends State<Test> {
     );
   }
 
-  void getAllPlaylists() async {
-    final result = await DatabaseService.instance.getAllPlayList();
-    result?.forEach((key, value) {
-      print('$key, $value');
-    });
-  }
+  void getAllPlaylists() async {}
 
   void getDeletedTales() {
     // final result = DatabaseService.instance.getDeletedTales;

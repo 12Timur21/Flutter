@@ -113,11 +113,11 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
       timerController?.pause();
     }
 
-    if (event is ShareSound) {
-      // String? songUrl = state.songUrl;
-      // if (songUrl != null) {
-      //   _soundPlayer?.shareSound(songUrl);
-      // }
+    if (event is ShareTale) {
+      String? songUrl = state.soundModel?.url;
+      if (songUrl != null) {
+        _soundPlayer?.shareSound(songUrl);
+      }
     }
 
     if (event is LocalSaveSound) {

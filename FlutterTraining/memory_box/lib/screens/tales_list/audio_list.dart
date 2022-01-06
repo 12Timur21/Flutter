@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/models/tale_model.dart';
+import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/widgets/appBar_withButtons.dart';
+import 'package:memory_box/widgets/audio_tale_tile.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/custom_navigationBar.dart';
 
@@ -14,9 +17,12 @@ class AudioListPage extends StatefulWidget {
 
 class _AudioListPageState extends State<AudioListPage> {
   bool isRepitMode = false;
+  int? audioLenght;
+  Duration? durationList;
 
   @override
   Widget build(BuildContext context) {
+    print('re re render');
     return BackgroundPattern(
       patternColor: const Color.fromRGBO(94, 119, 206, 1),
       height: 260,
@@ -72,7 +78,7 @@ class _AudioListPageState extends State<AudioListPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '20 часов',
+                        '${audioLenght ?? 0} аудио',
                         style: Theme.of(context).textTheme.headline1,
                       ),
                       const SizedBox(
@@ -144,92 +150,31 @@ class _AudioListPageState extends State<AudioListPage> {
                 height: 60,
               ),
               Expanded(
-                child: ListView.builder(
-                  // physics: ClampingScrollPhysics(),
-                  itemCount: 45,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(41),
-                        border: Border.all(
-                          color: const Color.fromRGBO(58, 58, 85, 0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/Play.svg',
-                            color: const Color.fromRGBO(94, 119, 206, 1),
-                            width: 60,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                              left: 20,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Малыш кокки ${index.toString()}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'TTNorms',
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                const Text(
-                                  '30 минут',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'TTNorms',
-                                    fontWeight: FontWeight.w500,
-                                    color: Color.fromRGBO(58, 58, 85, 0.5),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          Container(
-                            margin: const EdgeInsets.only(
-                              right: 10,
-                            ),
-                            child: IconButton(
-                              icon: SvgPicture.asset(
-                                'assets/icons/More.svg',
-                                color: Colors.black,
-                                width: 28,
-                              ),
-                              onPressed: () {},
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                    // return ListTile(
-                    //   tileColor: Color.fromRGBO(58, 58, 85, 0.2),
-                    //   shape: RoundedRectangleBorder(
+                child: FutureBuilder<List<TaleModel>>(
+                  future: DatabaseService.instance.getAllNotDeletedTaleModels(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      List<TaleModel>? data = snapshot.data;
 
-                    //       borderRadius: BorderRadius.circular(20.0)),
-                    //   leading: SvgPicture.asset(
-                    //     'assets/icons/Play.svg',
-                    //     color: Color.fromRGBO(94, 119, 206, 1),
-                    //   ),
-                    //   title: Text('$index'),
-                    //   subtitle: Text('30 минут'),
-                    //   trailing: SvgPicture.asset(
-                    //     'assets/icons/More.svg',
-                    //     color: Colors.black,
-                    //   ),
-                    // );
+                      return ListView.builder(
+                        // physics: ClampingScrollPhysics(),
+                        itemCount: data?.length,
+                        // itemExtent: 80,
+
+                        itemBuilder: (context, index) {
+                          return AudioTaleTile(
+                            title: data?[index].title ?? 'No name',
+                            taleDuration:
+                                data?[index].duration ?? Duration.zero,
+                            taleID: data?[index].ID ?? '',
+                            taleURL: data?[index].url ?? '',
+                          );
+                        },
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   },
                 ),
               ),

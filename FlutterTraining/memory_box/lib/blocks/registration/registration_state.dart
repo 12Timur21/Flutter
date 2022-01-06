@@ -18,14 +18,17 @@ class LoginFailure extends RegistrationState {
 
 class VerifyPhoneNumberSucces extends RegistrationState {
   final String verificationIds;
-
-  VerifyPhoneNumberSucces({required this.verificationIds});
+  final int? resendingToken;
+  VerifyPhoneNumberSucces({
+    required this.verificationIds,
+    this.resendingToken,
+  });
 }
 
-class VerifyPhoneFailure extends RegistrationState {
+class VerifyPhoneNumberFailure extends RegistrationState {
   final String? error;
 
-  VerifyPhoneFailure({required this.error});
+  VerifyPhoneNumberFailure({required this.error});
 }
 
 class VerifyOTPSucces extends RegistrationState {
@@ -34,10 +37,18 @@ class VerifyOTPSucces extends RegistrationState {
   VerifyOTPSucces({required this.user});
 }
 
-class VerifyOTPFailure extends RegistrationState {}
+class VerifyOTPFailure extends RegistrationState {
+  final String? error;
+
+  VerifyOTPFailure({this.error});
+}
+
+class VerifyTimeEnd extends RegistrationState {}
 
 class AnonRegistrationSucces extends RegistrationState {
   final UserModel user;
 
   AnonRegistrationSucces({required this.user});
 }
+
+class AnonRegistrationFailrule extends RegistrationState {}

@@ -5,13 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
+import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/repositories/storage_service.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/circle_textField.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
 import 'package:memory_box/widgets/custom_navigationBar.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,7 +28,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfileState extends State<ProfilePage> {
   final _phoneInputContoller = TextEditingController();
   final _nameInputController = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
   bool _isEditMode = false;
 
   UserModel? user;
@@ -62,7 +61,7 @@ class _ProfileState extends State<ProfilePage> {
     final storage = StorageService.instance;
     final database = DatabaseService.instance;
 
-    final authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    final authenticationBloc = BlocProvider.of<SessionBloc>(context);
 
     Future<void> _pickImage() async {
       XFile? image = await ImagePicker().pickImage(
@@ -138,7 +137,9 @@ class _ProfileState extends State<ProfilePage> {
         },
       );
       if (isDelete == true && user?.uid != null) {
-        authenticationBloc.add(DeleteAccount(user!.uid!));
+        authenticationBloc.add(DeleteAccount(
+          uid: user!.uid!,
+        ));
       }
     }
 
@@ -263,11 +264,40 @@ class _ProfileState extends State<ProfilePage> {
                 const SizedBox(
                   height: 8,
                 ),
-                CircleTextField(
-                  controller: _phoneInputContoller,
-                  inputFormatters: [PhoneInputFormatter()],
-                  editable: _isEditMode ? true : false,
-                ),
+                // Form(
+                //   key: _formKey,
+                //   child: Builder(
+                //     builder: (context) {
+                //       String? _errorText;
+                //       return StatefulBuilder(
+                //         builder: (BuildContext context, setState) {
+                //           // return CircleTextField(
+                //           //   controller: _phoneController,
+                //           //   inputFormatters: [PhoneInputFormatter()],
+                //           //   errorText: _errorText,
+                //           //   validator: (value) {
+                //           //     int length = toNumericString(value).length;
+                //           //     bool isError = false;
+                //           //     if (length < 8) {
+                //           //       _errorText = 'Укажите полный номер телефона';
+                //           //       isError = true;
+                //           //     }
+                //           //     if (value == null || value.isEmpty) {
+                //           //       _errorText = 'Поле не может быть пустым';
+                //           //       isError = true;
+                //           //     }
+                //           //     if (!isError) {
+                //           //       _errorText = null;
+                //           //     }
+                //           //     setState(() {});
+                //           //     return _errorText;
+                //           //   },
+                //           // );
+                //         },
+                //       );
+                //     },
+                //   ),
+                // ),
                 const SizedBox(
                   height: 0,
                 ),

@@ -14,6 +14,7 @@ import 'package:memory_box/widgets/audioSlider.dart';
 import 'package:memory_box/widgets/bottom_sheetWrapper.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
 import 'package:memory_box/widgets/soundControlsButtons.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class ListeningPage extends StatefulWidget {
@@ -26,38 +27,41 @@ class ListeningPage extends StatefulWidget {
 
 class _ListeningPageState extends State<ListeningPage> {
   AudioplayerBloc? _audioBloc;
-
+  Directory? appDirectory;
+  String? pathToSaveAudio;
   @override
   void initState() {
     _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
 
     changeRecordingButton();
     asyncInit();
-    // appDirectory = await getApplicationDocumentsDirectory();
-    // pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
-
-    _audioBloc?.add(
-      InitPlayer(
-        soundModel: TaleModel(
-          url: '/sdcard/download/test2.aac',
-          ID: const Uuid().v4(),
-        ),
-      ),
-    );
 
     super.initState();
   }
 
   void asyncInit() async {
-    int index = await StorageService.instance.filesLength(
-      fileType: FileType.tale,
-    );
+    appDirectory = await getApplicationDocumentsDirectory();
+    if (appDirectory != null) {
+      pathToSaveAudio = appDirectory!.path + '/' + 'Аудиозапись' + '.aac';
+      _audioBloc?.add(
+        InitPlayer(
+          soundModel: TaleModel(
+            url: pathToSaveAudio,
+            ID: const Uuid().v4(),
+          ),
+        ),
+      );
 
-    _audioBloc?.add(
-      UpdateSoundModel(
-        title: 'Запись №$index',
-      ),
-    );
+      int index = await StorageService.instance.filesLength(
+        fileType: FileType.tale,
+      );
+
+      _audioBloc?.add(
+        UpdateSoundModel(
+          title: 'Запись №$index',
+        ),
+      );
+    }
   }
 
   void changeRecordingButton() {
@@ -71,7 +75,9 @@ class _ListeningPageState extends State<ListeningPage> {
 
   @override
   Widget build(BuildContext context) {
-    void shareSound() {}
+    void shareSound() {
+      _audioBloc?.add(ShareTale());
+    }
 
     void localDownloadSound() {
       // _soundPlayer?.localDownloadSound();
@@ -102,33 +108,35 @@ class _ListeningPageState extends State<ListeningPage> {
     }
 
     void saveSound() async {
-      final file = File('sdcard/download/test2.aac');
-      TaleModel? taleModel = _audioBloc?.state.soundModel;
-      if (taleModel != null) {
-        await StorageService.instance.uploadTaleFIle(
-          file: file,
-          duration: taleModel.duration ?? Duration.zero,
-          taleID: taleModel.ID ?? '',
-          title: taleModel.title ?? '',
+      if (pathToSaveAudio != null) {
+        final file = File(pathToSaveAudio!);
+        TaleModel? taleModel = _audioBloc?.state.soundModel;
+        if (taleModel != null) {
+          await StorageService.instance.uploadTaleFIle(
+            file: file,
+            duration: taleModel.duration ?? Duration.zero,
+            taleID: taleModel.ID ?? '',
+            title: taleModel.title ?? '',
+          );
+        }
+        // await DatabaseService.instance.updateSongTitle(
+        //     oldTitle: "oldTitle", newTitle: "newTitle", uid: "uid");
+
+        _audioBloc?.add(StopTimer());
+        _audioBloc?.add(Pause());
+        _audioBloc?.add(
+          Seek(currentPlayTimeInSec: 0),
         );
+
+        navigateToPreviewPage();
+        //!!!!
+        // await CloudService.instance.isFileExist(
+        //   fileType: FileType.sound,
+        //   fileName: 'test2.aac',
+        // );
+
+        // Navigator.of(context).pop();
       }
-      // await DatabaseService.instance.updateSongTitle(
-      //     oldTitle: "oldTitle", newTitle: "newTitle", uid: "uid");
-
-      _audioBloc?.add(StopTimer());
-      _audioBloc?.add(Pause());
-      _audioBloc?.add(
-        Seek(currentPlayTimeInSec: 0),
-      );
-
-      navigateToPreviewPage();
-      //!!!!
-      // await CloudService.instance.isFileExist(
-      //   fileType: FileType.sound,
-      //   fileName: 'test2.aac',
-      // );
-
-      // Navigator.of(context).pop();
     }
 
     void moveBackward() {

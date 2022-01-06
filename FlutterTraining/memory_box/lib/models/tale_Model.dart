@@ -11,18 +11,20 @@ class TaleDeleteStatus {
 }
 
 class TaleModel {
-  String ID;
+  String? ID;
   String? title;
   String? url;
   Duration? duration;
   TaleDeleteStatus? deleteStatus;
+  int? fileSize;
 
   TaleModel({
-    required this.ID,
+    this.ID,
     this.duration,
     this.title,
     this.url,
     this.deleteStatus,
+    this.fileSize,
   });
 
   //!
@@ -50,12 +52,15 @@ class TaleModel {
   factory TaleModel.fromJson(Map<String, dynamic> json) {
     return TaleModel(
       title: json['title'],
-      ID: json['id'],
-      url: json['url'],
+      ID: json['taleID'],
+      url: json['taleUrl'],
       duration: Duration(
-        milliseconds: json['duration'],
+        milliseconds: json['durationInMS'],
       ),
-      deleteStatus: TaleDeleteStatus(isDeleted: json['isDeleted']),
+      deleteStatus: TaleDeleteStatus(
+        isDeleted: json['isDeleted']['status'],
+        deleteDate: json['isDeleted']['deleteDate'],
+      ),
     );
   }
 

@@ -79,21 +79,23 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
       collectionState.description = value;
     }
 
-    void saveCollection() {
+    void saveCollection() async {
       bool isTitleValidate = _formKey.currentState?.validate() ?? false;
       bool isPhotoValidate = validateImageField();
       if (isTitleValidate && isPhotoValidate) {
         String uuid = const Uuid().v4();
+
+        String coverUrl = await StorageService.instance.uploadPlayListCover(
+          file: collectionState.photo!,
+          coverID: uuid,
+        );
+
         _databaseService.createPlayList(
           playListID: uuid,
           title: collectionState.title ?? '',
           description: collectionState.description,
           talesIDs: collectionState.talesIDs,
-        );
-
-        StorageService.instance.uploadPlayListCover(
-          file: collectionState.photo!,
-          coverID: uuid,
+          coverUrl: coverUrl,
         );
       }
 

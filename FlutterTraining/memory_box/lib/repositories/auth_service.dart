@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:memory_box/models/user_model.dart';
-import 'package:memory_box/models/verify_auth_model.dart';
-
 import 'database_service.dart';
 
 class AuthService {
@@ -28,35 +26,41 @@ class AuthService {
     return null;
   }
 
-  Future<VerifyAuthModel> verifyPhoneNumberAndSendOTP({
+  Future<void> verifyPhoneNumberAndSendOTP({
     required String phoneNumber,
+    required void Function() codeAutoRetrievalTimeout,
+    required void Function(String?) verificationFailed,
+    required void Function(PhoneAuthCredential credential)
+        verificationCompleted,
+    required void Function(String, int?) codeSent,
   }) async {
-    VerifyAuthModel verifyAuthModel = VerifyAuthModel();
-    final completer = Completer<String>();
     await _auth.verifyPhoneNumber(
       phoneNumber: '+$phoneNumber',
-      timeout: const Duration(seconds: 120),
+      timeout: const Duration(seconds: 60),
       verificationCompleted: (PhoneAuthCredential credential) {
-        completer.complete(credential.verificationId);
+        verificationCompleted(credential);
       },
       verificationFailed: (FirebaseAuthException e) {
-        completer.completeError(e.message ?? '');
+        verificationFailed(e.message);
       },
       codeSent: (verficationIds, resendingToken) {
-        completer.complete(verficationIds);
+        codeSent(verficationIds, resendingToken);
       },
-      codeAutoRetrievalTimeout: (String e) {
-        completer.completeError(e);
+      codeAutoRetrievalTimeout: (_) {
+        if (_auth.currentUser == null) {
+          codeAutoRetrievalTimeout();
+        }
       },
     );
 
-    await completer.future.then((value) {
-      verifyAuthModel.verficationIds = value;
-    }).catchError((e) {
-      verifyAuthModel.error = e;
-    });
+    // return completer.future;
+    // await completer.future.then((value) {
+    //   verifyAuthModel.verficationIds = value;
+    // }).catchError((e) {
+    //   verifyAuthModel.error = e;
+    // });
 
-    return verifyAuthModel;
+    // return verifyAuthModel;
   }
 
   Future<UserModel?> verifyOTPCode({

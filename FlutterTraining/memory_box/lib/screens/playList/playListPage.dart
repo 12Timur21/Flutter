@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
+import 'package:memory_box/models/play_list_model.dart';
+import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/utils/formatting.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 
@@ -27,7 +29,7 @@ class _PlayListPageState extends State<PlayListPage> {
       required String title,
       required int audioCount,
       required Duration sumAudioDuration,
-      required String playListImageURL,
+      required String coverUrl,
       required int index,
     }) {
       EdgeInsets margin = index % 2 == 0
@@ -53,8 +55,7 @@ class _PlayListPageState extends State<PlayListPage> {
               child: Stack(
                 children: [
                   CachedNetworkImage(
-                    imageUrl:
-                        'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
+                    imageUrl: coverUrl,
                     height: 240,
                     fit: BoxFit.fill,
                     placeholder: (context, url) =>
@@ -208,22 +209,30 @@ class _PlayListPageState extends State<PlayListPage> {
             margin: const EdgeInsets.only(
               top: 30,
             ),
-            child: GridView.count(
-              primary: true,
-              crossAxisCount: 2,
-              childAspectRatio: 190 / 240,
-              children: List.generate(
-                50,
-                (index) {
-                  return CollectionTile(
-                    title: 'Текст', //snapshot.data['0']['title'] ?? '',
-                    audioCount: 5,
-                    playListImageURL: '57f7dbdb-5510-461d-921e-d84e44b6bba2',
-                    sumAudioDuration: const Duration(hours: 4),
-                    index: index,
+            child: FutureBuilder<List<PlayListModel>>(
+              future: DatabaseService.instance.getAllPlayList(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return GridView.count(
+                    primary: true,
+                    crossAxisCount: 2,
+                    childAspectRatio: 190 / 240,
+                    children: List.generate(
+                      snapshot.data?.length ?? 0,
+                      (index) {
+                        return CollectionTile(
+                          title: snapshot.data?[index].title ?? '',
+                          audioCount: 5,
+                          coverUrl: snapshot.data?[index].coverUrl ?? '',
+                          sumAudioDuration: const Duration(hours: 4),
+                          index: index,
+                        );
+                      },
+                    ),
                   );
-                },
-              ),
+                }
+                return CircularProgressIndicator();
+              },
             )
             // child: FutureBuilder(
             //   future: DatabaseService.instance.getAllPlayList(),

@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/hintPlate.dart';
 
-class GratitudePage extends StatelessWidget {
-  static const routeName = 'GraitudePage';
+class WelcomeRegualrUserScreen extends StatelessWidget {
+  static const routeName = 'WelcomeRegualrUserScreen';
 
-  const GratitudePage({Key? key}) : super(key: key);
+  const WelcomeRegualrUserScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    void navigateToMainPage() {
+      Navigator.pushNamed(
+        context,
+        MainPage.routeName,
+      );
+    }
+
+    Future.delayed(Duration(seconds: 3), () {
+      navigateToMainPage();
+    });
+
     return Scaffold(
       body: BackgroundPattern(
         child: Align(
@@ -23,29 +36,34 @@ class GratitudePage extends StatelessWidget {
                   height: 275,
                   width: double.infinity,
                   alignment: Alignment.center,
-                  child: Container(
-                    height: 275,
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
-                        FittedBox(
-                          fit: BoxFit.contain,
-                          child: Text(
-                            'Ты супер!',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'TTNorms',
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 6,
-                              fontSize: 48,
-                            ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          'MemoryBox',
+                          style: TextStyle(
+                            letterSpacing: 6,
+                            fontSize: 48,
+                            fontFamily: 'TTNorms',
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Text(
+                        'Твой голос всегда рядом',
+                        style: TextStyle(
+                          fontSize: 14,
+                          letterSpacing: 2,
+                          color: Colors.white,
+                          fontFamily: 'TTNorms',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 60),
@@ -80,6 +98,14 @@ class GratitudePage extends StatelessWidget {
                   height: 50,
                 ),
                 SvgPicture.asset('assets/icons/Heart.svg'),
+                const Spacer(),
+                const HintPlate(
+                  label:
+                      'Взрослые иногда нуждаются в \n сказке даже больше, чем дети',
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
               ],
             ),
           ),

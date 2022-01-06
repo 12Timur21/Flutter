@@ -267,14 +267,15 @@ class StorageService {
       fileName: taleID,
       fileType: FileType.tale,
     );
-
+    print(taleID);
     await _cloud.ref().child('/$destination').delete();
+    // await _database.deleteTaleRecord(taleID);
   }
 
   //??[End] Tale
 
   //??[Start] PlayList
-  Future<void> uploadPlayListCover({
+  Future<String> uploadPlayListCover({
     required File file,
     required String coverID,
   }) async {
@@ -285,6 +286,7 @@ class StorageService {
     );
 
     await _cloud.ref().child('/$destination').putFile(file);
+    return await _cloud.ref().child('/$destination').getDownloadURL();
   }
 
   Future<void> deletePlayListCover({

@@ -42,4 +42,4 @@ class LocalSaveSound extends AudioplayerEvent {}
 
 class DeleteSound extends AudioplayerEvent {}
 
-class ShareSound extends AudioplayerEvent {}
+class ShareTale extends AudioplayerEvent {}

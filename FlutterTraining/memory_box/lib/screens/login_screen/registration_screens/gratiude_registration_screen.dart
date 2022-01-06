@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/hintPlate.dart';
 
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+class GratitudeRegistrationScreen extends StatelessWidget {
+  static const routeName = 'GratitudeRegistrationScreen';
+
+  const GratitudeRegistrationScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    void navigateToMainPage() {
+      Navigator.pushNamed(
+        context,
+        MainPage.routeName,
+      );
+    }
+
+    Future.delayed(Duration(seconds: 3), () {
+      navigateToMainPage();
+    });
+
     return Scaffold(
       body: BackgroundPattern(
         child: Align(
@@ -22,34 +35,29 @@ class WelcomeScreen extends StatelessWidget {
                   height: 275,
                   width: double.infinity,
                   alignment: Alignment.center,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text(
-                          'MemoryBox',
-                          style: TextStyle(
-                            letterSpacing: 6,
-                            fontSize: 48,
-                            fontFamily: 'TTNorms',
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                  child: Container(
+                    height: 275,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const <Widget>[
+                        FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            'Ты супер!',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'TTNorms',
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 6,
+                              fontSize: 48,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        'Твой голос всегда рядом',
-                        style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2,
-                          color: Colors.white,
-                          fontFamily: 'TTNorms',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 60),
@@ -84,11 +92,6 @@ class WelcomeScreen extends StatelessWidget {
                   height: 50,
                 ),
                 SvgPicture.asset('assets/icons/Heart.svg'),
-                const Spacer(),
-                const HintPlate(
-                  label:
-                      'Взрослые иногда нуждаются в \n сказке даже больше, чем дети',
-                )
               ],
             ),
           ),

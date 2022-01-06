@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
+import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/root.dart';
 import 'package:memory_box/settings/initial_settings.dart';
@@ -40,9 +40,9 @@ Future<void> main() async {
             return RegistrationBloc();
           },
         ),
-        BlocProvider<AuthenticationBloc>(
+        BlocProvider<SessionBloc>(
           create: (BuildContext context) {
-            return AuthenticationBloc();
+            return SessionBloc();
           },
         ),
         BlocProvider<PlayListNavigationBloc>(

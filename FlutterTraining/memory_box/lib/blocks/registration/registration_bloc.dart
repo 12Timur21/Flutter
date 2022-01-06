@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:memory_box/models/user_model.dart';
-import 'package:memory_box/models/verify_auth_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
 part 'registration_event.dart';
 part 'registration_state.dart';
@@ -17,23 +17,28 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
   @override
   Stream<RegistrationState> mapEventToState(RegistrationEvent event) async* {
     if (event is VerifyPhoneNumber) {
-      VerifyAuthModel varifyAuthModel =
-          await _authService.verifyPhoneNumberAndSendOTP(
+      _authService.verifyPhoneNumberAndSendOTP(
         phoneNumber: event.phoneNumber,
+        codeAutoRetrievalTimeout: () {
+          print('VerifyTimeEnd');
+          emit(VerifyTimeEnd());
+        },
+        codeSent: (String verficationIds, int? resendingToken) {
+          print('codeSent');
+          emit(VerifyPhoneNumberSucces(
+            verificationIds: verficationIds,
+            resendingToken: resendingToken,
+          ));
+        },
+        verificationFailed: (String? error) {
+          print('verificationFailed 222');
+          emit(VerifyPhoneNumberFailure(error: error));
+        },
+        verificationCompleted: (PhoneAuthCredential credential) {
+          print('verificationCompleted');
+          print('verificationCompleted');
+        },
       );
-
-      String? error = varifyAuthModel.error;
-      String? verficationId = varifyAuthModel.verficationIds;
-
-      if (error == null && verficationId != null) {
-        yield VerifyPhoneNumberSucces(
-          verificationIds: verficationId,
-        );
-      } else {
-        yield VerifyPhoneFailure(
-          error: error,
-        );
-      }
     }
     if (event is VerifyOTPCode) {
       UserModel? userModel = await _authService.verifyOTPCode(
@@ -52,6 +57,8 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
       UserModel? userModel = await _authService.signInAnon();
       if (userModel != null) {
         yield AnonRegistrationSucces(user: userModel);
+      } else {
+        yield AnonRegistrationFailrule();
       }
     }
 

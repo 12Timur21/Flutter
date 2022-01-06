@@ -1,14 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:memory_box/blocks/authentication/authentication_bloc.dart';
-import 'package:memory_box/blocks/registration/registration_bloc.dart';
+import 'package:memory_box/blocks/session/session_bloc.dart';
+import 'package:memory_box/screens/login_screen/login_screens/welcome_regular_user_screen.dart';
+import 'package:memory_box/screens/login_screen/registration_screens/welcome_registration_screen.dart';
 import 'mainPage.dart';
-import 'registration/gratitudePage.dart';
-import 'registration/registrationPage.dart';
-import 'registration/registrationSplash.dart';
-import 'registration/verifyOTPPage.dart';
+
 import 'splash_screen.dart';
 
 class Root extends StatefulWidget {
@@ -22,87 +18,31 @@ class Root extends StatefulWidget {
 class _RootState extends State<Root> {
   @override
   void initState() {
-    final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
-    _authenticationBloc.add(InitAuth());
+    //Инициализация через 3 секунды
+    Future.delayed(const Duration(seconds: 3), () {
+      context.read<SessionBloc>().add(InitSession());
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-      builder: (context, state) {
-        if (state.status == AuthenticationStatus.authenticated) {
-          // Timer(const Duration(seconds: 3), () {
-          //         _authenticationBloc.add(LogIn());
-          //       });
-          return const MainPage();
-        }
-        if (state.status == AuthenticationStatus.notAuthenticated) {
-          //--Not auth --//
-          return BlocListener<RegistrationBloc, RegistrationState>(
-            listener: (context, state) {
-              final _authenticationBloc =
-                  BlocProvider.of<AuthenticationBloc>(context);
-              if (state is LoginPageLoaded) {
-                Navigator.pushNamed(
-                  context,
-                  RegistrationPage.routeName,
-                );
-
-                // RegistrationPage();
-              }
-              if (state is VerifyPhoneNumberSucces) {
-                Navigator.pushNamed(
-                  context,
-                  VerifyOTPPage.routeName,
-                  arguments: state.verificationIds,
-                );
-                // VerifyOTPPage(
-                //   verficationId: state.verifictionId,
-                // );
-              }
-              if (state is VerifyOTPSucces) {
-                Timer(const Duration(seconds: 3), () {
-                  _authenticationBloc.add(LogIn());
-                });
-                Navigator.pushNamed(
-                  context,
-                  GratitudePage.routeName,
-                );
-                // GratitudePage();
-              }
-
-              if (state is AnonRegistrationSucces) {
-                _authenticationBloc.add(LogIn());
-              }
-            },
-            child: const LoginSpash(),
+    return BlocListener<SessionBloc, SessionState>(
+      listener: (context, state) {
+        if (state.status == SessionStatus.authenticated) {
+          Navigator.pushNamed(
+            context,
+            WelcomeRegualrUserScreen.routeName,
           );
-          //--End not auth --//
         }
-        return const SplashScreen();
+        if (state.status == SessionStatus.notAuthenticated) {
+          Navigator.pushNamed(
+            context,
+            WelcomeRegistrationScreen.routeName,
+          );
+        }
       },
+      child: const SplashScreen(),
     );
   }
 }
-    // listener: (context, state) {
-    //   if (state is AuthenticationInitial) {
-    //     _authenticationBloc.add(
-    //       AppLoaded(),
-    //     );
-    //   }
-    //   if (state is Authenticated) {
-    //     // return MainPage();
-    //     Navigator.pushReplacementNamed(
-    //       context,
-    //       MainPage.routeName,
-    //       // arguments: verficationId,
-    //     );
-    //   } else if (state is NotAuthenticated) {
-    //     Navigator.pushReplacementNamed(
-    //       context,
-    //       LoginPage.routeName,
-    //     );
-    //   }
-    // },
-  // }

@@ -28,11 +28,7 @@ class _RecordingScreenState extends State<RecordingPage> {
   SoundRecorder recorder = SoundRecorder();
   StreamSubscription<RecordingDisposition>? recorderSubscription;
   Timer? _timer;
-  Duration _audioDuration = const Duration(
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  );
+  Duration? _audioDuration;
 
   @override
   void initState() {
@@ -59,8 +55,7 @@ class _RecordingScreenState extends State<RecordingPage> {
   void dispose() {
     disposeTimer();
     disposeRecording();
-    recorderSubscription?.cancel();
-    recorderSubscription = null;
+
     isRecorderStreamInitialized = false;
     super.dispose();
   }
@@ -74,8 +69,10 @@ class _RecordingScreenState extends State<RecordingPage> {
     navigateToListeningPage();
   }
 
-  void disposeRecording() {
+  void disposeRecording() async {
     recorder.dispose();
+    await recorderSubscription?.cancel();
+    recorderSubscription = null;
   }
 
   void startTimer() {
@@ -117,15 +114,13 @@ class _RecordingScreenState extends State<RecordingPage> {
 
   void navigateToListeningPage() {
     dispose();
-    final navigationBloc = BlocProvider.of<BottomSheetBloc>(context);
-    navigationBloc.add(
+    BlocProvider.of<BottomSheetBloc>(context).add(
       OpenListeningPage(),
     );
   }
 
   void changeRecordingButton() {
-    final recorderButtomBloc = BlocProvider.of<RecorderButtomBloc>(context);
-    recorderButtomBloc.add(
+    BlocProvider.of<RecorderButtomBloc>(context).add(
       const ChangeIcon(
         RecorderButtonStates.withLine,
       ),

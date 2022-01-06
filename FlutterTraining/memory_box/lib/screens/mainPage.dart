@@ -9,7 +9,7 @@ import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dar
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/screens/audio_list.dart';
+import 'package:memory_box/screens/tales_list/audio_list.dart';
 import 'package:memory_box/screens/deletedTales/deleted_tales_list.dart';
 import 'package:memory_box/screens/playList/createPlayListPage.dart';
 import 'package:memory_box/screens/playList/playListPage.dart';

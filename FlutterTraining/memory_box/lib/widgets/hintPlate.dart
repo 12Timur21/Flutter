@@ -13,10 +13,8 @@ class HintPlate extends StatelessWidget {
         vertical: 25,
         horizontal: 21,
       ),
-      margin: const EdgeInsets.only(
-        bottom: 20,
-        left: 15,
-        right: 15,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 15,
       ),
       decoration: const BoxDecoration(
         color: Color.fromRGBO(246, 246, 246, 1),

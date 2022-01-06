@@ -5,67 +5,71 @@ import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:meta/meta.dart';
 
-part 'authentication_event.dart';
-part 'authentication_state.dart';
+part 'session_event.dart';
+part 'session_state.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc() : super(const AuthenticationState());
+class SessionBloc extends Bloc<SessionEvent, SessionState> {
+  SessionBloc()
+      : super(const SessionState(
+          status: SessionStatus.initial,
+        ));
 
   final AuthService _authService = AuthService.instance;
   final DatabaseService _databaseService = DatabaseService.instance;
 
-  UserModel? currentUser;
-
   @override
-  Stream<AuthenticationState> mapEventToState(
-    AuthenticationEvent event,
+  Stream<SessionState> mapEventToState(
+    SessionEvent event,
   ) async* {
-    if (event is InitAuth) {
-      currentUser = await _authService.currentUser();
+    if (event is InitSession) {
+      print('called');
+      UserModel? currentUser = await _authService.currentUser();
+
       if (currentUser != null) {
-        yield AuthenticationState(
-          status: AuthenticationStatus.authenticated,
+        print('this');
+        yield SessionState(
+          status: SessionStatus.authenticated,
           user: currentUser,
         );
       } else {
-        yield const AuthenticationState(
-          status: AuthenticationStatus.notAuthenticated,
+        print('not this');
+        yield const SessionState(
+          status: SessionStatus.notAuthenticated,
           user: null,
         );
       }
     }
 
     if (event is LogIn) {
-      currentUser = await _authService.currentUser();
-      yield AuthenticationState(
-        status: AuthenticationStatus.authenticated,
+      UserModel? currentUser = await _authService.currentUser();
+
+      yield SessionState(
+        status: SessionStatus.authenticated,
         user: currentUser,
       );
     }
 
     if (event is LogOut) {
-      currentUser = null;
       await _authService.signOut();
-      yield const AuthenticationState(
-        status: AuthenticationStatus.notAuthenticated,
+
+      yield const SessionState(
+        status: SessionStatus.notAuthenticated,
         user: null,
       );
     }
 
     if (event is DeleteAccount) {
-      currentUser = null;
       await _databaseService.deleteUserFromFirebase();
       await _authService.deleteAccount();
 
-      yield const AuthenticationState(
-        status: AuthenticationStatus.notAuthenticated,
+      yield const SessionState(
+        status: SessionStatus.notAuthenticated,
         user: null,
       );
     }
 
     if (event is UpdateAccount) {
-      currentUser = await _authService.currentUser();
+      UserModel? currentUser = await _authService.currentUser();
       String? uid = event.uid;
 
       // PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credentialFromToken();
@@ -82,8 +86,8 @@ class AuthenticationBloc
         // await _authService.updatePhoneNumber()
       }
 
-      yield AuthenticationState(
-        status: AuthenticationStatus.authenticated,
+      yield SessionState(
+        status: SessionStatus.authenticated,
         user: currentUser?.copyWith(
           uid: uid,
           displayName: event.displayName,

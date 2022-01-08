@@ -3,14 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
-import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:memory_box/blocks/registration/registration_bloc.dart';
 import 'package:memory_box/screens/login_screen/registration_screens/gratiude_registration_screen.dart';
 import 'package:memory_box/screens/login_screen/registration_screens/registration_screen.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circle_textField.dart';
-import 'package:memory_box/widgets/continue_button.dart';
-import 'package:memory_box/widgets/hintPlate.dart';
+import 'package:memory_box/widgets/elipse_orange_button.dart';
+import 'package:memory_box/screens/login_screen/widgets/hintPlate.dart';
 
 class VerifyOTPScreen extends StatefulWidget {
   static const routeName = 'VerifyPin';
@@ -199,10 +198,9 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                     const SizedBox(
                       height: 40,
                     ),
-                    ContinueButton(
-                      onPress: () {
-                        _verifySMSCode();
-                      },
+                    ElipseOrangeButton(
+                      text: 'Продолжить',
+                      onPress: _verifySMSCode,
                     ),
                     const SizedBox(
                       height: 15,

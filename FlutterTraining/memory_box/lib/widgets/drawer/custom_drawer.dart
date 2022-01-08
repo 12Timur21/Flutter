@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
-import 'package:memory_box/blocks/mainPageNavigation/navigation_event.dart';
-import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
+import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
+import 'package:memory_box/screens/all_tales_screen/all_tales_screen.dart';
+import 'package:memory_box/screens/deleted_tales_screen/deleted_tales_screen.dart';
+import 'package:memory_box/screens/home_screen/home_screen.dart';
+import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
+import 'package:memory_box/screens/profile_screen/profile_screen.dart';
+import 'package:memory_box/screens/search_tales_screen/search_tales_screen.dart';
+import 'package:memory_box/screens/subscription_screen/subscription_screen.dart';
+import 'package:memory_box/utils/navigationService.dart';
+import 'package:memory_box/widgets/search.dart';
 
-class CustomNavigationBar extends StatelessWidget {
-  const CustomNavigationBar({Key? key}) : super(key: key);
+class CustomDrawer extends StatelessWidget {
+  const CustomDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final navigationBloc = BlocProvider.of<NavigationBloc>(context);
-
     ListTile CustomListTyle({title, svgUrl, callback}) {
       return ListTile(
         minLeadingWidth: 0,
@@ -77,17 +82,17 @@ class CustomNavigationBar extends StatelessWidget {
               title: 'Главная',
               svgUrl: 'assets/icons/Home.svg',
               callback: () {
-                Navigator.of(context).pop();
+                NavigationService.instance.navigateTo(
+                  HomeScreen.routeName,
+                );
               },
             ),
             CustomListTyle(
               title: 'Профиль',
               svgUrl: 'assets/icons/Profile.svg',
               callback: () {
-                navigationBloc.add(
-                  const NavigateTo(
-                    NavigationPages.profilePage,
-                  ),
+                NavigationService.instance.navigateTo(
+                  ProfileScreen.routeName,
                 );
               },
             ),
@@ -95,8 +100,8 @@ class CustomNavigationBar extends StatelessWidget {
               title: 'Подборки',
               svgUrl: 'assets/icons/Category.svg',
               callback: () {
-                navigationBloc.add(
-                  const NavigateTo(NavigationPages.collectionsListPage),
+                NavigationService.instance.navigateTo(
+                  PlaylistScreen.routeName,
                 );
               },
             ),
@@ -104,22 +109,26 @@ class CustomNavigationBar extends StatelessWidget {
               title: 'Все аудиофайлы',
               svgUrl: 'assets/icons/Paper.svg',
               callback: () {
-                navigationBloc.add(
-                  const NavigateTo(NavigationPages.audioListPage),
+                NavigationService.instance.navigateTo(
+                  AllTalesScreen.routeName,
                 );
               },
             ),
             CustomListTyle(
               title: 'Поиск',
               svgUrl: 'assets/icons/Search.svg',
-              callback: () {},
+              callback: () {
+                NavigationService.instance.navigateTo(
+                  SearchTalesScreen.routeName,
+                );
+              },
             ),
             CustomListTyle(
               title: 'Недавно удаленные',
               svgUrl: 'assets/icons/Delete.svg',
               callback: () {
-                navigationBloc.add(
-                  const NavigateTo(NavigationPages.deletedTalesListPage),
+                NavigationService.instance.navigateTo(
+                  DeletedTalesScreen.routeName,
                 );
               },
             ),
@@ -130,8 +139,8 @@ class CustomNavigationBar extends StatelessWidget {
               title: 'Подписка',
               svgUrl: 'assets/icons/Wallet.svg',
               callback: () {
-                navigationBloc.add(
-                  const NavigateTo(NavigationPages.subscriptionPage),
+                NavigationService.instance.navigateTo(
+                  SubscriptionScreen.routeName,
                 );
                 // Navigator.pushNamed(
                 //   context,

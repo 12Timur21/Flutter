@@ -10,16 +10,13 @@ class GratitudeRegistrationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToMainPage() {
-      Navigator.pushNamed(
-        context,
+    Future.delayed(
+      const Duration(seconds: 3),
+      () => Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
         MainPage.routeName,
-      );
-    }
-
-    Future.delayed(Duration(seconds: 3), () {
-      navigateToMainPage();
-    });
+        (route) => false,
+      ),
+    );
 
     return Scaffold(
       body: BackgroundPattern(

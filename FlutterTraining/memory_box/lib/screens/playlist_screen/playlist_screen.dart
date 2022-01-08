@@ -1,26 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/models/play_list_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/screens/home_screen/home_screen.dart';
+import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
 import 'package:memory_box/utils/formatting.dart';
+import 'package:memory_box/utils/navigationService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 
-class PlayListPage extends StatefulWidget {
-  const PlayListPage({Key? key}) : super(key: key);
+class PlaylistScreen extends StatefulWidget {
+  static const routeName = 'PlayListScreen';
+
+  const PlaylistScreen({Key? key}) : super(key: key);
 
   @override
-  _PlayListPageState createState() => _PlayListPageState();
+  _PlaylistScreenState createState() => _PlaylistScreenState();
 }
 
-class _PlayListPageState extends State<PlayListPage> {
+class _PlaylistScreenState extends State<PlaylistScreen> {
   void createNewCollection() {
-    final navigationBloc = BlocProvider.of<PlayListNavigationBloc>(context);
-    navigationBloc.add(
-      OpenPlayListCreationScreen(),
-    );
+    NavigationService.instance.navigateTo(CreatePlaylistScreen.routeName);
   }
 
   @override

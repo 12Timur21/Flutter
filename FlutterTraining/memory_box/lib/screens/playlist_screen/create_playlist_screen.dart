@@ -8,22 +8,26 @@ import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dar
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/repositories/storage_service.dart';
+import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
+import 'package:memory_box/screens/playlist_screen/select_playlist_tales.dart';
+import 'package:memory_box/utils/navigationService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/audio_tale_tile.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 import 'package:uuid/uuid.dart';
 
-class CreatePlayListPage extends StatefulWidget {
-  const CreatePlayListPage({
+class CreatePlaylistScreen extends StatefulWidget {
+  static const routeName = 'CreatePlaylistScreen';
+
+  const CreatePlaylistScreen({
     this.collectionCreationState,
     Key? key,
   }) : super(key: key);
   final PlayListCreationState? collectionCreationState;
   @override
-  _CreatePlayListPageState createState() => _CreatePlayListPageState();
+  _CreatePlaylistScreenState createState() => _CreatePlaylistScreenState();
 }
 
-class _CreatePlayListPageState extends State<CreatePlayListPage> {
+class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
   final _formKey = GlobalKey<FormState>();
   bool isImageValid = true;
 
@@ -35,17 +39,8 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
   void initState() {
     _databaseService = DatabaseService.instance;
     collectionState = widget.collectionCreationState ?? PlayListCreationState();
-
-    test();
     super.initState();
   }
-
-  //! TEST !//
-  void test() {
-    _test = collectionState.talesIDs ?? [];
-    print(_test);
-  }
-  //! TEST !//
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +94,8 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
         );
       }
 
+      NavigationService.instance.navigateTo(PlaylistScreen.routeName);
+
       // _databaseService.createCollection(collectionModel)
 
       // navigationBloc.add(
@@ -120,16 +117,13 @@ class _CreatePlayListPageState extends State<CreatePlayListPage> {
     }
 
     void undoChanges() {
-      navigationBloc.add(
-        OpenCollectionsPreviewScreen(),
-      );
+      NavigationService.instance.navigateTo(PlaylistScreen.routeName);
     }
 
     void addSongs() {
-      navigationBloc.add(
-        OpenPlayListSelectionScreen(
-          playListCreationState: collectionState,
-        ),
+      NavigationService.instance.navigateTo(
+        SelectPlaylistTales.routeName,
+        collectionState,
       );
     }
 

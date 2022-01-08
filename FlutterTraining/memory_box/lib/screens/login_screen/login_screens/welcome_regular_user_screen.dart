@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/hintPlate.dart';
+import 'package:memory_box/screens/login_screen/widgets/hintPlate.dart';
 
 class WelcomeRegualrUserScreen extends StatelessWidget {
   static const routeName = 'WelcomeRegualrUserScreen';
@@ -11,16 +11,16 @@ class WelcomeRegualrUserScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToMainPage() {
-      Navigator.pushNamed(
-        context,
+    Future.delayed(
+      const Duration(seconds: 3),
+      () => Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
         MainPage.routeName,
-      );
-    }
-
-    Future.delayed(Duration(seconds: 3), () {
-      navigateToMainPage();
-    });
+        (route) => false,
+        // MaterialPageRoute(
+        //   builder: (context) => const MainPage(),
+        // ),
+      ),
+    );
 
     return Scaffold(
       body: BackgroundPattern(

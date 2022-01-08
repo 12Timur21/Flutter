@@ -6,12 +6,12 @@ import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/screens/recording_screen/widgets/visualizer.dart';
 import 'dart:async';
 import 'dart:math';
 
 import 'package:memory_box/services/soundRecorder.dart';
 import 'package:memory_box/utils/formatting.dart';
-import 'package:memory_box/widgets/visualizer.dart';
 
 class RecordingPage extends StatefulWidget {
   static const routeName = 'RecordingPage';

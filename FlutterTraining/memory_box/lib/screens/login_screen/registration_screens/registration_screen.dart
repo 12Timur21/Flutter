@@ -6,8 +6,8 @@ import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/screens/login_screen/registration_screens/verifyOTP_screen.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/circle_textField.dart';
-import 'package:memory_box/widgets/continue_button.dart';
-import 'package:memory_box/widgets/hintPlate.dart';
+import 'package:memory_box/widgets/elipse_orange_button.dart';
+import 'package:memory_box/screens/login_screen/widgets/hintPlate.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const routeName = 'RegistrationScreen';
@@ -175,7 +175,8 @@ class _RegistrationState extends State<RegistrationScreen> {
                     const SizedBox(
                       height: 60,
                     ),
-                    ContinueButton(
+                    ElipseOrangeButton(
+                      text: 'Продолжить',
                       onPress: verifyPhoneNumber,
                     ),
                     const SizedBox(

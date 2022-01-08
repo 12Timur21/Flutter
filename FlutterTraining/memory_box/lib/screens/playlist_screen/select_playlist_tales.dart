@@ -1,27 +1,26 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
-import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
+import 'package:memory_box/utils/navigationService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/search.dart';
-import 'package:memory_box/widgets/audio_tale_tile.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 
-class SelectSoundPlayList extends StatefulWidget {
-  const SelectSoundPlayList({
+class SelectPlaylistTales extends StatefulWidget {
+  static const routeName = 'SelectPlaylistTales';
+
+  const SelectPlaylistTales({
     this.collectionCreationState,
     Key? key,
   }) : super(key: key);
 
   final PlayListCreationState? collectionCreationState;
   @override
-  _SelectSoundPlayListState createState() => _SelectSoundPlayListState();
+  _SelectPlaylistTalesState createState() => _SelectPlaylistTalesState();
 }
 
-class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
+class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
   late final PlayListCreationState? _playListState;
   final StreamController<String?> _toogleSubscriptionTale =
       StreamController<String>();
@@ -69,22 +68,18 @@ class _SelectSoundPlayListState extends State<SelectSoundPlayList> {
   @override
   Widget build(BuildContext context) {
     void _undoChanges() {
-      final navigationBloc = BlocProvider.of<PlayListNavigationBloc>(context);
-      navigationBloc.add(
-        OpenPlayListCreationScreen(
-          playListCreationState: widget.collectionCreationState,
-        ),
+      NavigationService.instance.navigateTo(
+        CreatePlaylistScreen.routeName,
+        widget.collectionCreationState,
       );
     }
 
     void _saveChanges() {
-      final navigationBloc = BlocProvider.of<PlayListNavigationBloc>(context);
-
       _playListState?.talesIDs = _taleModels;
-      navigationBloc.add(
-        OpenPlayListCreationScreen(
-          playListCreationState: _playListState,
-        ),
+
+      NavigationService.instance.navigateTo(
+        SelectPlaylistTales.routeName,
+        _playListState,
       );
     }
 

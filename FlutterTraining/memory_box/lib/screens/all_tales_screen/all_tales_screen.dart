@@ -5,17 +5,17 @@ import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/widgets/appBar_withButtons.dart';
 import 'package:memory_box/widgets/audio_tale_tile.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/custom_navigationBar.dart';
+import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 
-class AudioListPage extends StatefulWidget {
-  static const routeName = 'AudioListPage';
-  const AudioListPage({Key? key}) : super(key: key);
+class AllTalesScreen extends StatefulWidget {
+  static const routeName = 'AllTalesScreen';
+  const AllTalesScreen({Key? key}) : super(key: key);
 
   @override
-  _AudioListPageState createState() => _AudioListPageState();
+  _AllTalesScreenState createState() => _AllTalesScreenState();
 }
 
-class _AudioListPageState extends State<AudioListPage> {
+class _AllTalesScreenState extends State<AllTalesScreen> {
   bool isRepitMode = false;
   int? audioLenght;
   Duration? durationList;
@@ -60,7 +60,7 @@ class _AudioListPageState extends State<AudioListPage> {
           ),
           actionsOnPress: () {},
         ),
-        drawer: const CustomNavigationBar(),
+        drawer: const CustomDrawer(),
         body: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 20,

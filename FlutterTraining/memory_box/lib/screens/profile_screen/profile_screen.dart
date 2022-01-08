@@ -12,20 +12,20 @@ import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/repositories/storage_service.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
-import 'package:memory_box/widgets/custom_navigationBar.dart';
+import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 
-class ProfilePage extends StatefulWidget {
-  static const routeName = 'ProfilePage';
+class ProfileScreen extends StatefulWidget {
+  static const routeName = 'ProfileScreen';
 
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   _ProfileState createState() => _ProfileState();
 }
 
-class _ProfileState extends State<ProfilePage> {
+class _ProfileState extends State<ProfileScreen> {
   final _phoneInputContoller = TextEditingController();
   final _nameInputController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -196,7 +196,7 @@ class _ProfileState extends State<ProfilePage> {
           ),
           elevation: 0,
         ),
-        drawer: const CustomNavigationBar(),
+        drawer: const CustomDrawer(),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(

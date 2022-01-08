@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/routes/app_router.dart';
-import 'package:memory_box/screens/root.dart';
+import 'package:memory_box/screens/mainPage.dart';
+import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/settings/initial_settings.dart';
-import 'blocks/mainPageNavigation/navigation_bloc.dart';
-import 'blocks/mainPageNavigation/navigation_state.dart';
 import 'blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'blocks/recorderButton/recorderButton_bloc.dart';
 import 'blocks/recorderButton/recorderButton_state.dart';
@@ -19,13 +18,6 @@ Future<void> main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider<NavigationBloc>(
-          create: (context) => NavigationBloc(
-            const NavigationState(
-              selectedItem: NavigationPages.homePage,
-            ),
-          ),
-        ),
         BlocProvider<RecorderButtomBloc>(
           create: (BuildContext context) {
             return RecorderButtomBloc(
@@ -65,8 +57,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scrollBehavior: MyCustomScrollBehavior(),
       title: 'Memory Box',
-      initialRoute: Root.routeName,
+      initialRoute: SplashScreen.routeName,
       onGenerateRoute: AppRouter.generateRoute,
+      home: const SplashScreen(),
       theme: ThemeData(
         textTheme: const TextTheme(
           headline1: TextStyle(

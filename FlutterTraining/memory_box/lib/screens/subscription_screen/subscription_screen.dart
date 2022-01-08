@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/custom_navigationBar.dart';
+import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 
-class SubscriptionPage extends StatefulWidget {
-  static const routeName = 'SubscriptionPage';
+class SubscriptionScreen extends StatefulWidget {
+  static const routeName = 'SubscriptionScreen';
 
-  const SubscriptionPage({Key? key}) : super(key: key);
+  const SubscriptionScreen({Key? key}) : super(key: key);
 
   @override
-  _SubscriptionPageState createState() => _SubscriptionPageState();
+  _SubscriptionScreenState createState() => _SubscriptionScreenState();
 }
 
-class _SubscriptionPageState extends State<SubscriptionPage> {
+class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     Widget subscriptionType(bool isActive) {
@@ -131,7 +131,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           ),
           elevation: 0,
         ),
-        drawer: const CustomNavigationBar(),
+        drawer: const CustomDrawer(),
         body: Container(
           width: double.infinity,
           color: Colors.white,

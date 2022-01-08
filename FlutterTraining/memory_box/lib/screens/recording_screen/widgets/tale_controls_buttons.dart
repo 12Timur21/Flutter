@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class SoundControlButtons extends StatefulWidget {
-  const SoundControlButtons({
+class TaleControlButtons extends StatefulWidget {
+  const TaleControlButtons({
     Key? key,
     required this.tooglePlay,
     required this.moveBackward,
@@ -14,10 +14,10 @@ class SoundControlButtons extends StatefulWidget {
   final Function moveBackward;
 
   @override
-  _SoundControlButtonsState createState() => _SoundControlButtonsState();
+  _TaleControlButtonsState createState() => _TaleControlButtonsState();
 }
 
-class _SoundControlButtonsState extends State<SoundControlButtons> {
+class _TaleControlButtonsState extends State<TaleControlButtons> {
   bool isPlayMode = false;
 
   @override

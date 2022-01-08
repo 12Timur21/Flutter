@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:memory_box/screens/login_screen/registration_screens/registration_screen.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/continue_button.dart';
-import 'package:memory_box/widgets/textLogo.dart';
+import 'package:memory_box/widgets/elipse_orange_button.dart';
+import 'package:memory_box/screens/login_screen/widgets/textLogo.dart';
 
 class WelcomeRegistrationScreen extends StatelessWidget {
   static const routeName = 'WelcomeRegistrationScreen';
@@ -11,7 +11,7 @@ class WelcomeRegistrationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToRegistration() {
+    void _navigateToRegistration() {
       Navigator.pushNamed(
         context,
         RegistrationScreen.routeName,
@@ -65,11 +65,10 @@ class WelcomeRegistrationScreen extends StatelessWidget {
                   const SizedBox(
                     height: 50,
                   ),
-                  ContinueButton(
-                    onPress: () {
-                      navigateToRegistration();
-                    },
-                  )
+                  ElipseOrangeButton(
+                    text: 'Продолжить',
+                    onPress: _navigateToRegistration,
+                  ),
                 ],
               )
             ],

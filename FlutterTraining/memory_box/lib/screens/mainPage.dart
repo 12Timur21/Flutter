@@ -3,27 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
-import 'package:memory_box/blocks/mainPageNavigation/navigation_bloc.dart';
-import 'package:memory_box/blocks/mainPageNavigation/navigation_state.dart';
-import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
-import 'package:memory_box/screens/tales_list/audio_list.dart';
-import 'package:memory_box/screens/deletedTales/deleted_tales_list.dart';
-import 'package:memory_box/screens/playList/createPlayListPage.dart';
-import 'package:memory_box/screens/playList/playListPage.dart';
-import 'package:memory_box/screens/playList/selectSoundPlayList.dart';
-import 'package:memory_box/screens/profile.dart';
-import 'package:memory_box/screens/recording/record_preview.dart';
-
-import 'package:memory_box/screens/subscription.dart';
-import 'package:memory_box/screens/test.dart';
-import 'package:memory_box/widgets/bottom_navigationBar.dart';
-import 'package:memory_box/widgets/custom_navigationBar.dart';
-
-import 'recording/listening_tale.dart';
-import 'recording/recording_page.dart';
+import 'package:memory_box/routes/app_router.dart';
+import 'package:memory_box/screens/home_screen/home_screen.dart';
+import 'package:memory_box/screens/recording_screen/recording_screen.dart';
+import 'package:memory_box/utils/navigationService.dart';
+import 'package:memory_box/widgets/bottom_navigationBar/bottom_navigationBar.dart';
+import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 
 class MainPage extends StatefulWidget {
   static const routeName = 'MainPage';
@@ -42,7 +30,14 @@ class _MainPageState extends State<MainPage> {
   );
 
   bool isOpenBottomSheet = false;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<NavigatorState> _navigationKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    NavigationService.instance.initKey(_navigationKey);
+    super.initState();
+  }
 
   void _showBottomSheet() {
     isOpenBottomSheet = true;
@@ -107,68 +102,14 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
-      drawer: const CustomNavigationBar(),
-      body: BlocBuilder<NavigationBloc, NavigationState>(
-        builder: (context, state) {
-          if (state.selectedItem == NavigationPages.homePage) {
-            return const Test();
-          }
-          if (state.selectedItem == NavigationPages.collectionsListPage) {
-            return BlocBuilder<PlayListNavigationBloc, PlayListNavigationState>(
-              builder: (context, state) {
-                if (state is PlayListCreationScreen) {
-                  return CreatePlayListPage(
-                    collectionCreationState: state.playListCreationState,
-                  );
-                }
-                if (state is PlayListSelectionScreen) {
-                  return SelectSoundPlayList(
-                    collectionCreationState: state.playListCreationState,
-                  );
-                }
-                return const PlayListPage();
-              },
-            );
-          }
-          if (state.selectedItem == NavigationPages.audioListPage) {
-            return const AudioListPage();
-          }
-          if (state.selectedItem == NavigationPages.profilePage) {
-            return ProfilePage();
-          }
-          if (state.selectedItem == NavigationPages.subscriptionPage) {
-            return const SubscriptionPage();
-          }
-          if (state.selectedItem == NavigationPages.deletedTalesListPage) {
-            return DeletedTalesList();
-          }
-
-          return Container();
-        },
+      drawer: const CustomDrawer(),
+      body: Navigator(
+        key: _navigationKey,
+        initialRoute: HomeScreen.routeName,
+        onGenerateRoute: AppRouter.generateRoute,
       ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(30),
-            topLeft: Radius.circular(30),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              spreadRadius: 0,
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-          ),
-          child: BottomNavBar(
-            openButtomSheet: _showBottomSheet,
-          ),
-        ),
+      bottomNavigationBar: BottomNavBar(
+        openButtomSheet: _showBottomSheet,
       ),
     );
   }

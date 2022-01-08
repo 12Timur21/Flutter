@@ -4,15 +4,17 @@ import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/widgets/audio_tale_tile.dart';
 
-class DeletedTalesList extends StatefulWidget {
-  const DeletedTalesList({Key? key}) : super(key: key);
+class DeletedTalesScreen extends StatefulWidget {
+  static const routeName = 'DeletedTalesScreen';
+
+  const DeletedTalesScreen({Key? key}) : super(key: key);
 
   @override
-  _DeletedTalesListState createState() => _DeletedTalesListState();
+  _DeletedTalesScreenState createState() => _DeletedTalesScreenState();
 }
 
-class _DeletedTalesListState extends State<DeletedTalesList> {
-  Map<DateTime, List<String>> deletedTalesList = {
+class _DeletedTalesScreenState extends State<DeletedTalesScreen> {
+  Map<DateTime, List<String>> DeletedTalesScreen = {
     DateTime(2021, 12, 29): <String>['Tale id 1', 'tale id 2', 'tald id 3'],
     DateTime(2021, 12, 28): <String>[
       'Tale id 4',
@@ -43,12 +45,12 @@ class _DeletedTalesListState extends State<DeletedTalesList> {
       color: Colors.cyan,
       child: Container(),
       // FutureBuilder<List<TaleModel>>(
-      //     future: DatabaseService.instance.getDeletedTales(),
+      //     future: DatabaseService.instance.getDeletedTalesScreen(),
       //     builder: (context, snapshot) {
       //       return ListView.builder(
-      //         itemCount: deletedTalesList.length,
+      //         itemCount: DeletedTalesScreen.length,
       //         itemBuilder: (context, index) {
-      //           final deletedTaleDate = deletedTalesList.keys.elementAt(index);
+      //           final deletedTaleDate = DeletedTalesScreenScreen.keys.elementAt(index);
 
       //           return Container(
       //             child: Column(
@@ -60,7 +62,7 @@ class _DeletedTalesListState extends State<DeletedTalesList> {
       //                 //   isSelected: _taleModels?.contains(id) == true ? true : false,
       //                 // ),
       //                 Column(
-      //                   children: deletedTalesList.values
+      //                   children: DeletedTalesScreenScreen.values
       //                       .elementAt(index)
       //                       .map((item) => Text(item))
       //                       .toList(),

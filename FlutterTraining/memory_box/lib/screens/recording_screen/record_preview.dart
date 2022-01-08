@@ -6,9 +6,9 @@ import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
 import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/screens/recording_screen/widgets/bottom_sheet_wrapper.dart';
+import 'package:memory_box/screens/recording_screen/widgets/tale_controls_buttons.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
-import 'package:memory_box/widgets/bottom_sheetWrapper.dart';
-import 'package:memory_box/widgets/soundControlsButtons.dart';
 
 class RecordPreview extends StatefulWidget {
   const RecordPreview({
@@ -335,7 +335,7 @@ class _RecordPreviewState extends State<RecordPreview> {
                 );
               }),
             ),
-            SoundControlButtons(
+            TaleControlButtons(
               tooglePlay: tooglePlay,
               moveBackward: moveBackward,
               moveForward: moveForward,

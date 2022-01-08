@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-class ContinueButton extends StatefulWidget {
-  ContinueButton({
+class ElipseOrangeButton extends StatefulWidget {
+  ElipseOrangeButton({
     required this.onPress,
+    required this.text,
     Key? key,
   }) : super(key: key);
 
   VoidCallback onPress;
+  String text;
   @override
-  _ContinueButtonState createState() => _ContinueButtonState();
+  _ElipseOrangeButtonState createState() => _ElipseOrangeButtonState();
 }
 
-class _ContinueButtonState extends State<ContinueButton> {
+class _ElipseOrangeButtonState extends State<ElipseOrangeButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -27,9 +29,9 @@ class _ContinueButtonState extends State<ContinueButton> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        child: const Text(
-          'Продолжить',
-          style: TextStyle(
+        child: Text(
+          widget.text,
+          style: const TextStyle(
             fontFamily: 'TTNorms',
             fontWeight: FontWeight.w500,
             fontSize: 18,

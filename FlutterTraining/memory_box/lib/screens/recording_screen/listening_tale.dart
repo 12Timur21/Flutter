@@ -10,10 +10,10 @@ import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
 import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/storage_service.dart';
+import 'package:memory_box/screens/recording_screen/widgets/bottom_sheet_wrapper.dart';
+import 'package:memory_box/screens/recording_screen/widgets/tale_controls_buttons.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
-import 'package:memory_box/widgets/bottom_sheetWrapper.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
-import 'package:memory_box/widgets/soundControlsButtons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -246,7 +246,7 @@ class _ListeningPageState extends State<ListeningPage> {
                           soundDuration: state.soundModel?.duration,
                         ),
                       ),
-                      SoundControlButtons(
+                      TaleControlButtons(
                         tooglePlay: tooglePlay,
                         moveBackward: moveBackward,
                         moveForward: moveForward,

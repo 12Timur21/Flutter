@@ -3,9 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/widgets/appBar_withButtons.dart';
-import 'package:memory_box/widgets/audio_tale_tile.dart';
+import 'package:memory_box/widgets/tale_list_tiles/tale_list_tile_with_popup_menu.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 
 class AllTalesScreen extends StatefulWidget {
   static const routeName = 'AllTalesScreen';
@@ -25,7 +24,7 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
     print('re re render');
     return BackgroundPattern(
       patternColor: const Color.fromRGBO(94, 119, 206, 1),
-      height: 260,
+      isShort: true,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: appBarWithButtons(
@@ -60,7 +59,6 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
           ),
           actionsOnPress: () {},
         ),
-        drawer: const CustomDrawer(),
         body: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 20,
@@ -162,13 +160,14 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                         // itemExtent: 80,
 
                         itemBuilder: (context, index) {
-                          return AudioTaleTile(
-                            title: data?[index].title ?? 'No name',
-                            taleDuration:
-                                data?[index].duration ?? Duration.zero,
-                            taleID: data?[index].ID ?? '',
-                            taleURL: data?[index].url ?? '',
-                          );
+                          return Text('index');
+                          // return AudioTaleTile(
+                          //   title: data?[index].title ?? 'No name',
+                          //   taleDuration:
+                          //       data?[index].duration ?? Duration.zero,
+                          //   taleID: data?[index].ID ?? '',
+                          //   taleURL: data?[index].url ?? '',
+                          // );
                         },
                       );
                     }

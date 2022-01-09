@@ -82,12 +82,15 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                 return StatefulBuilder(
                   builder: (context, setState) {
                     if (countdown > 0) {
-                      timer = Timer(Duration(seconds: 1), () {
-                        setState(() {
-                          countdown--;
-                          timer?.cancel();
-                        });
-                      });
+                      timer = Timer(
+                        const Duration(seconds: 1),
+                        () {
+                          setState(() {
+                            countdown--;
+                            timer?.cancel();
+                          });
+                        },
+                      );
                     } else {
                       Navigator.pushNamed(
                         context,
@@ -101,7 +104,7 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
               },
             ),
           );
-          print('set statezzzz');
+
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         // if (state is VerifyTimeEnd) {

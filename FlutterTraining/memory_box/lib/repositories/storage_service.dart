@@ -2,7 +2,6 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:memory_box/models/tale_model.dart';
 
 import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';

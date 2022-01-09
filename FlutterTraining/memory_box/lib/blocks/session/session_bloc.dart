@@ -22,17 +22,14 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     SessionEvent event,
   ) async* {
     if (event is InitSession) {
-      print('called');
       UserModel? currentUser = await _authService.currentUser();
 
       if (currentUser != null) {
-        print('this');
         yield SessionState(
           status: SessionStatus.authenticated,
           user: currentUser,
         );
       } else {
-        print('not this');
         yield const SessionState(
           status: SessionStatus.notAuthenticated,
           user: null,

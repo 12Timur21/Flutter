@@ -16,9 +16,6 @@ class WelcomeRegualrUserScreen extends StatelessWidget {
       () => Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
         MainPage.routeName,
         (route) => false,
-        // MaterialPageRoute(
-        //   builder: (context) => const MainPage(),
-        // ),
       ),
     );
 

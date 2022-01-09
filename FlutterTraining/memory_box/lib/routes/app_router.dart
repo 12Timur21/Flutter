@@ -13,6 +13,7 @@ import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
 import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 import 'package:memory_box/screens/playlist_screen/select_playlist_tales.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
+import 'package:memory_box/screens/search_tales_screen/search_tales_screen.dart';
 import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/screens/subscription_screen/subscription_screen.dart';
 
@@ -70,6 +71,10 @@ class AppRouter {
 
       case DeletedTalesScreen.routeName:
         builder = (_) => const DeletedTalesScreen();
+        break;
+
+      case SearchTalesScreen.routeName:
+        builder = (_) => const SearchTalesScreen();
         break;
 
       //*[START] Play list

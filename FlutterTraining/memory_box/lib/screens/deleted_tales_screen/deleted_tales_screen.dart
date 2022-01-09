@@ -1,8 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/database_service.dart';
-import 'package:memory_box/widgets/audio_tale_tile.dart';
 
 class DeletedTalesScreen extends StatefulWidget {
   static const routeName = 'DeletedTalesScreen';

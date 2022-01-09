@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'tale_model.dart';
 
 class PlayListModel {

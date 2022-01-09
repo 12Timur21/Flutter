@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 
 class BackgroundPattern extends StatelessWidget {
-  const BackgroundPattern({
+  BackgroundPattern({
     required this.child,
     this.patternColor = const Color.fromRGBO(140, 132, 226, 1),
     this.height = 275,
+    this.isShort = false,
     Key? key,
   }) : super(key: key);
 
   final Widget child;
   final Color patternColor;
-  final double height;
+  double height;
+  final bool isShort;
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+
+    if (isShort) {
+      height = 260;
+    }
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
       body: Stack(

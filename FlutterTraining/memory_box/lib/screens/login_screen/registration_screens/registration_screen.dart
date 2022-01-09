@@ -50,8 +50,6 @@ class _RegistrationState extends State<RegistrationScreen> {
 
     return BlocListener<RegistrationBloc, RegistrationState>(
       listener: (BuildContext context, state) {
-        print('state state state ');
-        print(state);
         //*[Start] AnonSession
         if (state is AnonRegistrationSucces) {
           BlocProvider.of<SessionBloc>(context).add(

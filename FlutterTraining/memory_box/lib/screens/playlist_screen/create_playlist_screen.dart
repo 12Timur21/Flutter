@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
@@ -33,7 +32,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
 
   late final PlayListCreationState collectionState;
   late DatabaseService _databaseService;
-  List<String> _test = [];
 
   @override
   void initState() {
@@ -44,8 +42,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final navigationBloc = BlocProvider.of<PlayListNavigationBloc>(context);
-
     String? _validateCollectionTitleField(value) {
       if (value == null || value.isEmpty) {
         return 'Пожалуйста, введите название подборки';

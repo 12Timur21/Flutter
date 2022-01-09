@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memory_box/models/play_list_model.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/models/user_model.dart';
-import 'package:memory_box/utils/formatting.dart';
-
 import 'auth_service.dart';
 
 class DatabaseService {
@@ -104,8 +100,7 @@ class DatabaseService {
         .doc(taleID)
         .get();
 
-    Map<String, dynamic>? taleCollection =
-        documentSnapshot.data() as Map<String, dynamic>?;
+    Map<String, dynamic>? taleCollection = documentSnapshot.data();
 
     if (title != null) {
       taleCollection?['title'] = title;
@@ -210,6 +205,40 @@ class DatabaseService {
     return listTaleModels;
   }
 
+  Future<List<TaleModel>> searchTalesByTitle({String? title}) async {
+    title ??= '';
+    List<TaleModel> listTaleModels = [];
+
+    final String? uid = AuthService.userID;
+
+    final querySnapshot = await _talesCollection
+        .doc(uid)
+        .collection('allTales')
+        .where(
+          'isDeleted.status',
+          isEqualTo: false,
+        )
+        .where('searchKey', isGreaterThanOrEqualTo: title.toLowerCase())
+        .where(
+          'searchKey',
+          isLessThanOrEqualTo: title.toLowerCase() + '\uf8ff',
+        )
+        .get();
+
+    Map<int, QueryDocumentSnapshot<Map<String, dynamic>>> resultMap =
+        querySnapshot.docs.asMap();
+
+    resultMap.forEach((index, value) {
+      listTaleModels.add(
+        TaleModel.fromJson(
+          value.data(),
+        ),
+      );
+    });
+
+    return listTaleModels;
+  }
+
   // Future<List<TaleModel>> searchTalesByTitle(String taleTitle) async {
   //   List<TaleModel> listTaleModels = [];
 
@@ -218,11 +247,11 @@ class DatabaseService {
   //   final collectionReference = _talesCollection
   //       .doc(uid)
   //       .collection('allTales')
-  //       .where('title', isGreaterThanOrEqualTo: taleTitle)
-  //       .where(
-  //         'title',
-  //         isLessThanOrEqualTo: taleTitle + '\uf8ff',
-  //       );
+  // .where('title', isGreaterThanOrEqualTo: taleTitle)
+  // .where(
+  //   'title',
+  //   isLessThanOrEqualTo: taleTitle + '\uf8ff',
+  // );
 
   //   final snapshot = await collectionReference.get();
 

@@ -131,7 +131,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
           elevation: 0,
         ),
-        drawer: const CustomDrawer(),
         body: Container(
           width: double.infinity,
           color: Colors.white,

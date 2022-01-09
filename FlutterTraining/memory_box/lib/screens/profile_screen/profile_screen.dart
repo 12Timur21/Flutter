@@ -196,7 +196,6 @@ class _ProfileState extends State<ProfileScreen> {
           ),
           elevation: 0,
         ),
-        drawer: const CustomDrawer(),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(

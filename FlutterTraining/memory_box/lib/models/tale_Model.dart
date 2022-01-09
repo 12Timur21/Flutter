@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class TaleDeleteStatus {
   bool isDeleted;
   DateTime? deleteDate;
@@ -16,7 +14,6 @@ class TaleModel {
   String? url;
   Duration? duration;
   TaleDeleteStatus? deleteStatus;
-  int? fileSize;
 
   TaleModel({
     this.ID,
@@ -24,7 +21,6 @@ class TaleModel {
     this.title,
     this.url,
     this.deleteStatus,
-    this.fileSize,
   });
 
   //!

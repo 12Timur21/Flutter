@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/routes/app_router.dart';
-import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/settings/initial_settings.dart';
 import 'blocks/playListNavigation/playListNavigation_bloc.dart';

@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Search extends StatefulWidget {
-  const Search({required this.onChange, Key? key}) : super(key: key);
+  const Search({
+    required this.onChange,
+    this.onFocusChange,
+    required this.searchFieldContoller,
+    Key? key,
+  }) : super(key: key);
+
   final Function(String) onChange;
+  final Function(bool)? onFocusChange;
+  final TextEditingController? searchFieldContoller;
+
   @override
   _SearchState createState() => _SearchState();
 }
@@ -30,20 +39,24 @@ class _SearchState extends State<Search> {
                 padding: const EdgeInsets.only(
                   left: 5,
                 ),
-                child: TextField(
-                  onChanged: widget.onChange,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Поиск',
-                    hintStyle: TextStyle(
-                      color: Color.fromRGBO(58, 58, 85, 0.5),
+                child: Focus(
+                  onFocusChange: widget.onFocusChange,
+                  child: TextField(
+                    onChanged: widget.onChange,
+                    controller: widget.searchFieldContoller,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Поиск',
+                      hintStyle: TextStyle(
+                        color: Color.fromRGBO(58, 58, 85, 0.5),
+                      ),
                     ),
-                  ),
-                  style: const TextStyle(
-                    fontFamily: 'TTNorms',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20,
-                    color: Colors.black,
+                    style: const TextStyle(
+                      fontFamily: 'TTNorms',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),

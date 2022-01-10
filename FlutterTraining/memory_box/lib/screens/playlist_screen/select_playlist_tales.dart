@@ -5,6 +5,7 @@ import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dar
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
 import 'package:memory_box/utils/navigationService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/search.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 
 class SelectPlaylistTales extends StatefulWidget {
@@ -155,9 +156,11 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
               const SizedBox(
                 height: 15,
               ),
-              // Search(
-              //   onChange: search,
-              // ),
+              Search(
+                onChange: search,
+                onFocusChange: (bool) {},
+                searchFieldContoller: null,
+              ),
               const SizedBox(
                 height: 45,
               ),

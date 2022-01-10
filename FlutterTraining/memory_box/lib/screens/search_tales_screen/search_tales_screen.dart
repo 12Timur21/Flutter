@@ -17,10 +17,38 @@ class SearchTalesScreen extends StatefulWidget {
 }
 
 class _SearchTalesScreenState extends State<SearchTalesScreen> {
-  String? _searchTitle;
+  String? _searchValue;
+  bool _searchHasFocus = false;
+  final TextEditingController _searchFieldContoller = TextEditingController();
+
+  void _onSearchFocusChange(bool hasFocus) {
+    setState(() {
+      _searchHasFocus = hasFocus;
+    });
+  }
+
+  void _onSearchValueChange(String value) {
+    if (value.endsWith(' ')) return;
+    setState(() {
+      _searchValue = value;
+    });
+  }
+
+  void _onSearchValueSelected(String value) {
+    setState(() {
+      _searchHasFocus = false;
+
+      _searchValue = value;
+
+      _searchFieldContoller.text = _searchValue ?? '';
+
+      FocusScope.of(context).requestFocus(FocusNode());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    print('main build');
     return BackgroundPattern(
       patternColor: const Color.fromRGBO(103, 139, 210, 1),
       isShort: true,
@@ -44,39 +72,96 @@ class _SearchTalesScreenState extends State<SearchTalesScreen> {
                 height: 30,
               ),
               Search(
-                onChange: (value) {
-                  if (value.endsWith(' ')) return;
-                  setState(() {
-                    _searchTitle = value;
-                  });
-                },
+                searchFieldContoller: _searchFieldContoller,
+                onChange: _onSearchValueChange,
+                onFocusChange: _onSearchFocusChange,
               ),
-              const SizedBox(
-                height: 50,
-              ),
+              _searchHasFocus
+                  ? const SizedBox(
+                      height: 15,
+                    )
+                  : const SizedBox(
+                      height: 50,
+                    ),
               Expanded(
                 child: FutureBuilder<List<TaleModel>>(
                   future: DatabaseService.instance
-                      .searchTalesByTitle(title: _searchTitle),
+                      .searchTalesByTitle(title: _searchValue),
                   builder: (
                     BuildContext context,
                     AsyncSnapshot<List<TaleModel>> snapshot,
                   ) {
+                    print('future builder');
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return ListView.builder(
-                        itemCount: snapshot.data?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          TaleModel? taleModel = snapshot.data?[index];
-                          if (taleModel != null) {
-                            return TaleListTileWithPopupMenu(
-                              taleModel: taleModel,
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      );
+                      if (_searchHasFocus && snapshot.data?.length != 0) {
+                        return Container(
+                          height: 210,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 40,
+                          ),
+                          decoration: const BoxDecoration(
+                            color: Color.fromRGBO(246, 246, 246, 1),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(30),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(0, 4),
+                                blurRadius: 20,
+                                color: Color.fromRGBO(0, 0, 0, 0.18),
+                              ),
+                            ],
+                          ),
+                          child: ListView.builder(
+                            itemCount: snapshot.data?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              print('list view builder');
+                              TaleModel? taleModel = snapshot.data?[index];
+                              if (taleModel != null) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    _onSearchValueSelected(
+                                      snapshot.data?[index].title ?? '',
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      top: index == 0 ? 0 : 25,
+                                    ),
+                                    child: Text(
+                                      taleModel.title ?? '',
+                                      style: const TextStyle(
+                                        fontFamily: 'TTNorms',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+                        );
+                      } else {
+                        return ListView.builder(
+                          itemCount: snapshot.data?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            TaleModel? taleModel = snapshot.data?[index];
+                            if (taleModel != null) {
+                              return TaleListTileWithPopupMenu(
+                                taleModel: taleModel,
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        );
+                      }
                     }
-                    return const CircularProgressIndicator();
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   },
                 ),
               ),

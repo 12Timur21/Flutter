@@ -11,6 +11,7 @@ import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 import 'package:memory_box/screens/playlist_screen/select_playlist_tales.dart';
 import 'package:memory_box/utils/navigationService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/tale_list_tiles/tale_list_tile_with_popup_menu.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 import 'package:uuid/uuid.dart';
 
@@ -210,7 +211,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                     _pickImage();
                   },
                   child: Container(
-                    height: 240,
+                    height: 200,
                     decoration: BoxDecoration(
                       color: const Color.fromRGBO(246, 246, 246, 0.9),
                       borderRadius: BorderRadius.circular(15),
@@ -281,58 +282,80 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                //!TEST
                 Expanded(
-                  child: FutureBuilder(
-                    future: DatabaseService.instance
-                        .getFewTaleModels(taleIDs: ['']),
-                    builder: (
-                      BuildContext context,
-                      AsyncSnapshot<List<TaleModel>> snapshot,
-                    ) {
-                      print('------');
-                      snapshot.data?.forEach((element) {
-                        print(element.title);
-                      });
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return ListView.builder(
-                          itemCount: snapshot.data?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            return Text('');
-                            // TaleSelectionTile(
-                            //   taleModel: snapshot.data?[index],
-                            // );
-                          },
-                        );
-                      } else {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: TextButton(
-                    onPressed: addSongs,
-                    child: const Text(
-                      'Добавить аудиофайл',
-                      style: TextStyle(
-                        fontFamily: 'TTNorms',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: Colors.transparent,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.black,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black,
-                            offset: Offset(0, -5),
-                          ),
-                        ],
+                  child: Stack(
+                    children: [
+                      FutureBuilder(
+                        future: DatabaseService.instance.getFewTaleModels(
+                          taleIDs: widget.collectionCreationState?.talesIDs,
+                        ),
+                        builder: (
+                          BuildContext context,
+                          AsyncSnapshot<List<TaleModel>?> snapshot,
+                        ) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return ListView.builder(
+                              itemCount: snapshot.data?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                TaleModel? taleModel = snapshot.data?[index];
+                                if (taleModel != null) {
+                                  return TaleListTileWithPopupMenu(
+                                    taleModel: taleModel,
+                                  );
+                                }
+                                return const SizedBox();
+                              },
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
                       ),
-                    ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: 40,
+                          decoration: const BoxDecoration(
+                            color: Color.fromRGBO(246, 246, 246, 1),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromRGBO(0, 0, 0, 0.15),
+                                spreadRadius: 1,
+                                // offset: Offset(0, -1),
+                              ),
+                            ],
+                          ),
+                          child: TextButton(
+                            onPressed: addSongs,
+                            child: const Text(
+                              'Добавить аудиофайл',
+                              style: TextStyle(
+                                height: 2,
+                                fontFamily: 'TTNorms',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: Colors.transparent,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.black,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black,
+                                    offset: Offset(0, -5),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

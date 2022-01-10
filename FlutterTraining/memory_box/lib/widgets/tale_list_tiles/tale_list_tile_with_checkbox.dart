@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/database_service.dart';
-import 'package:memory_box/repositories/storage_service.dart';
-import 'package:memory_box/widgets/bottom_sheet_change_confirmation.dart';
 
 class TaleListTileWithCheckBox extends StatefulWidget {
   TaleListTileWithCheckBox({

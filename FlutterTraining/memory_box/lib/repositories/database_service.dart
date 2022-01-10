@@ -140,9 +140,11 @@ class DatabaseService {
   //   );
   // }
 
-  Future<List<TaleModel>> getFewTaleModels({
-    required List<String> taleIDs,
+  Future<List<TaleModel>?> getFewTaleModels({
+    required List<String>? taleIDs,
   }) async {
+    if (taleIDs?.isEmpty ?? true) return null;
+
     List<TaleModel> listTaleModels = [];
 
     String? uid = AuthService.userID;
@@ -156,9 +158,12 @@ class DatabaseService {
     QuerySnapshot<Map<String, dynamic>> taleCollection =
         await documentSnapshot.get();
 
-    print(taleCollection.docs.length);
-    final value = taleCollection.docs.map((e) {
-      print(e.data());
+    taleCollection.docs.forEach((e) {
+      listTaleModels.add(
+        TaleModel.fromJson(
+          e.data(),
+        ),
+      );
     });
 
     // listTaleModels.add(

@@ -149,25 +149,23 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
               ),
               Expanded(
                 child: FutureBuilder<List<TaleModel>>(
-                  future: DatabaseService.instance.getAllNotDeletedTaleModels(),
-                  builder: (context, snapshot) {
+                  future:
+                      DatabaseService.instance.searchTalesByTitle(title: ''),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<List<TaleModel>> snapshot,
+                  ) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      List<TaleModel>? data = snapshot.data;
-
                       return ListView.builder(
-                        // physics: ClampingScrollPhysics(),
-                        itemCount: data?.length,
-                        // itemExtent: 80,
-
+                        itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index) {
-                          return Text('index');
-                          // return AudioTaleTile(
-                          //   title: data?[index].title ?? 'No name',
-                          //   taleDuration:
-                          //       data?[index].duration ?? Duration.zero,
-                          //   taleID: data?[index].ID ?? '',
-                          //   taleURL: data?[index].url ?? '',
-                          // );
+                          TaleModel? taleModel = snapshot.data?[index];
+                          if (taleModel != null) {
+                            return TaleListTileWithPopupMenu(
+                              taleModel: taleModel,
+                            );
+                          }
+                          return const SizedBox();
                         },
                       );
                     }

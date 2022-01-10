@@ -82,7 +82,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
           coverID: uuid,
         );
 
-        _databaseService.createPlayList(
+        await _databaseService.createPlayList(
           playListID: uuid,
           title: collectionState.title ?? '',
           description: collectionState.description,
@@ -184,6 +184,9 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
           ),
           child: Form(
             key: _formKey,
+
+            // SingleChildScrollView(
+            // physics: const NeverScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

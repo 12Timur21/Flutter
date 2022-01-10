@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-PreferredSizeWidget appBarWithButtons({
-  required Function leadingOnPress,
-  required Widget title,
-  required Function actionsOnPress,
-}) {
+PreferredSizeWidget appBarWithButtons(
+    {required Function leadingOnPress,
+    required Widget title,
+    required Function actionsOnPress,
+    double? toolbarHeight}) {
   return AppBar(
     primary: true,
-    toolbarHeight: 70,
+    toolbarHeight: toolbarHeight ?? 70,
     backgroundColor: Colors.transparent,
     centerTitle: true,
     leading: Container(

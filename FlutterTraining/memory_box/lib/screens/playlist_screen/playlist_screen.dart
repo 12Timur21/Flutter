@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:memory_box/models/play_list_model.dart';
+import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
 import 'package:memory_box/utils/formatting.dart';
@@ -27,7 +27,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
     Widget CollectionTile({
       required String title,
       required int audioCount,
-      required Duration sumAudioDuration,
+      Duration? sumAudioDuration,
       required String coverUrl,
       required int index,
     }) {
@@ -118,11 +118,12 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                             height: 7,
                           ),
                           Text(
+                            // sumAudioDuration?.inMilliseconds.toString() ?? '',
                             '${convertDurationToString(
                               duration: sumAudioDuration,
                               formattingType:
                                   TimeFormattingType.hourMinuteWithOneDigits,
-                            )} часа',
+                            )} ${sumAudioDuration?.inHours == null ? 0 : sumAudioDuration!.inHours > 0 ? "часа" : "минут"}',
                             style: const TextStyle(
                               fontFamily: 'TTNorms',
                               fontWeight: FontWeight.w400,
@@ -195,7 +196,9 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                 right: 15,
               ),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  DatabaseService.instance.getAllPlayList();
+                },
                 icon: SvgPicture.asset(
                   'assets/icons/More.svg',
                 ),
@@ -208,10 +211,11 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
             margin: const EdgeInsets.only(
               top: 30,
             ),
-            child: FutureBuilder<List<PlayListModel>>(
+            child: FutureBuilder<List<PlaylistModel>>(
               future: DatabaseService.instance.getAllPlayList(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  print(snapshot.data);
                   return GridView.count(
                     primary: true,
                     crossAxisCount: 2,
@@ -221,16 +225,17 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                       (index) {
                         return CollectionTile(
                           title: snapshot.data?[index].title ?? '',
-                          audioCount: 5,
+                          audioCount:
+                              snapshot.data?[index].tilesIDSList?.length ?? 0,
                           coverUrl: snapshot.data?[index].coverUrl ?? '',
-                          sumAudioDuration: const Duration(hours: 4),
+                          sumAudioDuration: snapshot.data?[index].duration,
                           index: index,
                         );
                       },
                     ),
                   );
                 }
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               },
             )
             // child: FutureBuilder(

@@ -266,9 +266,8 @@ class StorageService {
       fileName: taleID,
       fileType: FileType.tale,
     );
-    print(taleID);
+
     await _cloud.ref().child('/$destination').delete();
-    // await _database.deleteTaleRecord(taleID);
   }
 
   //??[End] Tale

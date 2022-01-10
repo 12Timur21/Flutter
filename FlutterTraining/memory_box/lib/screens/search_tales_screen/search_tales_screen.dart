@@ -91,7 +91,6 @@ class _SearchTalesScreenState extends State<SearchTalesScreen> {
                     BuildContext context,
                     AsyncSnapshot<List<TaleModel>> snapshot,
                   ) {
-                    print('future builder');
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (_searchHasFocus && snapshot.data?.length != 0) {
                         return Container(

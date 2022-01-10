@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TaleDeleteStatus {
   bool isDeleted;
   DateTime? deleteDate;
@@ -46,6 +48,8 @@ class TaleModel {
   // }
 
   factory TaleModel.fromJson(Map<String, dynamic> json) {
+    Timestamp? timeStamp = (json['isDeleted']['deleteDate'] as Timestamp?);
+
     return TaleModel(
       title: json['title'],
       ID: json['taleID'],
@@ -55,7 +59,9 @@ class TaleModel {
       ),
       deleteStatus: TaleDeleteStatus(
         isDeleted: json['isDeleted']['status'],
-        deleteDate: json['isDeleted']['deleteDate'],
+        deleteDate: DateTime.fromMicrosecondsSinceEpoch(
+          timeStamp?.microsecondsSinceEpoch ?? 0,
+        ),
       ),
     );
   }

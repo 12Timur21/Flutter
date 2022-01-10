@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:memory_box/models/play_list_model.dart';
+import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/models/user_model.dart';
+import 'package:memory_box/repositories/storage_service.dart';
 import 'auth_service.dart';
 
 class DatabaseService {
@@ -210,6 +211,34 @@ class DatabaseService {
     return listTaleModels;
   }
 
+  Future<List<TaleModel>> getAllDeletedTaleModels() async {
+    List<TaleModel> listTaleModels = [];
+
+    final String? uid = AuthService.userID;
+
+    final querySnapshot = await _talesCollection
+        .doc(uid)
+        .collection('allTales')
+        .where(
+          'isDeleted.status',
+          isEqualTo: true,
+        )
+        .get();
+
+    Map<int, QueryDocumentSnapshot<Map<String, dynamic>>> resultMap =
+        querySnapshot.docs.asMap();
+
+    resultMap.forEach((index, value) {
+      listTaleModels.add(
+        TaleModel.fromJson(
+          value.data(),
+        ),
+      );
+    });
+
+    return listTaleModels;
+  }
+
   Future<List<TaleModel>> searchTalesByTitle({String? title}) async {
     title ??= '';
     List<TaleModel> listTaleModels = [];
@@ -339,6 +368,38 @@ class DatabaseService {
       }
     });
   }
+
+  Future<void> finalDeleteTaleRecord(String taleID) async {
+    String? uid = AuthService.userID;
+    print(taleID);
+    await _talesCollection.doc(uid).collection('allTales').doc(taleID).delete();
+    await StorageService.instance.deleteTale(
+      taleID: taleID,
+    );
+  }
+
+  Future<int> calculateTalesInMS(List<String>? taleIDs) async {
+    int sumTimeInMS = 0;
+    String? uid = AuthService.userID;
+
+    QuerySnapshot<Map<String, dynamic>> documentSnapshot =
+        await _talesCollection
+            .doc(uid)
+            .collection('allTales')
+            .where(
+              'taleID',
+              whereIn: taleIDs,
+            )
+            .get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> e
+        in documentSnapshot.docs) {
+      Map<String, dynamic> data = e.data();
+      sumTimeInMS += data['durationInMS'] as int;
+    }
+    print(sumTimeInMS);
+    return sumTimeInMS;
+  }
   //??[End] Tale
 
   //??[Start] PlayList
@@ -350,11 +411,14 @@ class DatabaseService {
     required String coverUrl,
   }) async {
     String? uid = AuthService.userID;
+    int tilesSumDurationInMs = await calculateTalesInMS(talesIDs);
 
     Map<String, dynamic> collection = {
+      'ID': playListID,
       'title': title,
       'description': description,
       'tilesIDSList': talesIDs,
+      'tilesSumDurationInMs': tilesSumDurationInMs,
       'coverUrl': coverUrl,
     };
 
@@ -453,8 +517,8 @@ class DatabaseService {
     return collection?[playListID];
   }
 
-  Future<List<PlayListModel>> getAllPlayList() async {
-    List<PlayListModel> playListModel = [];
+  Future<List<PlaylistModel>> getAllPlayList() async {
+    List<PlaylistModel> playListModel = [];
     String? uid = AuthService.userID;
 
     DocumentSnapshot documentSnapshot =
@@ -464,10 +528,14 @@ class DatabaseService {
         documentSnapshot.data() as Map<String, dynamic>?;
 
     collection?.forEach((key, value) {
-      playListModel.add(PlayListModel(
+      playListModel.add(PlaylistModel(
         coverUrl: value['coverUrl'],
         ID: value['key'],
         title: value['title'],
+        duration: Duration(
+          milliseconds: value['tilesSumDurationInMs'],
+        ),
+        // tilesIDSList: value['tilesIDSList'],
       ));
     });
 

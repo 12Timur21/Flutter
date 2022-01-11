@@ -5,22 +5,46 @@ class NavigationService {
   NavigationService._();
   static NavigationService instance = NavigationService._();
 
+  String? _newRouteName;
+  Object? _newArguments;
+  String? _oldRouteName;
+  Object? _oldArguments;
+
+  void updateHistory(String z, Object? x) {
+    _oldRouteName = _newRouteName;
+    _newRouteName = z;
+
+    _oldArguments = _newArguments;
+    _newArguments = x;
+  }
+
   void initKey(GlobalKey<NavigatorState> key) {
     navigationKey = key;
   }
 
-  void navigateTo(String routeName, [Object? arguments]) {
+  void navigateTo(
+    String routeName, {
+    Object? arguments,
+    bool saveNewRoute = true,
+  }) {
+    if (saveNewRoute) {
+      updateHistory(routeName, arguments);
+    }
+
     navigationKey.currentState?.pushNamed(
       routeName,
       arguments: arguments,
     );
   }
 
-  // Future<dynamic> navigateToRoute(MaterialPageRoute _rn) {
-  //   return navigationKey.currentState.push(_rn);
-  // }
+  void navigateToPreviousPage() {
+    updateHistory(_oldRouteName ?? '', _oldArguments);
 
-  void goback() {
-    navigationKey.currentState?.pop();
+    if (_oldRouteName != null) {
+      navigationKey.currentState?.pushNamed(
+        _newRouteName!,
+        arguments: _newArguments,
+      );
+    }
   }
 }

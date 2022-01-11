@@ -25,7 +25,7 @@ class AppRouter {
 
     WidgetBuilder builder;
 
-    print('settings name : ${settings.name}');
+    print(settings.name);
 
     switch (settings.name) {
       case SplashScreen.routeName:
@@ -79,7 +79,12 @@ class AppRouter {
 
       //*[START] Play list
       case PlaylistScreen.routeName:
-        builder = (_) => const PlaylistScreen();
+        {
+          final String? taleID = arguments as String?;
+          builder = (_) => PlaylistScreen(
+                taleID: taleID,
+              );
+        }
         break;
 
       case CreatePlaylistScreen.routeName:

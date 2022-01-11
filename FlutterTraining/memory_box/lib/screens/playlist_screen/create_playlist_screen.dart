@@ -23,6 +23,7 @@ class CreatePlaylistScreen extends StatefulWidget {
     Key? key,
   }) : super(key: key);
   final PlayListCreationState? collectionCreationState;
+
   @override
   _CreatePlaylistScreenState createState() => _CreatePlaylistScreenState();
 }
@@ -82,7 +83,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
           coverID: uuid,
         );
 
-        await _databaseService.createPlayList(
+        await _databaseService.createPlaylist(
           playListID: uuid,
           title: collectionState.title ?? '',
           description: collectionState.description,
@@ -91,13 +92,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
         );
       }
 
-      NavigationService.instance.navigateTo(PlaylistScreen.routeName);
-
-      // _databaseService.createCollection(collectionModel)
-
-      // navigationBloc.add(
-      //   OpenCollectionsPreviewScreen(),
-      // );
+      NavigationService.instance.navigateToPreviousPage();
     }
 
     Future<void> _pickImage() async {
@@ -114,14 +109,12 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
     }
 
     void undoChanges() {
-      NavigationService.instance.navigateTo(PlaylistScreen.routeName);
+      NavigationService.instance.navigateToPreviousPage();
     }
 
     void addSongs() {
-      NavigationService.instance.navigateTo(
-        SelectPlaylistTales.routeName,
-        collectionState,
-      );
+      NavigationService.instance.navigateTo(SelectPlaylistTales.routeName,
+          arguments: collectionState, saveNewRoute: false);
     }
 
     return BackgroundPattern(

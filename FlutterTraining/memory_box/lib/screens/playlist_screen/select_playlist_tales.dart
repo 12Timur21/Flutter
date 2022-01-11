@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
@@ -28,9 +27,8 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
   late final PlayListCreationState? _playListState;
   final StreamController<String?> _toogleSubscriptionTale =
       StreamController<String>();
-  List<String>? _taleModels;
+  List<String>? _taleIDs;
 
-  //!
   String? _searchValue;
   bool _searchHasFocus = false;
   final TextEditingController _searchFieldContoller = TextEditingController();
@@ -60,20 +58,18 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
     });
   }
 
-  //!
-
   @override
   void initState() {
     _playListState = widget.collectionCreationState;
-    _taleModels = _playListState?.talesIDs ?? [];
+    _taleIDs = _playListState?.talesIDs ?? [];
 
     _toogleSubscriptionTale.stream.listen((String? event) {
       String? taleID = event;
       bool isTaleInList = false;
 
       print(taleID);
-      if (taleID != null && _taleModels != null) {
-        for (String savedTaleID in _taleModels!) {
+      if (taleID != null && _taleIDs != null) {
+        for (String savedTaleID in _taleIDs!) {
           print('$taleID - $savedTaleID');
           if (taleID == savedTaleID) {
             isTaleInList = true;
@@ -81,11 +77,11 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
         }
 
         if (isTaleInList) {
-          _taleModels?.remove(taleID);
+          _taleIDs?.remove(taleID);
         } else {
-          _taleModels?.add(taleID);
+          _taleIDs?.add(taleID);
         }
-        print(_taleModels);
+        print(_taleIDs);
       }
     });
 
@@ -98,33 +94,32 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
     super.dispose();
   }
 
-  // Future<List<TaleModel>> futureLoaderTales =
-  //     DatabaseService.instance.getAllTaleModels();
-
   @override
   Widget build(BuildContext context) {
     void _undoChanges() {
       NavigationService.instance.navigateTo(
         CreatePlaylistScreen.routeName,
-        widget.collectionCreationState,
+        arguments: widget.collectionCreationState,
+        saveNewRoute: false,
       );
     }
 
     void _saveChanges() {
-      _playListState?.talesIDs = _taleModels;
+      _playListState?.talesIDs = _taleIDs;
 
       NavigationService.instance.navigateTo(
         CreatePlaylistScreen.routeName,
-        _playListState,
+        arguments: _playListState,
+        saveNewRoute: false,
       );
     }
 
     void subscibeTale(String taleID) {
-      _taleModels?.add(taleID);
+      _taleIDs?.add(taleID);
     }
 
     void unSubscribeTale(String taleID) {
-      _taleModels?.remove(taleID);
+      _taleIDs?.remove(taleID);
     }
 
     // void search(String value) async {
@@ -278,8 +273,7 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
                             TaleModel? taleModel = snapshot.data?[index];
                             if (taleModel != null) {
                               bool isSelected = false;
-                              if (_taleModels?.contains(taleModel.ID) ??
-                                  false) {
+                              if (_taleIDs?.contains(taleModel.ID) ?? false) {
                                 isSelected = true;
                               }
                               return TaleListTileWithCheckBox(

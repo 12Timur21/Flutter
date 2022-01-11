@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
+import 'package:memory_box/utils/navigationService.dart';
 
 class TaleListTileWithPopupMenu extends StatefulWidget {
   const TaleListTileWithPopupMenu({
@@ -36,7 +38,12 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
     );
   }
 
-  void _addToPlayList() {}
+  void _addToPlayList() {
+    NavigationService.instance.navigateTo(
+      PlaylistScreen.routeName,
+      arguments: _taleModel.ID,
+    );
+  }
 
   void _deleteTale() {
     String? taleID = _taleModel.ID;
@@ -58,6 +65,7 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
   }
 
   void _save() async {
+    _taleModel.title = _textFieldController.text;
     String? taleID = _taleModel.ID;
     if (taleID != null) {
       await DatabaseService.instance.updateTaleData(
@@ -91,7 +99,7 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
   @override
   Widget build(BuildContext context) {
     return _isDeleted
-        ? SizedBox()
+        ? const SizedBox()
         : Container(
             margin: const EdgeInsets.only(bottom: 10),
             decoration: BoxDecoration(
@@ -108,6 +116,9 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
               ),
               leading: GestureDetector(
                 onTap: () {
+                  setState(() {
+                    _isPlay = !_isPlay;
+                  });
                   // _myFocusNode.requestFocus();
                   // myFocusNode.unfocus();
                   // showModalBottomSheet(
@@ -207,25 +218,46 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
                         color: Colors.black,
                         width: 25,
                       ),
+                      onSelected: (result) {
+                        switch (result) {
+                          case 0:
+                            _openEditMode();
+                            break;
+                          case 1:
+                            _addToPlayList();
+                            break;
+                          case 2:
+                            _deleteTale();
+                            break;
+                          case 3:
+                            _shareTale();
+                            break;
+                        }
+                      },
                       itemBuilder: (context) {
                         return [
                           PopupMenuItem(
+                            value: 0,
                             child: _isEditMode
                                 ? const Text('Сохранить')
                                 : const Text('Переименовать'),
-                            onTap: _openEditMode,
+
+                            // onTap: _openEditMode,
                           ),
-                          PopupMenuItem(
-                            child: const Text('Добавить в подборку'),
-                            onTap: _addToPlayList,
+                          const PopupMenuItem(
+                            value: 1,
+                            child: Text('Добавить в подборку'),
+                            // onTap: _addToPlayList,
                           ),
-                          PopupMenuItem(
-                            child: const Text('Удалить'),
-                            onTap: _deleteTale,
+                          const PopupMenuItem(
+                            value: 2,
+                            child: Text('Удалить'),
+                            // onTap: ,
                           ),
-                          PopupMenuItem(
-                            child: const Text('Поделиться'),
-                            onTap: _shareTale,
+                          const PopupMenuItem(
+                            value: 3,
+                            child: Text('Поделиться'),
+                            // onTap: ,
                           )
                         ];
                       },

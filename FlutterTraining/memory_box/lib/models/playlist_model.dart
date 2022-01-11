@@ -6,7 +6,7 @@ class PlaylistModel {
   String? description;
   String? coverUrl;
   Duration? duration;
-  List<String>? tilesIDSList;
+  List<String>? taleIDsList;
 
   PlaylistModel({
     required this.ID,
@@ -14,15 +14,31 @@ class PlaylistModel {
     this.description,
     required this.coverUrl,
     this.duration,
-    this.tilesIDSList,
+    this.taleIDsList,
   });
 
   factory PlaylistModel.fromJson(Map<String, dynamic> json) {
+    // print('1----');
+    // print(json['taleIDsList'][0]);
+    // print(
+    //   PlaylistModel(
+    //     coverUrl: json['coverUrl'],
+    //     ID: json['ID'],
+    //     description: json['description'],
+    //     title: json['title'],
+    //     // taleIDsList: json['taleIDsList'] as List<String>?,
+    //     // duration: Duration(
+    //     //   milliseconds: json['tilesSumDurationInMs'],
+    //     // ),
+    //   ),
+    // );
+    // print('2----');
     return PlaylistModel(
       coverUrl: json['coverUrl'],
       ID: json['ID'],
+      description: json['description'],
       title: json['title'],
-      tilesIDSList: json['tilesIDSList'],
+      // taleIDsList: json['taleIDsList'],
       duration: Duration(
         milliseconds: json['tilesSumDurationInMs'],
       ),

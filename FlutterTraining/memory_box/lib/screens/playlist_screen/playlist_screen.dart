@@ -39,9 +39,10 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   }
 
   void _createNewPlaylist() {
-    NavigationService.instance.navigateTo(
-      CreatePlaylistScreen.routeName,
-    );
+    Navigator.of(context).pushNamed(CreatePlaylistScreen.routeName);
+    // NavigationService.instance.navigateTo(
+    //   CreatePlaylistScreen.routeName,
+    // );
   }
 
   //*[START] AdditionTaleToPlaylistMode
@@ -63,7 +64,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         taleID: taleID,
       );
     }
-    NavigationService.instance.navigateToPreviousPage();
+    // NavigationService.instance.navigateToPreviousPage();
   }
   //*[END] AdditionTaleToPlaylistMode
 

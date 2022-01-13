@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/screens/recording_screen/widgets/bottom_sheet_wrapper.dart';
 import 'package:memory_box/screens/recording_screen/widgets/tale_controls_buttons.dart';
@@ -57,11 +55,8 @@ class _RecordPreviewState extends State<RecordPreview> {
   }
 
   void changeRecordingButton() {
-    final recorderButtomBloc = BlocProvider.of<RecorderButtomBloc>(context);
-    recorderButtomBloc.add(
-      const ChangeIcon(
-        RecorderButtonStates.withIcon,
-      ),
+    BlocProvider.of<BottomNavigationIndexControlCubit>(context).changeIcon(
+      RecorderButtonStates.withIcon,
     );
   }
 

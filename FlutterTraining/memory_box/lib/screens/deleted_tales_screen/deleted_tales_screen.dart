@@ -18,31 +18,6 @@ class DeletedTalesScreen extends StatefulWidget {
 }
 
 class _DeletedTalesScreenState extends State<DeletedTalesScreen> {
-  Map<DateTime, List<String>> DeletedTalesScreen = {
-    DateTime(2021, 12, 29): <String>['Tale id 1', 'tale id 2', 'tald id 3'],
-    DateTime(2021, 12, 28): <String>[
-      'Tale id 4',
-      'tale id 5',
-      'tald id 6',
-      'tald id 7'
-    ],
-    DateTime(2021, 12, 27): <String>[
-      'Tale id n',
-      'tale id 2',
-      'tald id 3',
-    ],
-    DateTime(2021, 12, 26): <String>[
-      'Tale id 1',
-      'tale id 2',
-      'tald id 3',
-    ],
-    DateTime(2021, 12, 25): <String>[
-      'Tale id 1',
-      ' tale id 2',
-      'tald id 3',
-    ],
-  };
-
   @override
   Widget build(BuildContext context) {
     return BackgroundPattern(

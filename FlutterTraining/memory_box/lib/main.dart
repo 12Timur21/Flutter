@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
 import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/settings/initial_settings.dart';
 import 'blocks/playListNavigation/playListNavigation_bloc.dart';
-import 'blocks/recorderButton/recorderButton_bloc.dart';
-import 'blocks/recorderButton/recorderButton_state.dart';
+
 import 'blocks/registration/registration_bloc.dart';
 
 Future<void> main() async {
@@ -17,13 +17,9 @@ Future<void> main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider<RecorderButtomBloc>(
+        BlocProvider<BottomNavigationIndexControlCubit>(
           create: (BuildContext context) {
-            return RecorderButtomBloc(
-              const RecorderButtonState(
-                selectedIcon: RecorderButtonStates.withIcon,
-              ),
-            );
+            return BottomNavigationIndexControlCubit();
           },
         ),
         BlocProvider<RegistrationBloc>(

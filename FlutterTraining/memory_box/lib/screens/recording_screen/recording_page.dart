@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_event.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
 import 'package:memory_box/screens/recording_screen/widgets/visualizer.dart';
 import 'dart:async';
 import 'dart:math';
@@ -120,10 +118,8 @@ class _RecordingScreenState extends State<RecordingPage> {
   }
 
   void changeRecordingButton() {
-    BlocProvider.of<RecorderButtomBloc>(context).add(
-      const ChangeIcon(
-        RecorderButtonStates.withLine,
-      ),
+    BlocProvider.of<BottomNavigationIndexControlCubit>(context).changeIcon(
+      RecorderButtonStates.withLine,
     );
   }
 

@@ -5,9 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
 import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_event.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton._event.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton_bloc.dart';
-import 'package:memory_box/blocks/recorderButton/recorderButton_state.dart';
+import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
+
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/storage_service.dart';
 import 'package:memory_box/screens/recording_screen/widgets/bottom_sheet_wrapper.dart';
@@ -65,11 +64,8 @@ class _ListeningPageState extends State<ListeningPage> {
   }
 
   void changeRecordingButton() {
-    final recorderButtomBloc = BlocProvider.of<RecorderButtomBloc>(context);
-    recorderButtomBloc.add(
-      const ChangeIcon(
-        RecorderButtonStates.defaultIcon,
-      ),
+    BlocProvider.of<BottomNavigationIndexControlCubit>(context).changeIcon(
+      RecorderButtonStates.defaultIcon,
     );
   }
 

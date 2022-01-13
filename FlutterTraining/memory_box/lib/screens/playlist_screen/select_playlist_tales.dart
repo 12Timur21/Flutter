@@ -97,21 +97,21 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
   @override
   Widget build(BuildContext context) {
     void _undoChanges() {
-      NavigationService.instance.navigateTo(
-        CreatePlaylistScreen.routeName,
-        arguments: widget.collectionCreationState,
-        saveNewRoute: false,
-      );
+      // NavigationService.instance.navigateTo(
+      //   CreatePlaylistScreen.routeName,
+      //   arguments: widget.collectionCreationState,
+      //   saveNewRoute: false,
+      // );
     }
 
     void _saveChanges() {
       _playListState?.talesIDs = _taleIDs;
 
-      NavigationService.instance.navigateTo(
-        CreatePlaylistScreen.routeName,
-        arguments: _playListState,
-        saveNewRoute: false,
-      );
+      // NavigationService.instance.navigateTo(
+      //   CreatePlaylistScreen.routeName,
+      //   arguments: _playListState,
+      //   saveNewRoute: false,
+      // );
     }
 
     void subscibeTale(String taleID) {

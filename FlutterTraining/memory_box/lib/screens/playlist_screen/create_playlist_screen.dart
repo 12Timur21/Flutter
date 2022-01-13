@@ -92,7 +92,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
         );
       }
 
-      NavigationService.instance.navigateToPreviousPage();
+      // NavigationService.instance.navigateToPreviousPage();
     }
 
     Future<void> _pickImage() async {
@@ -109,12 +109,13 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
     }
 
     void undoChanges() {
-      NavigationService.instance.navigateToPreviousPage();
+      Navigator.of(context).pop();
+      // NavigationService.instance.navigateToPreviousPage();
     }
 
     void addSongs() {
-      NavigationService.instance.navigateTo(SelectPlaylistTales.routeName,
-          arguments: collectionState, saveNewRoute: false);
+      // NavigationService.instance.navigateTo(SelectPlaylistTales.routeName,
+      //     arguments: collectionState, saveNewRoute: false);
     }
 
     return BackgroundPattern(

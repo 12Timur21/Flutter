@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/screens/all_tales_screen/all_tales_screen.dart';
 import 'package:memory_box/screens/deleted_tales_screen/deleted_tales_screen.dart';
 import 'package:memory_box/screens/home_screen/home_screen.dart';
+import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
 import 'package:memory_box/screens/search_tales_screen/search_tales_screen.dart';
@@ -82,7 +83,7 @@ class CustomDrawer extends StatelessWidget {
               title: 'Главная',
               svgUrl: 'assets/icons/Home.svg',
               callback: () {
-                NavigationService.instance.navigateTo(
+                MainPage.navigationKey.currentState?.pushNamed(
                   HomeScreen.routeName,
                 );
               },
@@ -91,7 +92,7 @@ class CustomDrawer extends StatelessWidget {
               title: 'Профиль',
               svgUrl: 'assets/icons/Profile.svg',
               callback: () {
-                NavigationService.instance.navigateTo(
+                MainPage.navigationKey.currentState?.pushNamed(
                   ProfileScreen.routeName,
                 );
               },
@@ -100,7 +101,7 @@ class CustomDrawer extends StatelessWidget {
               title: 'Подборки',
               svgUrl: 'assets/icons/Category.svg',
               callback: () {
-                NavigationService.instance.navigateTo(
+                MainPage.navigationKey.currentState?.pushNamed(
                   PlaylistScreen.routeName,
                 );
               },
@@ -109,7 +110,7 @@ class CustomDrawer extends StatelessWidget {
               title: 'Все аудиофайлы',
               svgUrl: 'assets/icons/Paper.svg',
               callback: () {
-                NavigationService.instance.navigateTo(
+                MainPage.navigationKey.currentState?.pushNamed(
                   AllTalesScreen.routeName,
                 );
               },
@@ -118,7 +119,7 @@ class CustomDrawer extends StatelessWidget {
               title: 'Поиск',
               svgUrl: 'assets/icons/Search.svg',
               callback: () {
-                NavigationService.instance.navigateTo(
+                MainPage.navigationKey.currentState?.pushNamed(
                   SearchTalesScreen.routeName,
                 );
               },
@@ -127,7 +128,7 @@ class CustomDrawer extends StatelessWidget {
               title: 'Недавно удаленные',
               svgUrl: 'assets/icons/Delete.svg',
               callback: () {
-                NavigationService.instance.navigateTo(
+                MainPage.navigationKey.currentState?.pushNamed(
                   DeletedTalesScreen.routeName,
                 );
               },
@@ -139,13 +140,9 @@ class CustomDrawer extends StatelessWidget {
               title: 'Подписка',
               svgUrl: 'assets/icons/Wallet.svg',
               callback: () {
-                NavigationService.instance.navigateTo(
+                MainPage.navigationKey.currentState?.pushNamed(
                   SubscriptionScreen.routeName,
                 );
-                // Navigator.pushNamed(
-                //   context,
-                //   MainPage.routeName,
-                // );
               },
             ),
             const SizedBox(

@@ -39,10 +39,10 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
   }
 
   void _addToPlayList() {
-    NavigationService.instance.navigateTo(
-      PlaylistScreen.routeName,
-      arguments: _taleModel.ID,
-    );
+    // NavigationService.instance.navigateTo(
+    //   PlaylistScreen.routeName,
+    //   arguments: _taleModel.ID,
+    // );
   }
 
   void _deleteTale() {

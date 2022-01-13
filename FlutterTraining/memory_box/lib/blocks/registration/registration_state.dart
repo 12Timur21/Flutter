@@ -19,6 +19,7 @@ class LoginFailure extends RegistrationState {
 class VerifyPhoneNumberSucces extends RegistrationState {
   final String verificationIds;
   final int? resendingToken;
+
   VerifyPhoneNumberSucces({
     required this.verificationIds,
     this.resendingToken,

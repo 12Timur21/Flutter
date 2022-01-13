@@ -12,7 +12,6 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('wtf');
     Future.delayed(const Duration(seconds: 3), () {
       context.read<SessionBloc>().add(InitSession());
     });

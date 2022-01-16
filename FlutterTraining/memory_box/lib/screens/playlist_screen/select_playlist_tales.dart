@@ -102,14 +102,15 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
       //   arguments: widget.collectionCreationState,
       //   saveNewRoute: false,
       // );
+      Navigator.of(context).pop();
     }
 
     void _saveChanges() {
       _playListState?.talesIDs = _taleIDs;
-
+      Navigator.of(context).pop(_playListState);
       // NavigationService.instance.navigateTo(
       //   CreatePlaylistScreen.routeName,
-      //   arguments: _playListState,
+      // arguments: _playListState,
       //   saveNewRoute: false,
       // );
     }

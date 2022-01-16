@@ -236,7 +236,7 @@ class DatabaseService {
     return listTaleModels;
   }
 
-  Future<void> deleteTaleRecord(String taleID) async {
+  Future<void> setTaleDeleteStatus(String taleID) async {
     String? uid = AuthService.userID;
 
     await _talesCollection.doc(uid).collection('allTales').doc(taleID).update({
@@ -400,19 +400,22 @@ class DatabaseService {
     });
   }
 
-//! переделать
-  Future<Map<String, dynamic>?> getPlayList({
+  Future<TaleModel?> getPlayList({
     required String playListID,
   }) async {
     String? uid = AuthService.userID;
 
-    DocumentSnapshot documentSnapshot =
-        await _playListsCollection.doc(uid).get();
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await _playListsCollection
+            .doc(uid)
+            .collection('allPlaylists')
+            .doc(playListID)
+            .get();
 
-    Map<String, dynamic>? collection =
-        documentSnapshot.data() as Map<String, dynamic>?;
-
-    return collection?[playListID];
+    Map<String, dynamic>? result = documentSnapshot.data();
+    if (result != null) {
+      return TaleModel.fromJson(result);
+    }
   }
 
   Future<List<PlaylistModel>> getAllPlayList() async {

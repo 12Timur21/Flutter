@@ -75,7 +75,7 @@ class _MainPageState extends State<MainPage> {
             setState(() {
               BlocProvider.of<BottomNavigationIndexControlCubit>(context)
                   .changeIcon(
-                RecorderButtonStates.defaultIcon,
+                RecorderButtonStates.withIcon,
               );
               isOpenBottomSheet = false;
             });

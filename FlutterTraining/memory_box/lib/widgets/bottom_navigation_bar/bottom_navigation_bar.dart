@@ -26,12 +26,7 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
-
-  final TextStyle _bottomNavigationBarTextStyle = const TextStyle(
-    fontFamily: 'TTNorms',
-    fontWeight: FontWeight.w400,
-    fontSize: 11,
-  );
+  RecorderButtonStates _iconState = RecorderButtonStates.withIcon;
 
   void _onBottomNavigatorTapped(int index) {
     if (index == _selectedIndex) return;
@@ -102,81 +97,90 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
             ],
           ),
-          child: BlocBuilder<BottomNavigationIndexControlCubit,
+          child: BlocListener<BottomNavigationIndexControlCubit,
               BottomNavigationIndexControlState>(
-            builder: (context, state) {
-              _selectedIndex = state.index;
-
-              return BottomNavigationBar(
-                backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
-                type: BottomNavigationBarType.fixed,
-                currentIndex: _selectedIndex,
-                selectedItemColor: const Color.fromRGBO(140, 132, 226, 1),
-                onTap: _onBottomNavigatorTapped,
-                items: <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      'assets/icons/Home.svg',
-                      color: _selectedIndex == 0
-                          ? const Color.fromRGBO(140, 132, 226, 1)
-                          : null,
-                    ),
-                    title: Text(
-                      'Главная',
-                      style: _bottomNavigationBarTextStyle,
-                    ),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      'assets/icons/Category.svg',
-                      color: _selectedIndex == 1
-                          ? const Color.fromRGBO(140, 132, 226, 1)
-                          : null,
-                    ),
-                    title: Text(
-                      'Подборки',
-                      style: _bottomNavigationBarTextStyle,
-                    ),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: _getIcon(state.recorderButtonState),
-                    title: Text(
-                      'Запись',
-                      style: const TextStyle(
-                        color: Color.fromRGBO(241, 180, 136, 1),
-                      ).merge(_bottomNavigationBarTextStyle),
-                    ),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      'assets/icons/Paper.svg',
-                      color: _selectedIndex == 3
-                          ? const Color.fromRGBO(140, 132, 226, 1)
-                          : null,
-                    ),
-                    title: Text(
-                      'Аудиозаписи',
-                      style: _bottomNavigationBarTextStyle,
-                    ),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: SvgPicture.asset(
-                      'assets/icons/Profile.svg',
-                      color: _selectedIndex == 4
-                          ? const Color.fromRGBO(140, 132, 226, 1)
-                          : null,
-                    ),
-                    title: Text(
-                      'Профиль',
-                      style: _bottomNavigationBarTextStyle,
-                    ),
-                  ),
-                ],
+            listener: (context, state) {
+              setState(
+                () {
+                  _selectedIndex = state.index;
+                  _iconState = state.recorderButtonState;
+                },
               );
             },
+            child: BottomNavigationBar(
+              backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: const Color.fromRGBO(140, 132, 226, 1),
+              onTap: _onBottomNavigatorTapped,
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/icons/Home.svg',
+                    color: _selectedIndex == 0
+                        ? const Color.fromRGBO(140, 132, 226, 1)
+                        : null,
+                  ),
+                  title: Text(
+                    'Главная',
+                    style: _bottomNavigationBarTextStyle,
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/icons/Category.svg',
+                    color: _selectedIndex == 1
+                        ? const Color.fromRGBO(140, 132, 226, 1)
+                        : null,
+                  ),
+                  title: Text(
+                    'Подборки',
+                    style: _bottomNavigationBarTextStyle,
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  icon: _getIcon(_iconState),
+                  title: Text(
+                    'Запись',
+                    style: const TextStyle(
+                      color: Color.fromRGBO(241, 180, 136, 1),
+                    ).merge(_bottomNavigationBarTextStyle),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/icons/Paper.svg',
+                    color: _selectedIndex == 3
+                        ? const Color.fromRGBO(140, 132, 226, 1)
+                        : null,
+                  ),
+                  title: Text(
+                    'Аудиозаписи',
+                    style: _bottomNavigationBarTextStyle,
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/icons/Profile.svg',
+                    color: _selectedIndex == 4
+                        ? const Color.fromRGBO(140, 132, 226, 1)
+                        : null,
+                  ),
+                  title: Text(
+                    'Профиль',
+                    style: _bottomNavigationBarTextStyle,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  final TextStyle _bottomNavigationBarTextStyle = const TextStyle(
+    fontFamily: 'TTNorms',
+    fontWeight: FontWeight.w400,
+    fontSize: 11,
+  );
 }

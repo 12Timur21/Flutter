@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/blocks/bloc/list_builder_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/widgets/appBar_withButtons.dart';
@@ -148,33 +150,37 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                 height: 60,
               ),
               Expanded(
-                child: FutureBuilder<List<TaleModel>>(
-                  future:
-                      DatabaseService.instance.searchTalesByTitle(title: ''),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<List<TaleModel>> snapshot,
-                  ) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return ListView.builder(
-                        itemCount: snapshot.data?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          TaleModel? taleModel = snapshot.data?[index];
-                          if (taleModel != null) {
-                            return TaleListTileWithPopupMenu(
-                              taleModel: taleModel,
-                            );
-                          }
-                          return const SizedBox();
-                        },
+                child: BlocProvider(
+                  create: (context) => ListBuilderBloc()
+                    ..add(
+                      InitializeListBuilder(
+                        DatabaseService.instance.getAllNotDeletedTaleModels(),
+                      ),
+                    ),
+                  child: BlocBuilder<ListBuilderBloc, ListBuilderState>(
+                    builder: (context, state) {
+                      if (state is InitializedListBuilderState) {
+                        return ListView.builder(
+                          itemCount: state.allTales?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            TaleModel? taleModel = state.allTales?[index];
+                            if (taleModel != null) {
+                              return TaleListTileWithPopupMenu(
+                                key: UniqueKey(),
+                                taleModel: taleModel,
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        );
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
                       );
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
+                    },
+                  ),
                 ),
-              ),
+              )
             ],
           ),
         ),

@@ -92,7 +92,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
         );
       }
 
-      // NavigationService.instance.navigateToPreviousPage();
+      Navigator.of(context).pop();
     }
 
     Future<void> _pickImage() async {
@@ -113,11 +113,15 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
       // NavigationService.instance.navigateToPreviousPage();
     }
 
-    void addSongs() {
-      // NavigationService.instance.navigateTo(SelectPlaylistTales.routeName,
-      //     arguments: collectionState, saveNewRoute: false);
+    void addSongs() async {
+      var x = await Navigator.of(context).pushNamed(
+        SelectPlaylistTales.routeName,
+        arguments: collectionState,
+      );
+      print(x);
     }
 
+    print('threre render');
     return BackgroundPattern(
       patternColor: const Color.fromRGBO(113, 165, 159, 1),
       child: Scaffold(

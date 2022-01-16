@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:logger/logger.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
+// import 'package:share/share.dart';
 
 class SoundPlayer {
   static final SoundPlayer _singleton = SoundPlayer._();

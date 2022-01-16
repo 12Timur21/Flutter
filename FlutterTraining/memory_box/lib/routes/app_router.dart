@@ -10,7 +10,7 @@ import 'package:memory_box/screens/login_screen/registration_screens/verifyOTP_s
 import 'package:memory_box/screens/login_screen/registration_screens/welcome_registration_screen.dart';
 import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
-import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
+
 import 'package:memory_box/screens/playlist_screen/select_playlist_tales.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
 import 'package:memory_box/screens/search_tales_screen/search_tales_screen.dart';
@@ -20,12 +20,12 @@ import 'package:memory_box/screens/subscription_screen/subscription_screen.dart'
 class AppRouter {
   const AppRouter._();
 
-  static Route<dynamic> generateRoute(RouteSettings settings) {
+  static Route<dynamic>? generateRoute(RouteSettings settings) {
+    String? currentRouteName;
+
     final Object? arguments = settings.arguments;
 
     WidgetBuilder builder;
-
-    print(settings.name);
 
     switch (settings.name) {
       case SplashScreen.routeName:
@@ -78,14 +78,14 @@ class AppRouter {
         break;
 
       //*[START] Play list
-      case PlaylistScreen.routeName:
-        {
-          final String? taleID = arguments as String?;
-          builder = (_) => PlaylistScreen(
-                taleID: taleID,
-              );
-        }
-        break;
+      // case AllSelectPlaylistTile.routeName:
+      //   {
+      //     final String? taleID = arguments as String?;
+      //     builder = (_) => AllSelectPlaylistTile(
+      //           taleID: taleID,
+      //         );
+      //   }
+      //   break;
 
       case CreatePlaylistScreen.routeName:
         {
@@ -108,14 +108,25 @@ class AppRouter {
               );
         }
         break;
-      //*[END] Play list
 
-      case SubscriptionScreen.routeName:
-        builder = (_) => const SubscriptionScreen();
-        break;
+      // case DetailedViewPlaylist.routeName:
+      //   {
+      //     final String playListID = arguments as String;
+
+      //     builder = (_) => DetailedViewPlaylist(
+      //           playListID: playListID,
+      //         );
+      //   }
+      //   break;
+
+      //*[END] Play list
 
       case AllTalesScreen.routeName:
         builder = (_) => const AllTalesScreen();
+        break;
+
+      case SubscriptionScreen.routeName:
+        builder = (_) => const SubscriptionScreen();
         break;
 
       default:

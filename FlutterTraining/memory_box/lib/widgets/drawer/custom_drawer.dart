@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_svg/svg.dart';
-import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
+import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
 import 'package:memory_box/screens/all_tales_screen/all_tales_screen.dart';
 import 'package:memory_box/screens/deleted_tales_screen/deleted_tales_screen.dart';
 import 'package:memory_box/screens/home_screen/home_screen.dart';
@@ -10,8 +11,6 @@ import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
 import 'package:memory_box/screens/search_tales_screen/search_tales_screen.dart';
 import 'package:memory_box/screens/subscription_screen/subscription_screen.dart';
-import 'package:memory_box/utils/navigationService.dart';
-import 'package:memory_box/widgets/search.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({Key? key}) : super(key: key);
@@ -86,6 +85,8 @@ class CustomDrawer extends StatelessWidget {
                 MainPage.navigationKey.currentState?.pushNamed(
                   HomeScreen.routeName,
                 );
+                BlocProvider.of<BottomNavigationIndexControlCubit>(context)
+                    .changeIndex(0);
               },
             ),
             CustomListTyle(
@@ -95,6 +96,8 @@ class CustomDrawer extends StatelessWidget {
                 MainPage.navigationKey.currentState?.pushNamed(
                   ProfileScreen.routeName,
                 );
+                BlocProvider.of<BottomNavigationIndexControlCubit>(context)
+                    .changeIndex(5);
               },
             ),
             CustomListTyle(
@@ -104,6 +107,8 @@ class CustomDrawer extends StatelessWidget {
                 MainPage.navigationKey.currentState?.pushNamed(
                   PlaylistScreen.routeName,
                 );
+                BlocProvider.of<BottomNavigationIndexControlCubit>(context)
+                    .changeIndex(1);
               },
             ),
             CustomListTyle(
@@ -113,6 +118,8 @@ class CustomDrawer extends StatelessWidget {
                 MainPage.navigationKey.currentState?.pushNamed(
                   AllTalesScreen.routeName,
                 );
+                BlocProvider.of<BottomNavigationIndexControlCubit>(context)
+                    .changeIndex(3);
               },
             ),
             CustomListTyle(
@@ -122,6 +129,8 @@ class CustomDrawer extends StatelessWidget {
                 MainPage.navigationKey.currentState?.pushNamed(
                   SearchTalesScreen.routeName,
                 );
+                BlocProvider.of<BottomNavigationIndexControlCubit>(context)
+                    .changeIndex(-1);
               },
             ),
             CustomListTyle(
@@ -131,6 +140,8 @@ class CustomDrawer extends StatelessWidget {
                 MainPage.navigationKey.currentState?.pushNamed(
                   DeletedTalesScreen.routeName,
                 );
+                BlocProvider.of<BottomNavigationIndexControlCubit>(context)
+                    .changeIndex(-1);
               },
             ),
             const SizedBox(
@@ -143,6 +154,8 @@ class CustomDrawer extends StatelessWidget {
                 MainPage.navigationKey.currentState?.pushNamed(
                   SubscriptionScreen.routeName,
                 );
+                BlocProvider.of<BottomNavigationIndexControlCubit>(context)
+                    .changeIndex(-1);
               },
             ),
             const SizedBox(

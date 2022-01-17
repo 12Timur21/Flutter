@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:memory_box/blocks/bloc/list_builder_bloc.dart';
+import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
+
+import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/database_service.dart';
-import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
-import 'package:memory_box/utils/navigationService.dart';
+
+import 'package:share_plus/share_plus.dart';
 
 class TaleListTileWithPopupMenu extends StatefulWidget {
   const TaleListTileWithPopupMenu({
@@ -25,14 +26,11 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
   late final TextEditingController _textFieldController;
 
   bool _isEditMode = false;
-  bool _isPlay = false;
-
-  late FocusNode _myFocusNode;
+  bool _isPlayMode = false;
 
   @override
   void initState() {
     super.initState();
-    _myFocusNode = FocusNode();
     _taleModel = widget.taleModel;
     _textFieldController = TextEditingController(
       text: _taleModel.title,
@@ -54,6 +52,11 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
   }
 
   void _shareTale() {
+    String? songUrl = widget.taleModel.url;
+    if (songUrl != null) {
+      Share.share(songUrl);
+    }
+
     String? taleUrl = _taleModel.url;
     if (taleUrl != null) {
       BlocProvider.of<ListBuilderBloc>(context).add(
@@ -88,16 +91,20 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
     setState(() {
       _isEditMode = true;
     });
-
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      _myFocusNode.requestFocus();
-    });
   }
 
-  void _onFocusChange(hasFocus) {
-    print(hasFocus);
-    if (!hasFocus) {
-      _undoChanges();
+  void _tooglePlayMode() {
+    setState(() {
+      _isPlayMode = !_isPlayMode;
+    });
+    if (_isPlayMode) {
+      BlocProvider.of<AudioplayerBloc>(context).add(
+        Play(taleModel: widget.taleModel),
+      );
+    } else {
+      BlocProvider.of<AudioplayerBloc>(context).add(
+        Pause(),
+      );
     }
   }
 
@@ -118,59 +125,40 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
           horizontal: 10,
         ),
         leading: GestureDetector(
-          onTap: () {
-            setState(() {
-              _isPlay = !_isPlay;
-            });
-            // _myFocusNode.requestFocus();
-            // myFocusNode.unfocus();
-            // showModalBottomSheet(
-            //   context: context,
-            //   useRootNavigator: true,
-            //   enableDrag: false,
-            //   barrierColor: Colors.transparent,
-            //   builder: (BuildContext context) {
-            //     return const BottomSheetChangeConfirmation();
-            //   },
-            // );
-          },
+          onTap: _tooglePlayMode,
           child: SvgPicture.asset(
-            _isPlay
+            _isPlayMode
                 ? 'assets/icons/StopCircle.svg'
                 : 'assets/icons/CirclePlay.svg',
             color: const Color.fromRGBO(94, 119, 206, 1),
             width: 50,
           ),
         ),
-        title: Focus(
-          onFocusChange: _onFocusChange,
-          child: TextFormField(
-            enabled: _isEditMode,
-            controller: _textFieldController,
-            focusNode: _myFocusNode,
-            textInputAction: TextInputAction.done,
-            validator: (value) {
-              if (value?.isEmpty == true || value == null) {
-                return 'Название не может быть пустым';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-              isDense: true,
-              border: _isEditMode
-                  ? const UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                    )
-                  : InputBorder.none,
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.black,
-                  width: 1,
-                ),
+        title: TextFormField(
+          enabled: _isEditMode,
+          controller: _textFieldController,
+          textInputAction: TextInputAction.done,
+          validator: (value) {
+            if (value?.isEmpty == true || value == null) {
+              return 'Название не может быть пустым';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+            isDense: true,
+            border: _isEditMode
+                ? const UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.black,
+                      width: 1,
+                    ),
+                  )
+                : InputBorder.none,
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+                width: 1,
               ),
             ),
           ),

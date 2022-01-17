@@ -1,152 +1,170 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_sound_lite/flutter_sound.dart';
-import 'package:logger/logger.dart';
+import 'package:memory_box/models/tale_model.dart';
 import 'package:share_plus/share_plus.dart';
 // import 'package:share/share.dart';
 
 class SoundPlayer {
-  static final SoundPlayer _singleton = SoundPlayer._();
-  factory SoundPlayer() {
-    return _singleton;
-  }
   SoundPlayer._();
+  static final SoundPlayer instance = SoundPlayer._();
 
   FlutterSoundPlayer? _flutterSoundPlayer;
-  String? pathToSaveAudio;
-  Directory? appDirectory;
-  bool isSoundPlay = false;
+
+  // String? pathToSaveAudio;
+  // Directory? appDirectory;
+  // bool isSoundPlay = false;
 
   Stream<PlaybackDisposition>? get soundDurationStream =>
       _flutterSoundPlayer?.onProgress;
 
-  StreamSubscription? soundDurationStreamController;
+  // StreamSubscription? soundDurationStreamController;
 
-  Duration? _soundDuration;
-  Duration get songDuration => _soundDuration ?? Duration.zero;
+  // Duration? _soundDuration;
+  // Duration get songDuration => _soundDuration ?? Duration.zero;
 
-  Duration? _currentPlayDuration;
-  Duration get currentPlayDuration => _currentPlayDuration ?? Duration.zero;
+  // Duration? _currentPlayDuration;
+  // Duration get currentPlayDuration => _currentPlayDuration ?? Duration.zero;
 
-  Future<void> init({
-    required String soundUrl,
-  }) async {
-    _flutterSoundPlayer = FlutterSoundPlayer(logLevel: Level.nothing);
-    await _openSoundSession();
+  Future<bool> initPlayer() async {
+    try {
+      _flutterSoundPlayer = FlutterSoundPlayer();
+      await _flutterSoundPlayer?.openAudioSession();
 
-    //
-    _soundDuration = await _flutterSoundPlayer?.startPlayer(
-      fromURI: soundUrl,
-      codec: Codec.aacMP4,
-      whenFinished: () {},
+      await _flutterSoundPlayer?.setSubscriptionDuration(
+        const Duration(
+          seconds: 1,
+        ),
+      );
+
+      return true;
+    } catch (_) {
+      return false;
+    }
+
+    // await _openSoundSession();
+
+    // //
+    // _soundDuration = await _flutterSoundPlayer?.startPlayer(
+    //   fromURI: soundUrl,
+    //   codec: Codec.aacMP4,
+    //   whenFinished: () {},
+    // );
+    // _flutterSoundPlayer?.pausePlayer();
+    // //
+
+    // setSubscriptionDuration(
+    //   subscriptionDurationInSec: 1,
+    // );
+    // startProgressListener();
+  }
+
+  Future<Duration?> initTale({required TaleModel taleModel}) async {
+    return await _flutterSoundPlayer?.startPlayer(
+      fromURI: taleModel.url,
+      codec: Codec.mp3,
+      whenFinished: () {
+        print('finished sound');
+      },
     );
-    _flutterSoundPlayer?.pausePlayer();
-    //
-
-    setSubscriptionDuration(
-      subscriptionDurationInSec: 1,
-    );
-    startProgressListener();
   }
 
   Future<void> dispose() async {
-    await _closeSoundSession();
-    _flutterSoundPlayer = null;
-    soundDurationStreamController?.cancel();
-  }
-
-  Future<void> setSubscriptionDuration({
-    required int subscriptionDurationInSec,
-  }) async {
-    await _flutterSoundPlayer?.setSubscriptionDuration(
-      Duration(
-        seconds: subscriptionDurationInSec,
-      ),
-    );
-  }
-
-  Future<FlutterSoundPlayer?> _openSoundSession() async {
-    await _flutterSoundPlayer?.openAudioSession();
-  }
-
-  Future<void> _closeSoundSession() async {
+    await _flutterSoundPlayer?.stopPlayer();
     await _flutterSoundPlayer?.closeAudioSession();
+    _flutterSoundPlayer = null;
+    // soundDurationStreamController?.cancel();
   }
 
-  void startProgressListener() {
-    //!
-    soundDurationStreamController = soundDurationStream?.listen((e) {
-      // maxDuration = e.duration;
-      _currentPlayDuration = e.position;
-    });
+  Future<void> resumePlayer() async {
+    _flutterSoundPlayer?.resumePlayer();
   }
 
-  Future<void> play() async {
-    await _flutterSoundPlayer?.resumePlayer();
-    isSoundPlay = true;
-  }
-
-  Future<void> pause() async {
+  Future<void> pausePlayer() async {
     await _flutterSoundPlayer?.pausePlayer();
-    isSoundPlay = false;
   }
 
-  void seek({required int currentPlayTimeInSec}) {
-    _flutterSoundPlayer?.seekToPlayer(Duration(
-      seconds: currentPlayTimeInSec,
-    ));
-  }
+  // Future<void> resumePlayer() async {
+  //   await _flutterSoundPlayer?.resumePlayer();
+  // }
 
-  void moveForward15Sec({required int currentPlayTimeInSec}) {
-    if (currentPlayTimeInSec + 15 <= songDuration.inSeconds) {
-      _flutterSoundPlayer?.seekToPlayer(
-        Duration(
-          seconds: currentPlayTimeInSec + 15,
-        ),
-      );
-    } else {
-      _flutterSoundPlayer?.seekToPlayer(
-        Duration(
-          seconds: songDuration.inSeconds,
-        ),
-      );
-    }
-  }
+  // Future<void> setSubscriptionDuration({
+  //   required int subscriptionDurationInSec,
+  // }) async {
 
-  void moveBackward15Sec({required int currentPlayTimeInSec}) {
-    if (currentPlayTimeInSec - 15 >= 0) {
-      _flutterSoundPlayer?.seekToPlayer(
-        Duration(
-          seconds: currentPlayTimeInSec - 15,
-        ),
-      );
-    } else {
-      _flutterSoundPlayer?.seekToPlayer(Duration.zero);
-    }
-  }
+  // }
 
-  void shareSound(String pathToSaveAudio) {
-    Share.shareFiles([pathToSaveAudio]);
-  }
+  // void startProgressListener() {
+  //   //!
 
-  void localDownloadSound(String pathToSaveAudio) async {
-    String downloadDirectory = '';
+  // }
 
-    if (Platform.isAndroid) {
-      downloadDirectory = '/sdcard/download/Аудиозапись.aac';
-    }
+  // Future<void> play() async {
+  //   await _flutterSoundPlayer?.resumePlayer();
+  //   isSoundPlay = true;
+  // }
 
-    File pathToAudio = File(pathToSaveAudio);
+  // Future<void> pause() async {
+  //   await _flutterSoundPlayer?.pausePlayer();
+  //   isSoundPlay = false;
+  // }
 
-    try {
-      await pathToAudio.rename(downloadDirectory);
-    } on FileSystemException catch (e) {
-      await pathToAudio.copy(downloadDirectory);
-      deleteSound();
-    }
-  }
+  // void seek({required int currentPlayTimeInSec}) {
+  //   _flutterSoundPlayer?.seekToPlayer(Duration(
+  //     seconds: currentPlayTimeInSec,
+  //   ));
+  // }
 
-  void deleteSound() {
-    appDirectory?.deleteSync(recursive: true);
-  }
+  // void moveForward15Sec({required int currentPlayTimeInSec}) {
+  //   if (currentPlayTimeInSec + 15 <= songDuration.inSeconds) {
+  //     _flutterSoundPlayer?.seekToPlayer(
+  //       Duration(
+  //         seconds: currentPlayTimeInSec + 15,
+  //       ),
+  //     );
+  //   } else {
+  //     _flutterSoundPlayer?.seekToPlayer(
+  //       Duration(
+  //         seconds: songDuration.inSeconds,
+  //       ),
+  //     );
+  //   }
+  // }
+
+  // void moveBackward15Sec({required int currentPlayTimeInSec}) {
+  //   if (currentPlayTimeInSec - 15 >= 0) {
+  //     _flutterSoundPlayer?.seekToPlayer(
+  //       Duration(
+  //         seconds: currentPlayTimeInSec - 15,
+  //       ),
+  //     );
+  //   } else {
+  //     _flutterSoundPlayer?.seekToPlayer(Duration.zero);
+  //   }
+  // }
+
+  // void shareSound(String pathToSaveAudio) {
+  //   Share.shareFiles([pathToSaveAudio]);
+  // }
+
+  // void localDownloadSound(String pathToSaveAudio) async {
+  //   String downloadDirectory = '';
+
+  //   if (Platform.isAndroid) {
+  //     downloadDirectory = '/sdcard/download/Аудиозапись.aac';
+  //   }
+
+  //   File pathToAudio = File(pathToSaveAudio);
+
+  //   try {
+  //     await pathToAudio.rename(downloadDirectory);
+  //   } on FileSystemException catch (e) {
+  //     await pathToAudio.copy(downloadDirectory);
+  //     deleteSound();
+  //   }
+  // }
+
+  // void deleteSound() {
+  //   appDirectory?.deleteSync(recursive: true);
+  // }
 }

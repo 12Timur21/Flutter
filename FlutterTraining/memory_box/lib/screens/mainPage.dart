@@ -43,9 +43,9 @@ class _MainPageState extends State<MainPage> {
                     ListeningPageState(),
                   ),
                 ),
-                BlocProvider(
-                  create: (context) => AudioplayerBloc(),
-                ),
+                // BlocProvider(
+                //   create: (context) => AudioplayerBloc(),
+                // ),
               ],
               // child: GestureDetector(
               // onVerticalDragDown: (_) {},
@@ -55,10 +55,10 @@ class _MainPageState extends State<MainPage> {
                     return const RecordingPage();
                   }
                   if (state is ListeningPageState) {
-                    return const ListeningPage();
+                    // return const ListeningPage();
                   }
                   if (state is PreviewPageState) {
-                    return const RecordPreview();
+                    // return const RecordPreview();
                   }
                   return Container();
                 },

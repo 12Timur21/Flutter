@@ -38,15 +38,11 @@ class ShareTale extends ListBuilderEvent {
 }
 
 class PlayTale extends ListBuilderEvent {
-  String taleID;
+  int taleIndex;
 
-  PlayTale(this.taleID);
+  PlayTale(this.taleIndex);
 }
 
-class StopTale extends ListBuilderEvent {
-  String taleID;
-
-  StopTale(this.taleID);
-}
+class StopTale extends ListBuilderEvent {}
 
 class PlayAllTales extends ListBuilderEvent {}

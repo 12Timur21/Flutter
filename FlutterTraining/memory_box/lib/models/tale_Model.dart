@@ -25,6 +25,22 @@ class TaleModel {
     this.deleteStatus,
   });
 
+  TaleModel copyWith({
+    String? ID,
+    String? title,
+    String? url,
+    Duration? duration,
+    TaleDeleteStatus? deleteStatus,
+  }) {
+    return TaleModel(
+      ID: ID ?? this.ID,
+      title: title ?? this.title,
+      url: url ?? this.url,
+      duration: duration ?? this.duration,
+      deleteStatus: deleteStatus ?? this.deleteStatus,
+    );
+  }
+
   //!
   // Map<String, dynamic> toMap() {
   //   return {

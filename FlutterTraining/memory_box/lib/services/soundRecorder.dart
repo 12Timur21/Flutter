@@ -9,28 +9,26 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SoundRecorder {
-  late Directory appDirectory;
-  late String pathToSaveAudio;
+  String? pathToSaveAudio;
 
   FlutterSoundRecorder? _soundRecorder;
+
   bool _isRecorderInitialised = false;
 
   Future<void> init() async {
-    appDirectory = await getApplicationDocumentsDirectory();
+    final Directory appDirectory = await getApplicationDocumentsDirectory();
     pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
     try {
       bool isPermissionsReceived = await _checkPermission();
       if (isPermissionsReceived) {
-        _isRecorderInitialised = true;
         _soundRecorder = FlutterSoundRecorder();
-
-        await _openRecorderAudioSession();
-        _setAudioRecorderSubscriptionDuration(
+        _isRecorderInitialised = true;
+        await _soundRecorder?.openAudioSession();
+        await _soundRecorder?.setSubscriptionDuration(
           const Duration(
             milliseconds: 20,
           ),
         );
-        log('Recorder session open');
       }
     } catch (e) {
       dispose();
@@ -38,43 +36,32 @@ class SoundRecorder {
     }
   }
 
-  void dispose() {
-    if (!_isRecorderInitialised) return;
-    _closeRecorderAudioSession();
-    _soundRecorder = null;
-    _isRecorderInitialised = false;
+  Future<void> dispose() async {
+    if (_isRecorderInitialised) {
+      await _soundRecorder?.closeAudioSession();
+      _soundRecorder = null;
+    }
   }
 
-  void startRecording() async {
-    if (!_isRecorderInitialised) return;
-    await _soundRecorder?.startRecorder(
-      toFile: pathToSaveAudio,
-    );
+  Future<void> startRecording() async {
+    if (_isRecorderInitialised) {
+      await _soundRecorder?.startRecorder(
+        toFile: pathToSaveAudio,
+      );
+    }
   }
 
-  void finishRecording() async {
-    if (!_isRecorderInitialised) return;
-    await _soundRecorder?.stopRecorder();
-    dispose();
+  Future<void> finishRecording() async {
+    if (_isRecorderInitialised) {
+      await _soundRecorder?.stopRecorder();
+      await dispose();
+    }
   }
 
   Stream<RecordingDisposition>? get recorderStream {
-    if (!_isRecorderInitialised) {
-      return null;
+    if (_isRecorderInitialised) {
+      return _soundRecorder?.onProgress;
     }
-    return _soundRecorder?.onProgress;
-  }
-
-  Future<void> _openRecorderAudioSession() async {
-    await _soundRecorder?.openAudioSession();
-  }
-
-  Future<void> _closeRecorderAudioSession() async {
-    await _soundRecorder?.closeAudioSession();
-  }
-
-  Future<void> _setAudioRecorderSubscriptionDuration(Duration duration) async {
-    await _soundRecorder?.setSubscriptionDuration(duration);
   }
 
   Future<bool> _checkPermission() async {

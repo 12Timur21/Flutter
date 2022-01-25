@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
-import 'package:memory_box/screens/playlist_screen/select_playlist_tales.dart';
+import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/screens/playlist_screen/widgets/appBars/selection_appbar.dart';
 import 'package:memory_box/screens/playlist_screen/widgets/appBars/viewing_appbar.dart';
 
 import 'package:memory_box/screens/playlist_screen/widgets/tiles/playlist_tile.dart';
 import 'package:memory_box/screens/playlist_screen/widgets/tiles/select_playtlist_tile.dart';
-import 'package:memory_box/utils/navigationService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 
 import 'create_playlist_screen.dart';
@@ -39,10 +38,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   }
 
   void _createNewPlaylist() {
-    Navigator.of(context).pushNamed(CreatePlaylistScreen.routeName);
-    // NavigationService.instance.navigateTo(
-    //   CreatePlaylistScreen.routeName,
-    // );
+    Navigator.of(context).pushReplacementNamed(CreatePlaylistScreen.routeName);
   }
 
   //*[START] AdditionTaleToPlaylistMode
@@ -64,14 +60,14 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
         taleID: taleID,
       );
     }
-    // NavigationService.instance.navigateToPreviousPage();
+    Navigator.of(context).pop();
   }
   //*[END] AdditionTaleToPlaylistMode
 
   @override
   Widget build(BuildContext context) {
     return BackgroundPattern(
-      patternColor: const Color.fromRGBO(113, 165, 159, 1),
+      patternColor: AppColors.seaNymph,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,

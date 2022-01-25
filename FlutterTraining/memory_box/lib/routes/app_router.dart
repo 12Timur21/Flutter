@@ -10,6 +10,7 @@ import 'package:memory_box/screens/login_screen/registration_screens/verifyOTP_s
 import 'package:memory_box/screens/login_screen/registration_screens/welcome_registration_screen.dart';
 import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
+import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 
 import 'package:memory_box/screens/playlist_screen/select_playlist_tales.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
@@ -78,14 +79,9 @@ class AppRouter {
         break;
 
       //*[START] Play list
-      // case AllSelectPlaylistTile.routeName:
-      //   {
-      //     final String? taleID = arguments as String?;
-      //     builder = (_) => AllSelectPlaylistTile(
-      //           taleID: taleID,
-      //         );
-      //   }
-      //   break;
+      case PlaylistScreen.routeName:
+        builder = (_) => const PlaylistScreen();
+        break;
 
       case CreatePlaylistScreen.routeName:
         {

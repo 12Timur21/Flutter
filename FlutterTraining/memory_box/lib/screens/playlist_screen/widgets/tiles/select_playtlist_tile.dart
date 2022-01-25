@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/resources/app_coloros.dart';
+import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/utils/formatting.dart';
 
 class SelectPlaylistTile extends StatefulWidget {
@@ -87,8 +89,8 @@ class _SelectPlaylistTileState extends State<SelectPlaylistTile> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: <Color>[
-                          Color.fromRGBO(0, 0, 0, 0),
-                          Color.fromRGBO(69, 69, 69, 1),
+                          Colors.black,
+                          AppColors.gray,
                         ],
                       ),
                     ),
@@ -135,20 +137,20 @@ class _SelectPlaylistTileState extends State<SelectPlaylistTile> {
                                       const SizedBox(
                                         height: 7,
                                       ),
-                                      Text(
-                                        // sumAudioDuration?.inMilliseconds.toString() ?? '',
-                                        '${convertDurationToString(
-                                          duration: widget.sumAudioDuration,
-                                          formattingType: TimeFormattingType
-                                              .hourMinuteWithOneDigits,
-                                        )} ${widget.sumAudioDuration.inHours > 0 ? "часа" : "минут"}',
-                                        style: const TextStyle(
-                                          fontFamily: 'TTNorms',
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12,
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                                      // Text(
+                                      //   // sumAudioDuration?.inMilliseconds.toString() ?? '',
+                                      //   '${convertDurationToString(
+                                      //     duration: widget.sumAudioDuration,
+                                      //     formattingType: TimeFormattingType
+                                      //         .hourMinuteWithOneDigits,
+                                      //   )} ${widget.sumAudioDuration.inHours > 0 ? "часа" : "минут"}',
+                                      //   style: const TextStyle(
+                                      //     fontFamily: 'TTNorms',
+                                      //     fontWeight: FontWeight.w400,
+                                      //     fontSize: 12,
+                                      //     color: Colors.white,
+                                      //   ),
+                                      // ),
                                     ],
                                   )
                                 ],
@@ -157,17 +159,16 @@ class _SelectPlaylistTileState extends State<SelectPlaylistTile> {
                           ],
                         ),
                         Container(
-                          color: isSelect
-                              ? null
-                              : const Color.fromRGBO(0, 0, 0, 0.4),
+                          color:
+                              isSelect ? null : Colors.black.withOpacity(0.4),
                           child: Center(
                             child: isSelect
                                 ? SvgPicture.asset(
-                                    'assets/icons/SubmitCircle.svg',
+                                    AppIcons.submitCircle,
                                     color: Colors.white,
                                   )
                                 : SvgPicture.asset(
-                                    'assets/icons/Circle.svg',
+                                    AppIcons.circle,
                                     color: Colors.white,
                                   ),
                           ),

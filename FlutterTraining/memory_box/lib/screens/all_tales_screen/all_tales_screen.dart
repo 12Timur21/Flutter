@@ -5,10 +5,14 @@ import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
 import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/resources/app_coloros.dart';
+import 'package:memory_box/resources/app_icons.dart';
+import 'package:memory_box/utils/formatting.dart';
 import 'package:memory_box/widgets/appBar_withButtons.dart';
 import 'package:memory_box/widgets/audioplayer/audio_player.dart';
 import 'package:memory_box/widgets/tale_list_tiles/tale_list_tile_with_popup_menu.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AllTalesScreen extends StatefulWidget {
   static const routeName = 'AllTalesScreen';
@@ -19,9 +23,7 @@ class AllTalesScreen extends StatefulWidget {
 }
 
 class _AllTalesScreenState extends State<AllTalesScreen> {
-  bool isRepitMode = false;
-  int? audioLenght;
-  Duration? durationList;
+  bool _isRepitMode = false;
 
   @override
   void dispose() {
@@ -33,13 +35,27 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AudioplayerBloc()
-        ..add(
-          InitPlayer(),
+    Duration _durationSum = Duration.zero;
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ListBuilderBloc()
+            ..add(
+              InitializeListBuilder(
+                DatabaseService.instance.getAllNotDeletedTaleModels(),
+              ),
+            ),
         ),
+        BlocProvider(
+          create: (context) => AudioplayerBloc()
+            ..add(
+              InitPlayer(),
+            ),
+        ),
+      ],
       child: BackgroundPattern(
-        patternColor: const Color.fromRGBO(94, 119, 206, 1),
+        patternColor: AppColors.lightBlue,
         isShort: true,
         child: Scaffold(
           backgroundColor: Colors.transparent,
@@ -75,146 +91,259 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
             ),
             actionsOnPress: () {},
           ),
-          body: Stack(
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(
-                  bottom: 10,
-                ),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: AudioPlayer(),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 30,
+          body: BlocConsumer<ListBuilderBloc, ListBuilderState>(
+            listener: (context, listBuilderState) {
+              if (listBuilderState is PlayTaleState) {
+                final int index = listBuilderState.currentPlayTaleIndex!;
+                context.read<AudioplayerBloc>().add(
+                      Play(
+                        taleModel: listBuilderState.allTales![index],
+                        isAutoPlay: true,
+                      ),
+                    );
+              }
+
+              if (listBuilderState is StopTaleState) {
+                context.read<AudioplayerBloc>().add(
+                      Pause(),
+                    );
+              }
+            },
+            builder: (context, listBuilderState) {
+              //!FIX
+              _durationSum = Duration.zero;
+              listBuilderState.allTales?.forEach(
+                (TaleModel taleModel) {
+                  if (taleModel.duration?.inMilliseconds != null) {
+                    _durationSum = Duration(
+                      seconds: _durationSum.inSeconds +
+                          taleModel.duration!.inSeconds,
+                    );
+                  }
+                },
+              );
+              return Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '${audioLenght ?? 0} аудио',
-                              style: Theme.of(context).textTheme.headline1,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${listBuilderState.allTales?.length ?? 0} аудио',
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  '${convertDurationToString(
+                                    duration: _durationSum,
+                                    formattingType:
+                                        TimeFormattingType.hourMinute,
+                                  )} часов',
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              '10:30 часов',
-                              style: Theme.of(context).textTheme.headline1,
-                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isRepitMode = !_isRepitMode;
+                                });
+                                if (_isRepitMode) {
+                                  context.read<ListBuilderBloc>().add(
+                                        PlayAllTales(true),
+                                      );
+                                } else {
+                                  context.read<ListBuilderBloc>().add(
+                                        PlayAllTales(false),
+                                      );
+                                }
+                              },
+                              child: Container(
+                                  width: 222,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.wildSand.withOpacity(
+                                      _isRepitMode == false ? 0.5 : 0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 168,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.wildSand,
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                              AppIcons.play,
+                                              width: 50,
+                                            ),
+                                            const Text('Запустить все'),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                          left: 8,
+                                        ),
+                                        child: SvgPicture.asset(
+                                          AppIcons.repeat,
+                                          color: AppColors.wildSand.withOpacity(
+                                            _isRepitMode == false ? 0.5 : 1,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            )
                           ],
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isRepitMode = !isRepitMode;
-                            });
-                          },
-                          child: Container(
-                              width: 222,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Color.fromRGBO(
-                                  246,
-                                  246,
-                                  246,
-                                  isRepitMode == false ? 0.5 : 0.2,
-                                ),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 168,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromRGBO(
-                                          246, 246, 246, 1),
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icons/Play.svg',
-                                          width: 50,
-                                        ),
-                                        const Text('Запустить все'),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                      left: 8,
-                                    ),
-                                    child: SvgPicture.asset(
-                                      'assets/icons/Repeat.svg',
-                                      color: Color.fromRGBO(
-                                        246,
-                                        246,
-                                        246,
-                                        isRepitMode == false ? 0.5 : 1,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 60,
-                    ),
-                    Expanded(
-                      child: BlocProvider(
-                        create: (context) => ListBuilderBloc()
-                          ..add(
-                            InitializeListBuilder(
-                              DatabaseService.instance
-                                  .getAllNotDeletedTaleModels(),
-                            ),
-                          ),
-                        child: BlocConsumer<ListBuilderBloc, ListBuilderState>(
-                          listener: (context, state) {
-                            // if(state is )
-                          },
-                          builder: (context, state) {
-                            if (state.isInit) {
-                              return ListView.builder(
-                                itemCount: state.allTales?.length ?? 0,
-                                itemBuilder: (context, index) {
-                                  TaleModel? taleModel = state.allTales?[index];
-                                  if (taleModel != null) {
+                        const SizedBox(
+                          height: 60,
+                        ),
+                        Expanded(
+                          child: listBuilderState.isInit
+                              ? ListView.builder(
+                                  itemCount:
+                                      listBuilderState.allTales?.length ?? 0,
+                                  itemBuilder: (context, index) {
+                                    TaleModel taleModel =
+                                        listBuilderState.allTales![index];
+                                    bool isPlay = false;
+
+                                    if (listBuilderState.currentPlayTaleIndex ==
+                                            index &&
+                                        listBuilderState.isPlay) {
+                                      isPlay = true;
+                                    }
+
                                     return TaleListTileWithPopupMenu(
                                       key: UniqueKey(),
+                                      // index: index,
+                                      isPlayMode: isPlay,
                                       taleModel: taleModel,
+                                      onAddToPlaylist: () {},
+                                      onDelete: () {
+                                        context.read<ListBuilderBloc>().add(
+                                              DeleteTale(index),
+                                            );
+                                      },
+                                      onPause: () {
+                                        context.read<ListBuilderBloc>().add(
+                                              PlayTale(index),
+                                            );
+                                      },
+                                      onPlay: () {
+                                        context.read<ListBuilderBloc>().add(
+                                              StopTale(),
+                                            );
+                                      },
+                                      onRename: (String newTitle) {
+                                        print('rename');
+                                        if (taleModel.ID != null) {
+                                          context.read<ListBuilderBloc>().add(
+                                                RenameTale(
+                                                  taleModel.ID!,
+                                                  newTitle,
+                                                ),
+                                              );
+                                        }
+                                      },
+                                      onShare: () {
+                                        Share.share(taleModel.url!);
+                                      },
+                                      onUndoRenaming: () {
+                                        print('undo');
+                                        context.read<ListBuilderBloc>().add(
+                                              UndoRenameTale(),
+                                            );
+                                      },
                                     );
-                                  }
-                                  return const SizedBox();
-                                },
-                              );
-                            }
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
+                                  },
+                                )
+                              : const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
+                      ],
+                    ),
+                  ),
+                  BlocConsumer<AudioplayerBloc, AudioplayerState>(
+                    listener: (context, audioPlayerState) {
+                      print('listener is tale end');
+                      if (audioPlayerState.isTaleEnd) {
+                        context.read<ListBuilderBloc>().add(
+                              TaleEndPlay(),
+                            );
+                      }
+                    },
+                    builder: (context, audioPlayerState) {
+                      if (listBuilderState.currentPlayTaleIndex == null) {
+                        return Container();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 10,
+                        ),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: AudioPlayer(
+                            taleModel: audioPlayerState.taleModel,
+                            currentPlayDuration:
+                                audioPlayerState.currentPlayDuration,
+                            isPlay: listBuilderState.isPlay,
+                            next: () {
+                              context.read<ListBuilderBloc>().add(NextTale());
+                            },
+                            pause: () {
+                              print(listBuilderState.currentPlayTaleIndex!);
+
+                              context.read<ListBuilderBloc>().add(
+                                    PlayTale(
+                                      listBuilderState.currentPlayTaleIndex!,
+                                    ),
+                                  );
+                              // context.read<ListBuilderBloc>().add(StopTale());
+                            },
+                            play: () {
+                              context.read<ListBuilderBloc>().add(
+                                    StopTale(),
+                                  );
+                            },
+                            seek: (double durationInMs) {
+                              context.read<AudioplayerBloc>().add(
+                                    Seek(
+                                      currentPlayTimeInSec: durationInMs,
+                                    ),
+                                  );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

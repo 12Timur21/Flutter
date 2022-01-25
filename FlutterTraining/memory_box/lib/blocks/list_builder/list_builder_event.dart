@@ -9,9 +9,9 @@ class InitializeListBuilder extends ListBuilderEvent {
 }
 
 class DeleteTale extends ListBuilderEvent {
-  String taleID;
+  int index;
 
-  DeleteTale(this.taleID);
+  DeleteTale(this.index);
 }
 
 class DeleteFewTales extends ListBuilderEvent {}
@@ -45,4 +45,12 @@ class PlayTale extends ListBuilderEvent {
 
 class StopTale extends ListBuilderEvent {}
 
-class PlayAllTales extends ListBuilderEvent {}
+class TaleEndPlay extends ListBuilderEvent {}
+
+class PlayAllTales extends ListBuilderEvent {
+  bool isPlayAllTales;
+
+  PlayAllTales(this.isPlayAllTales);
+}
+
+class NextTale extends ListBuilderEvent {}

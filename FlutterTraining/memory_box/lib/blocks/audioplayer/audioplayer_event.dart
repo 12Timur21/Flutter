@@ -6,8 +6,10 @@ class InitPlayer extends AudioplayerEvent {}
 
 class InitTale extends AudioplayerEvent {
   final TaleModel taleModel;
+  final bool isAutoPlay;
   InitTale({
     required this.taleModel,
+    this.isAutoPlay = true,
   });
 }
 
@@ -15,8 +17,10 @@ class DisposePlayer extends AudioplayerEvent {}
 
 class Play extends AudioplayerEvent {
   final TaleModel taleModel;
+  final bool isAutoPlay;
   Play({
     required this.taleModel,
+    this.isAutoPlay = false,
   });
 }
 
@@ -33,18 +37,8 @@ class MoveForward15Sec extends AudioplayerEvent {}
 
 class MoveBackward15Sec extends AudioplayerEvent {}
 
-class UpdatePlayDuration extends AudioplayerEvent {}
-
-class StartTimer extends AudioplayerEvent {}
-
-class StopTimer extends AudioplayerEvent {}
-
-class UpdateSoundModel extends AudioplayerEvent {
-  String? title;
-
-  UpdateSoundModel({this.title});
+//!Заменить
+class UpdateTaleModel extends AudioplayerEvent {
+  final String newTitle;
+  UpdateTaleModel(this.newTitle);
 }
-
-class LocalSaveSound extends AudioplayerEvent {}
-
-class DeleteSound extends AudioplayerEvent {}

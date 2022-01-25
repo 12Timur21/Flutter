@@ -5,16 +5,35 @@ import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
 
 import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
+import 'package:memory_box/resources/app_coloros.dart';
+import 'package:memory_box/resources/app_icons.dart';
 
 import 'package:share_plus/share_plus.dart';
 
 class TaleListTileWithPopupMenu extends StatefulWidget {
   const TaleListTileWithPopupMenu({
     required this.taleModel,
+    required this.onPlay,
+    required this.onPause,
+    required this.onRename,
+    required this.onUndoRenaming,
+    required this.onAddToPlaylist,
+    required this.onDelete,
+    required this.onShare,
+    this.isPlayMode = false,
     Key? key,
   }) : super(key: key);
 
   final TaleModel taleModel;
+  final bool isPlayMode;
+
+  final VoidCallback onPlay;
+  final VoidCallback onPause;
+  final Function(String) onRename;
+  final VoidCallback onUndoRenaming;
+  final VoidCallback onAddToPlaylist;
+  final VoidCallback onDelete;
+  final VoidCallback onShare;
 
   @override
   _TaleListTileWithPopupMenuState createState() =>
@@ -22,69 +41,24 @@ class TaleListTileWithPopupMenu extends StatefulWidget {
 }
 
 class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
-  late final TaleModel _taleModel;
   late final TextEditingController _textFieldController;
 
   bool _isEditMode = false;
-  bool _isPlayMode = false;
 
   @override
   void initState() {
     super.initState();
-    _taleModel = widget.taleModel;
     _textFieldController = TextEditingController(
-      text: _taleModel.title,
+      text: widget.taleModel.title,
     );
   }
 
-  void _addToPlayList() {
-    // NavigationService.instance.navigateTo(
-    //   PlaylistScreen.routeName,
-    //   arguments: _taleModel.ID,
-    // );
+  void _renameTale() {
+    widget.onRename(_textFieldController.text);
   }
 
-  void _deleteTale() {
-    String? taleID = _taleModel.ID;
-    if (taleID != null) {
-      BlocProvider.of<ListBuilderBloc>(context).add(DeleteTale(taleID));
-    }
-  }
-
-  void _shareTale() {
-    String? songUrl = widget.taleModel.url;
-    if (songUrl != null) {
-      Share.share(songUrl);
-    }
-
-    String? taleUrl = _taleModel.url;
-    if (taleUrl != null) {
-      BlocProvider.of<ListBuilderBloc>(context).add(
-        ShareTale(taleUrl),
-      );
-    }
-  }
-
-  void _undoChanges() {
-    BlocProvider.of<ListBuilderBloc>(context).add(
-      UndoRenameTale(),
-    );
-  }
-
-  void _save() async {
-    String? taleID = _taleModel.ID;
-    if (taleID != null) {
-      BlocProvider.of<ListBuilderBloc>(context).add(
-        RenameTale(
-          taleID,
-          _textFieldController.value.text,
-        ),
-      );
-    }
-
-    setState(() {
-      _isEditMode = false;
-    });
+  void _onUndoRename() {
+    widget.onUndoRenaming();
   }
 
   void _openEditMode() {
@@ -94,17 +68,10 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
   }
 
   void _tooglePlayMode() {
-    setState(() {
-      _isPlayMode = !_isPlayMode;
-    });
-    if (_isPlayMode) {
-      BlocProvider.of<AudioplayerBloc>(context).add(
-        Play(taleModel: widget.taleModel),
-      );
+    if (widget.isPlayMode) {
+      widget.onPlay();
     } else {
-      BlocProvider.of<AudioplayerBloc>(context).add(
-        Pause(),
-      );
+      widget.onPause();
     }
   }
 
@@ -114,9 +81,9 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(41),
-        color: const Color.fromRGBO(246, 246, 246, 1),
+        color: AppColors.wildSand,
         border: Border.all(
-          color: const Color.fromRGBO(58, 58, 85, 0.2),
+          color: AppColors.darkPurple.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -127,10 +94,8 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
         leading: GestureDetector(
           onTap: _tooglePlayMode,
           child: SvgPicture.asset(
-            _isPlayMode
-                ? 'assets/icons/StopCircle.svg'
-                : 'assets/icons/CirclePlay.svg',
-            color: const Color.fromRGBO(94, 119, 206, 1),
+            widget.isPlayMode ? AppIcons.stopCircle : AppIcons.playCircle,
+            color: AppColors.lightBlue,
             width: 50,
           ),
         ),
@@ -167,14 +132,14 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
         subtitle: _isEditMode
             ? null
             : Text(
-                _taleModel.duration?.inMinutes != 0
-                    ? '${_taleModel.duration?.inMinutes ?? 0} минут'
-                    : '${_taleModel.duration?.inSeconds ?? 0} секунд',
-                style: const TextStyle(
+                widget.taleModel.duration?.inMinutes != 0
+                    ? '${widget.taleModel.duration?.inMinutes ?? 0} минут'
+                    : '${widget.taleModel.duration?.inSeconds ?? 0} секунд',
+                style: TextStyle(
                   fontSize: 14,
                   fontFamily: 'TTNorms',
                   fontWeight: FontWeight.normal,
-                  color: Color.fromRGBO(58, 58, 85, 0.5),
+                  color: AppColors.darkPurple.withOpacity(0.5),
                   letterSpacing: 0.1,
                 ),
               ),
@@ -183,13 +148,13 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    onPressed: _save,
+                    onPressed: _renameTale,
                     icon: const Icon(
                       Icons.task_alt,
                     ),
                   ),
                   IconButton(
-                    onPressed: _undoChanges,
+                    onPressed: _onUndoRename,
                     icon: const Icon(
                       Icons.cancel,
                     ),
@@ -204,7 +169,7 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
                   ),
                 ),
                 icon: SvgPicture.asset(
-                  'assets/icons/More.svg',
+                  AppIcons.more,
                   color: Colors.black,
                   width: 25,
                 ),
@@ -214,13 +179,13 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
                       _openEditMode();
                       break;
                     case 1:
-                      _addToPlayList();
+                      widget.onAddToPlaylist();
                       break;
                     case 2:
-                      _deleteTale();
+                      widget.onDelete();
                       break;
                     case 3:
-                      _shareTale();
+                      widget.onShare();
                       break;
                   }
                 },

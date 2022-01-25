@@ -11,11 +11,11 @@ class TaleDeleteStatus {
 }
 
 class TaleModel {
-  String? ID;
-  String? title;
-  String? url;
-  Duration? duration;
-  TaleDeleteStatus? deleteStatus;
+  final String? ID;
+  final String? title;
+  final String? url;
+  final Duration? duration;
+  final TaleDeleteStatus? deleteStatus;
 
   TaleModel({
     this.ID,

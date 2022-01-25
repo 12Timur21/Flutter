@@ -11,25 +11,22 @@ class SoundPlayer {
 
   FlutterSoundPlayer? _flutterSoundPlayer;
 
-  // String? pathToSaveAudio;
-  // Directory? appDirectory;
-  // bool isSoundPlay = false;
+  bool get isSoundPlay => _flutterSoundPlayer?.isPlaying ?? false;
 
   Stream<PlaybackDisposition>? get soundDurationStream =>
       _flutterSoundPlayer?.onProgress;
 
-  // StreamSubscription? soundDurationStreamController;
-
-  // Duration? _soundDuration;
-  // Duration get songDuration => _soundDuration ?? Duration.zero;
-
-  // Duration? _currentPlayDuration;
-  // Duration get currentPlayDuration => _currentPlayDuration ?? Duration.zero;
+  final StreamController<bool> _whenFinishedController =
+      StreamController<bool>();
+  Stream<bool>? get whenFinishedStream => _whenFinishedController.stream;
 
   Future<bool> initPlayer() async {
     try {
       _flutterSoundPlayer = FlutterSoundPlayer();
-      await _flutterSoundPlayer?.openAudioSession();
+      await _flutterSoundPlayer?.openAudioSession(
+        mode: SessionMode.modeMeasurement,
+        focus: AudioFocus.requestFocus,
+      );
 
       await _flutterSoundPlayer?.setSubscriptionDuration(
         const Duration(
@@ -41,39 +38,37 @@ class SoundPlayer {
     } catch (_) {
       return false;
     }
-
-    // await _openSoundSession();
-
-    // //
-    // _soundDuration = await _flutterSoundPlayer?.startPlayer(
-    //   fromURI: soundUrl,
-    //   codec: Codec.aacMP4,
-    //   whenFinished: () {},
-    // );
-    // _flutterSoundPlayer?.pausePlayer();
-    // //
-
-    // setSubscriptionDuration(
-    //   subscriptionDurationInSec: 1,
-    // );
-    // startProgressListener();
   }
 
-  Future<Duration?> initTale({required TaleModel taleModel}) async {
-    return await _flutterSoundPlayer?.startPlayer(
+  Future<Duration> initTale({
+    required TaleModel taleModel,
+    required bool isAutoPlay,
+  }) async {
+    Duration? taleDuration = await _flutterSoundPlayer?.startPlayer(
       fromURI: taleModel.url,
-      codec: Codec.mp3,
-      whenFinished: () {
-        print('finished sound');
-      },
+      codec: Codec.aacADTS,
+      whenFinished: whenFinished,
     );
+
+    if (!isAutoPlay) {
+      await _flutterSoundPlayer?.pausePlayer();
+    }
+    return taleDuration ?? Duration.zero;
+  }
+
+  void whenFinished() {
+    print('начало конца --------------------');
+    _whenFinishedController.add(true);
   }
 
   Future<void> dispose() async {
+    print('dispose');
     await _flutterSoundPlayer?.stopPlayer();
+
     await _flutterSoundPlayer?.closeAudioSession();
     _flutterSoundPlayer = null;
-    // soundDurationStreamController?.cancel();
+
+    _whenFinishedController.close();
   }
 
   Future<void> resumePlayer() async {
@@ -84,87 +79,43 @@ class SoundPlayer {
     await _flutterSoundPlayer?.pausePlayer();
   }
 
-  // Future<void> resumePlayer() async {
-  //   await _flutterSoundPlayer?.resumePlayer();
-  // }
+  void seek({required Duration currentPlayTime}) {
+    _flutterSoundPlayer?.seekToPlayer(currentPlayTime);
+  }
 
-  // Future<void> setSubscriptionDuration({
-  //   required int subscriptionDurationInSec,
-  // }) async {
+  Future<Duration> moveForward15Sec({
+    required Duration currentPlayDuration,
+    required Duration taleDuration,
+  }) async {
+    Duration updatedDurationPosition = currentPlayDuration;
 
-  // }
+    if (currentPlayDuration.inSeconds + 15 <= taleDuration.inSeconds) {
+      updatedDurationPosition = Duration(
+        seconds: updatedDurationPosition.inSeconds + 15,
+      );
+    } else {
+      updatedDurationPosition = Duration(
+        seconds: taleDuration.inSeconds,
+      );
+    }
+    await _flutterSoundPlayer?.seekToPlayer(updatedDurationPosition);
+    return updatedDurationPosition;
+  }
 
-  // void startProgressListener() {
-  //   //!
+  Future<Duration> moveBackward15Sec({
+    required Duration currentPlayDuration,
+  }) async {
+    Duration updatedDurationPosition = currentPlayDuration;
+    if (currentPlayDuration.inSeconds - 15 >= 0) {
+      updatedDurationPosition = Duration(
+        seconds: updatedDurationPosition.inSeconds - 15,
+      );
+    } else {
+      updatedDurationPosition = Duration.zero;
+    }
+    await _flutterSoundPlayer?.seekToPlayer(updatedDurationPosition);
+    return updatedDurationPosition;
+  }
 
-  // }
-
-  // Future<void> play() async {
-  //   await _flutterSoundPlayer?.resumePlayer();
-  //   isSoundPlay = true;
-  // }
-
-  // Future<void> pause() async {
-  //   await _flutterSoundPlayer?.pausePlayer();
-  //   isSoundPlay = false;
-  // }
-
-  // void seek({required int currentPlayTimeInSec}) {
-  //   _flutterSoundPlayer?.seekToPlayer(Duration(
-  //     seconds: currentPlayTimeInSec,
-  //   ));
-  // }
-
-  // void moveForward15Sec({required int currentPlayTimeInSec}) {
-  //   if (currentPlayTimeInSec + 15 <= songDuration.inSeconds) {
-  //     _flutterSoundPlayer?.seekToPlayer(
-  //       Duration(
-  //         seconds: currentPlayTimeInSec + 15,
-  //       ),
-  //     );
-  //   } else {
-  //     _flutterSoundPlayer?.seekToPlayer(
-  //       Duration(
-  //         seconds: songDuration.inSeconds,
-  //       ),
-  //     );
-  //   }
-  // }
-
-  // void moveBackward15Sec({required int currentPlayTimeInSec}) {
-  //   if (currentPlayTimeInSec - 15 >= 0) {
-  //     _flutterSoundPlayer?.seekToPlayer(
-  //       Duration(
-  //         seconds: currentPlayTimeInSec - 15,
-  //       ),
-  //     );
-  //   } else {
-  //     _flutterSoundPlayer?.seekToPlayer(Duration.zero);
-  //   }
-  // }
-
-  // void shareSound(String pathToSaveAudio) {
-  //   Share.shareFiles([pathToSaveAudio]);
-  // }
-
-  // void localDownloadSound(String pathToSaveAudio) async {
-  //   String downloadDirectory = '';
-
-  //   if (Platform.isAndroid) {
-  //     downloadDirectory = '/sdcard/download/Аудиозапись.aac';
-  //   }
-
-  //   File pathToAudio = File(pathToSaveAudio);
-
-  //   try {
-  //     await pathToAudio.rename(downloadDirectory);
-  //   } on FileSystemException catch (e) {
-  //     await pathToAudio.copy(downloadDirectory);
-  //     deleteSound();
-  //   }
-  // }
-
-  // void deleteSound() {
-  //   appDirectory?.deleteSync(recursive: true);
-  // }
+  void localDownloadSound(String pathToSaveAudio) async {}
 }

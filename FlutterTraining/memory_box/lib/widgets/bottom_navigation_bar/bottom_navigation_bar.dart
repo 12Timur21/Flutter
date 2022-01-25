@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
+import 'package:memory_box/resources/app_coloros.dart';
+import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/screens/all_tales_screen/all_tales_screen.dart';
 import 'package:memory_box/screens/home_screen/home_screen.dart';
 import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
-import 'package:memory_box/utils/navigationService.dart';
 import 'package:memory_box/widgets/recorder_button_icons/recorder_button_icons.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({
-    // required this.navigationKey,
     required this.openButtomSheet,
     Key? key,
   }) : super(key: key);
 
   final Function openButtomSheet;
-  // final GlobalKey<NavigatorState> navigationKey;
-
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
 }
@@ -108,17 +106,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
               );
             },
             child: BottomNavigationBar(
-              backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
+              backgroundColor: AppColors.wildSand,
               type: BottomNavigationBarType.fixed,
-              selectedItemColor: const Color.fromRGBO(140, 132, 226, 1),
+              selectedItemColor: AppColors.blueMagenta,
               onTap: _onBottomNavigatorTapped,
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: SvgPicture.asset(
-                    'assets/icons/Home.svg',
-                    color: _selectedIndex == 0
-                        ? const Color.fromRGBO(140, 132, 226, 1)
-                        : null,
+                    AppIcons.home,
+                    color: _selectedIndex == 0 ? AppColors.blueMagenta : null,
                   ),
                   title: Text(
                     'Главная',
@@ -127,10 +123,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 ),
                 BottomNavigationBarItem(
                   icon: SvgPicture.asset(
-                    'assets/icons/Category.svg',
-                    color: _selectedIndex == 1
-                        ? const Color.fromRGBO(140, 132, 226, 1)
-                        : null,
+                    AppIcons.category,
+                    color: _selectedIndex == 1 ? AppColors.blueMagenta : null,
                   ),
                   title: Text(
                     'Подборки',
@@ -142,16 +136,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   title: Text(
                     'Запись',
                     style: const TextStyle(
-                      color: Color.fromRGBO(241, 180, 136, 1),
+                      color: AppColors.tacao,
                     ).merge(_bottomNavigationBarTextStyle),
                   ),
                 ),
                 BottomNavigationBarItem(
                   icon: SvgPicture.asset(
-                    'assets/icons/Paper.svg',
-                    color: _selectedIndex == 3
-                        ? const Color.fromRGBO(140, 132, 226, 1)
-                        : null,
+                    AppIcons.document,
+                    color: _selectedIndex == 3 ? AppColors.blueMagenta : null,
                   ),
                   title: Text(
                     'Аудиозаписи',
@@ -160,10 +152,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 ),
                 BottomNavigationBarItem(
                   icon: SvgPicture.asset(
-                    'assets/icons/Profile.svg',
-                    color: _selectedIndex == 4
-                        ? const Color.fromRGBO(140, 132, 226, 1)
-                        : null,
+                    AppIcons.profile,
+                    color: _selectedIndex == 4 ? AppColors.blueMagenta : null,
                   ),
                   title: Text(
                     'Профиль',
@@ -183,4 +173,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
     fontWeight: FontWeight.w400,
     fontSize: 11,
   );
+
+  // Widget _selectedBarItem(
+  //   {required icon}
+  // ) {
+  //   return
+  // }
 }

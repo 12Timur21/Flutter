@@ -122,7 +122,7 @@ class StorageService {
     required String title,
     required Duration duration,
   }) async {
-    final destination = mapDestination(
+    final String destination = mapDestination(
       fileType: FileType.tale,
       uid: AuthService.userID,
       fileName: taleID,
@@ -131,6 +131,7 @@ class StorageService {
     try {
       await _cloud.ref().child('/$destination').putFile(file);
       String url = await _cloud.ref().child('/$destination').getDownloadURL();
+
       await _database.createTale(
         taleID: taleID,
         title: title,

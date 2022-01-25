@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/utils/formatting.dart';
 
 class PlaylistTile extends StatefulWidget {
@@ -76,10 +77,12 @@ class _PlaylistTileState extends State<PlaylistTile> {
                     imageUrl: widget.coverUrl,
                     height: 240,
                     fit: BoxFit.fill,
-                    placeholder: (context, url) =>
-                        const Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) =>
-                        const Center(child: Icon(Icons.error)),
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Icon(Icons.error),
+                    ),
                   ),
                   Container(
                     decoration: const BoxDecoration(
@@ -87,8 +90,8 @@ class _PlaylistTileState extends State<PlaylistTile> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: <Color>[
-                          Color.fromRGBO(0, 0, 0, 0),
-                          Color.fromRGBO(69, 69, 69, 1),
+                          Colors.black,
+                          AppColors.gray,
                         ],
                       ),
                     ),
@@ -132,20 +135,20 @@ class _PlaylistTileState extends State<PlaylistTile> {
                                   const SizedBox(
                                     height: 7,
                                   ),
-                                  Text(
-                                    // sumAudioDuration?.inMilliseconds.toString() ?? '',
-                                    '${convertDurationToString(
-                                      duration: widget.sumAudioDuration,
-                                      formattingType: TimeFormattingType
-                                          .hourMinuteWithOneDigits,
-                                    )} ${widget.sumAudioDuration.inHours > 0 ? "часа" : "минут"}',
-                                    style: const TextStyle(
-                                      fontFamily: 'TTNorms',
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                                  // Text(
+                                  //   // sumAudioDuration?.inMilliseconds.toString() ?? '',
+                                  //   '${convertDurationToString(
+                                  //     duration: widget.sumAudioDuration,
+                                  //     formattingType:
+                                  //         TimeFormattingType.hourMinute,
+                                  //   )} ${widget.sumAudioDuration.inHours > 0 ? "часа" : "минут"}',
+                                  //   style: const TextStyle(
+                                  //     fontFamily: 'TTNorms',
+                                  //     fontWeight: FontWeight.w400,
+                                  //     fontSize: 12,
+                                  //     color: Colors.white,
+                                  //   ),
+                                  // ),
                                 ],
                               )
                             ],

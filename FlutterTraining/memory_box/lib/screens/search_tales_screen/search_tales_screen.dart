@@ -149,9 +149,9 @@ class _SearchTalesScreenState extends State<SearchTalesScreen> {
                           itemBuilder: (context, index) {
                             TaleModel? taleModel = snapshot.data?[index];
                             if (taleModel != null) {
-                              return TaleListTileWithPopupMenu(
-                                taleModel: taleModel,
-                              );
+                              // return TaleListTileWithPopupMenu(
+                              //   taleModel: taleModel,
+                              // );
                             }
                             return const SizedBox();
                           },

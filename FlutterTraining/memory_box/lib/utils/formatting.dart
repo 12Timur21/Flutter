@@ -1,7 +1,7 @@
 enum TimeFormattingType {
+  minuteSecond,
   hourMinute,
-  hourMinuteWithOneDigits,
-  hourMinuteSecond
+  hourMinuteSecond,
 }
 
 enum DayTimeFormattingType {
@@ -12,23 +12,23 @@ enum DayTimeFormattingType {
 
 String convertDurationToString({
   Duration? duration,
-  TimeFormattingType? formattingType,
+  required TimeFormattingType? formattingType,
 }) {
-  if (duration != null && formattingType != null) {
+  if (duration != null) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String oneDigitHours = duration.inHours.remainder(60).toString();
+    String oneDigitHours = twoDigits(duration.inHours.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
 
-    if (formattingType == TimeFormattingType.hourMinute) {
+    if (formattingType == TimeFormattingType.minuteSecond) {
       return "$twoDigitMinutes:$twoDigitSeconds";
     }
-    if (formattingType == TimeFormattingType.hourMinuteWithOneDigits) {
+    if (formattingType == TimeFormattingType.hourMinute) {
       return "$oneDigitHours:$twoDigitMinutes";
     }
-    return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    return "${duration.inHours}:$twoDigitMinutes:$twoDigitSeconds";
   }
-  return '00:00';
+  return '00:00:00';
 }
 
 String convertDateTimeToString({

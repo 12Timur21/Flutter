@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
-import 'package:memory_box/utils/navigationService.dart';
 
 class ViewingAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ViewingAppBar({
@@ -25,7 +25,7 @@ class ViewingAppBar extends StatelessWidget implements PreferredSizeWidget {
         margin: const EdgeInsets.only(left: 6),
         child: IconButton(
           icon: SvgPicture.asset(
-            'assets/icons/Plus.svg',
+            AppIcons.plus,
           ),
           onPressed: createNewPlaylist,
         ),
@@ -66,7 +66,7 @@ class ViewingAppBar extends StatelessWidget implements PreferredSizeWidget {
               DatabaseService.instance.getAllPlayList();
             },
             icon: SvgPicture.asset(
-              'assets/icons/More.svg',
+              AppIcons.more,
             ),
           ),
         )

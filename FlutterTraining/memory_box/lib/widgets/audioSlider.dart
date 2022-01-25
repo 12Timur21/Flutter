@@ -6,80 +6,87 @@ class AudioSlider extends StatefulWidget {
     required this.onChanged,
     required this.onChangeEnd,
     this.currentPlayDuration,
-    this.soundDuration,
+    this.taleDuration,
+    this.primaryColor = Colors.black,
     Key? key,
   }) : super(key: key);
 
   final Function onChanged;
   final Function(double) onChangeEnd;
   final Duration? currentPlayDuration;
-  final Duration? soundDuration;
+  final Duration? taleDuration;
+  final Color primaryColor;
 
   @override
   _AudioSliderState createState() => _AudioSliderState();
 }
 
 class _AudioSliderState extends State<AudioSlider> {
-  double sliderTimeValue = 0;
-
-  @override
-  void initState() {
-    sliderTimeValue =
-        widget.currentPlayDuration?.inMilliseconds.toDouble() ?? 0;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    double sliderTimeValue =
+        widget.currentPlayDuration?.inSeconds.toDouble() ?? 0;
+
+    TextStyle numericStyle = TextStyle(
+      color: widget.primaryColor,
+      fontFamily: 'TTNorms',
+      fontSize: 10,
+      fontWeight: FontWeight.w500,
+    );
+
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
         overlayShape: SliderComponentShape.noOverlay,
         // thumbShape: CustomSliderThumbRhombus(),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Slider(
-            activeColor: Colors.black,
-            inactiveColor: Colors.black,
-            max: widget.soundDuration?.inSeconds.toDouble() ?? 0,
-            min: 0.0,
-            value: sliderTimeValue,
-            thumbColor: Colors.red,
-            onChanged: (double value) {
-              widget.onChanged();
-              setState(() {
-                sliderTimeValue = value;
-              });
-            },
-            onChangeEnd: (double value) {
-              setState(() {
-                sliderTimeValue = value;
-              });
-              widget.onChangeEnd(value);
-            },
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                convertDurationToString(
-                  duration: widget.currentPlayDuration,
-                  formattingType: TimeFormattingType.hourMinute,
+      child: Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Slider(
+              activeColor: Colors.black,
+              inactiveColor: widget.primaryColor,
+              max: widget.taleDuration?.inSeconds.toDouble() ?? 0,
+              min: 0.0,
+              value: sliderTimeValue,
+              thumbColor: Colors.red,
+              onChanged: (double value) {
+                widget.onChanged();
+                setState(() {
+                  sliderTimeValue = value;
+                });
+              },
+              onChangeEnd: (double value) {
+                setState(() {
+                  sliderTimeValue = value;
+                });
+                widget.onChangeEnd(value);
+              },
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  convertDurationToString(
+                    duration: widget.currentPlayDuration,
+                    formattingType: TimeFormattingType.hourMinute,
+                  ),
+                  style: numericStyle,
                 ),
-              ),
-              Text(
-                convertDurationToString(
-                  duration: widget.soundDuration,
-                  formattingType: TimeFormattingType.hourMinute,
+                Text(
+                  convertDurationToString(
+                    duration: widget.taleDuration,
+                    formattingType: TimeFormattingType.hourMinute,
+                  ),
+                  style: numericStyle,
                 ),
-              ),
-            ],
-          )
-        ],
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

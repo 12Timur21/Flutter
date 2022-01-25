@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
-import 'package:memory_box/utils/navigationService.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/search.dart';
 import 'package:memory_box/widgets/tale_list_tiles/tale_list_tile_with_checkbox.dart';
@@ -24,7 +24,7 @@ class SelectPlaylistTales extends StatefulWidget {
 }
 
 class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
-  late final PlayListCreationState? _playListState;
+  PlayListCreationState? _playListState;
   final StreamController<String?> _toogleSubscriptionTale =
       StreamController<String>();
   List<String>? _taleIDs;
@@ -97,22 +97,17 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
   @override
   Widget build(BuildContext context) {
     void _undoChanges() {
-      // NavigationService.instance.navigateTo(
-      //   CreatePlaylistScreen.routeName,
-      //   arguments: widget.collectionCreationState,
-      //   saveNewRoute: false,
-      // );
       Navigator.of(context).pop();
     }
 
     void _saveChanges() {
       _playListState?.talesIDs = _taleIDs;
-      Navigator.of(context).pop(_playListState);
-      // NavigationService.instance.navigateTo(
-      //   CreatePlaylistScreen.routeName,
-      // arguments: _playListState,
-      //   saveNewRoute: false,
-      // );
+
+      Navigator.of(context).pushNamed(
+        CreatePlaylistScreen.routeName,
+        arguments: PlayListCreationState(talesIDs: _taleIDs),
+      );
+      // Navigator.of(context).pop(_playListState);
     }
 
     void subscibeTale(String taleID) {
@@ -133,7 +128,7 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
     // }
 
     return BackgroundPattern(
-      patternColor: const Color.fromRGBO(113, 165, 159, 1),
+      patternColor: AppColors.seaNymph,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
@@ -142,10 +137,9 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
           toolbarHeight: 70,
           backgroundColor: Colors.transparent,
           centerTitle: true,
-          leading: Container(
-              child: UndoButton(
+          leading: UndoButton(
             undoChanges: _undoChanges,
-          )),
+          ),
           title: Container(
             margin: const EdgeInsets.only(top: 10),
             child: RichText(
@@ -209,8 +203,9 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
                     ),
               Expanded(
                 child: FutureBuilder<List<TaleModel>>(
-                  future: DatabaseService.instance
-                      .searchTalesByTitle(title: _searchValue),
+                  future: DatabaseService.instance.getAllDeletedTaleModels(),
+                  // DatabaseService.instance
+                  //     .searchTalesByTitle(title: _searchValue),
                   builder: (
                     BuildContext context,
                     AsyncSnapshot<List<TaleModel>> snapshot,
@@ -223,16 +218,16 @@ class _SelectPlaylistTalesState extends State<SelectPlaylistTales> {
                             horizontal: 40,
                             vertical: 40,
                           ),
-                          decoration: const BoxDecoration(
-                            color: Color.fromRGBO(246, 246, 246, 1),
-                            borderRadius: BorderRadius.all(
+                          decoration: BoxDecoration(
+                            color: AppColors.wildSand,
+                            borderRadius: const BorderRadius.all(
                               Radius.circular(30),
                             ),
                             boxShadow: [
                               BoxShadow(
                                 offset: Offset(0, 4),
                                 blurRadius: 20,
-                                color: Color.fromRGBO(0, 0, 0, 0.18),
+                                color: Colors.black.withOpacity(0.18),
                               ),
                             ],
                           ),

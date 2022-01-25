@@ -6,8 +6,8 @@ import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/home_screen/home_screen.dart';
-import 'package:memory_box/screens/recording_screen/recording_screen.dart';
-import 'package:memory_box/utils/navigationService.dart';
+import 'package:memory_box/screens/recording_screen/recording_barrel.dart';
+
 import 'package:memory_box/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
 import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 
@@ -43,22 +43,23 @@ class _MainPageState extends State<MainPage> {
                     ListeningPageState(),
                   ),
                 ),
-                // BlocProvider(
-                //   create: (context) => AudioplayerBloc(),
-                // ),
+                BlocProvider(
+                  create: (context) => AudioplayerBloc(),
+                ),
               ],
               // child: GestureDetector(
               // onVerticalDragDown: (_) {},
               child: BlocBuilder<BottomSheetBloc, BottomSheetState>(
                 builder: (BuildContext context, BottomSheetState state) {
                   if (state is RecorderPageState) {
-                    return const RecordingPage();
+                    return const RecordingScreen();
                   }
                   if (state is ListeningPageState) {
-                    // return const ListeningPage();
+                    // return Container();
+                    return const ListeningScreen();
                   }
                   if (state is PreviewPageState) {
-                    // return const RecordPreview();
+                    return const RecordingPreviewScreen();
                   }
                   return Container();
                 },

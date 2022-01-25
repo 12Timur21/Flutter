@@ -48,7 +48,6 @@ class _TaleControlButtonsState extends State<TaleControlButtons> {
         IconButton(
           onPressed: () {
             moveBackward();
-            // _soundPlayer?.moveBackward();
           },
           icon: SvgPicture.asset(
             'assets/icons/15SecAgo.svg',
@@ -76,8 +75,7 @@ class _TaleControlButtonsState extends State<TaleControlButtons> {
         ),
         IconButton(
           onPressed: () {
-            moveBackward();
-            // _soundPlayer?.moveForward();
+            moveForward();
           },
           icon: SvgPicture.asset('assets/icons/15SecAfter.svg'),
         ),

@@ -6,7 +6,6 @@ import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/settings/initial_settings.dart';
-import 'blocks/playListNavigation/playListNavigation_bloc.dart';
 
 import 'blocks/registration/registration_bloc.dart';
 
@@ -30,11 +29,6 @@ Future<void> main() async {
         BlocProvider<SessionBloc>(
           create: (BuildContext context) {
             return SessionBloc();
-          },
-        ),
-        BlocProvider<PlayListNavigationBloc>(
-          create: (BuildContext context) {
-            return PlayListNavigationBloc();
           },
         ),
       ],

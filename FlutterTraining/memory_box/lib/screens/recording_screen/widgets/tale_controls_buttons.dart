@@ -7,11 +7,13 @@ class TaleControlButtons extends StatefulWidget {
     required this.tooglePlay,
     required this.moveBackward,
     required this.moveForward,
+    required this.isPlay,
   }) : super(key: key);
 
   final Function tooglePlay;
   final Function moveForward;
   final Function moveBackward;
+  final bool isPlay;
 
   @override
   _TaleControlButtonsState createState() => _TaleControlButtonsState();
@@ -26,9 +28,6 @@ class _TaleControlButtonsState extends State<TaleControlButtons> {
   }
 
   void tooglePlay() {
-    setState(() {
-      isPlayMode = !isPlayMode;
-    });
     widget.tooglePlay();
   }
 
@@ -58,7 +57,7 @@ class _TaleControlButtonsState extends State<TaleControlButtons> {
         ),
         GestureDetector(
           onTap: tooglePlay,
-          child: isPlayMode
+          child: widget.isPlay
               ? const Icon(
                   Icons.pause_circle,
                   color: Color.fromRGBO(241, 180, 136, 1),

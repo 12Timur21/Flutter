@@ -2,6 +2,7 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:memory_box/models/tale_model.dart';
 
 import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';
@@ -118,29 +119,25 @@ class StorageService {
 
   Future<void> uploadTaleFIle({
     required File file,
-    required String taleID,
-    required String title,
-    required Duration duration,
+    required TaleModel taleModel,
   }) async {
     final String destination = mapDestination(
       fileType: FileType.tale,
       uid: AuthService.userID,
-      fileName: taleID,
+      fileName: taleModel.ID,
     );
 
     try {
       await _cloud.ref().child('/$destination').putFile(file);
+
       String url = await _cloud.ref().child('/$destination').getDownloadURL();
 
       await _database.createTale(
-        taleID: taleID,
-        title: title,
-        duration: duration,
-        taleUrl: url,
+        taleModel: taleModel.copyWith(
+          url: url,
+        ),
       );
-    } on FirebaseException catch (e) {
-      print(e);
-    }
+    } on FirebaseException catch (_) {}
   }
 
   // Future<void> updateTaleTitle({

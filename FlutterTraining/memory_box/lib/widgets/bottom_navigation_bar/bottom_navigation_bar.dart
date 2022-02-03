@@ -9,7 +9,7 @@ import 'package:memory_box/screens/home_screen/home_screen.dart';
 import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
-import 'package:memory_box/widgets/recorder_button_icons/recorder_button_icons.dart';
+import 'package:memory_box/widgets/recorder_button_icons/recorder_buttons_barrel.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({
@@ -57,7 +57,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
     if (recorderButtonStates == RecorderButtonStates.withLine) {
       return const RecorderButtonWithLine();
     }
-    return const DefaultRecorderButton();
+    if (recorderButtonStates == RecorderButtonStates.defaultIcon) {
+      return const DefaultRecorderButton();
+    }
+    return const RecorderButtonClose();
   }
 
   @override

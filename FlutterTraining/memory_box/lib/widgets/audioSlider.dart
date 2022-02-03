@@ -39,54 +39,52 @@ class _AudioSliderState extends State<AudioSlider> {
         overlayShape: SliderComponentShape.noOverlay,
         // thumbShape: CustomSliderThumbRhombus(),
       ),
-      child: Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Slider(
-              activeColor: Colors.black,
-              inactiveColor: widget.primaryColor,
-              max: widget.taleDuration?.inSeconds.toDouble() ?? 0,
-              min: 0.0,
-              value: sliderTimeValue,
-              thumbColor: Colors.red,
-              onChanged: (double value) {
-                widget.onChanged();
-                setState(() {
-                  sliderTimeValue = value;
-                });
-              },
-              onChangeEnd: (double value) {
-                setState(() {
-                  sliderTimeValue = value;
-                });
-                widget.onChangeEnd(value);
-              },
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  convertDurationToString(
-                    duration: widget.currentPlayDuration,
-                    formattingType: TimeFormattingType.hourMinute,
-                  ),
-                  style: numericStyle,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Slider(
+            activeColor: Colors.black,
+            inactiveColor: widget.primaryColor,
+            max: widget.taleDuration?.inSeconds.toDouble() ?? 0,
+            min: 0.0,
+            value: sliderTimeValue,
+            thumbColor: Colors.red,
+            onChanged: (double value) {
+              widget.onChanged();
+              setState(() {
+                sliderTimeValue = value;
+              });
+            },
+            onChangeEnd: (double value) {
+              setState(() {
+                sliderTimeValue = value;
+              });
+              widget.onChangeEnd(value);
+            },
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                convertDurationToString(
+                  duration: widget.currentPlayDuration,
+                  formattingType: TimeFormattingType.minuteSecond,
                 ),
-                Text(
-                  convertDurationToString(
-                    duration: widget.taleDuration,
-                    formattingType: TimeFormattingType.hourMinute,
-                  ),
-                  style: numericStyle,
+                style: numericStyle,
+              ),
+              Text(
+                convertDurationToString(
+                  duration: widget.taleDuration,
+                  formattingType: TimeFormattingType.minuteSecond,
                 ),
-              ],
-            )
-          ],
-        ),
+                style: numericStyle,
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

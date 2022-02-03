@@ -15,7 +15,10 @@ class DeleteAlert extends StatelessWidget {
     return Align(
       alignment: Alignment.center,
       child: AlertDialog(
-        contentPadding: const EdgeInsets.symmetric(vertical: 30),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 30,
+          horizontal: 10,
+        ),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(30),

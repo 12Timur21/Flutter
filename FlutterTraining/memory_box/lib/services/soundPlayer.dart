@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:share_plus/share_plus.dart';
@@ -16,9 +17,9 @@ class SoundPlayer {
   Stream<PlaybackDisposition>? get soundDurationStream =>
       _flutterSoundPlayer?.onProgress;
 
-  final StreamController<bool> _whenFinishedController =
-      StreamController<bool>();
-  Stream<bool>? get whenFinishedStream => _whenFinishedController.stream;
+  StreamController<void> whenFinishedController = StreamController<void>();
+
+  // Stream<bool> get whenFinishedStream => _whenFinishedController.stream;
 
   Future<bool> initPlayer() async {
     try {
@@ -43,10 +44,11 @@ class SoundPlayer {
   Future<Duration> initTale({
     required TaleModel taleModel,
     required bool isAutoPlay,
+    required VoidCallback whenFinished,
   }) async {
     Duration? taleDuration = await _flutterSoundPlayer?.startPlayer(
       fromURI: taleModel.url,
-      codec: Codec.aacADTS,
+      codec: Codec.mp3,
       whenFinished: whenFinished,
     );
 
@@ -56,19 +58,19 @@ class SoundPlayer {
     return taleDuration ?? Duration.zero;
   }
 
-  void whenFinished() {
-    print('начало конца --------------------');
-    _whenFinishedController.add(true);
-  }
+  // void whenFinished() {
+  //   print('начало конца --------------------');
+  //   whenFinishedController.add(null);
+  // }
 
   Future<void> dispose() async {
-    print('dispose');
+    print('dispose disepo sesease');
     await _flutterSoundPlayer?.stopPlayer();
 
     await _flutterSoundPlayer?.closeAudioSession();
     _flutterSoundPlayer = null;
 
-    _whenFinishedController.close();
+    whenFinishedController.close();
   }
 
   Future<void> resumePlayer() async {

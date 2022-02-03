@@ -26,4 +26,6 @@ class AppIcons {
   static const String category = '$_path/Category.svg';
   static const String document = '$_path/Document.svg';
   static const String profile = '$_path/Profile.svg';
+  static const String voice = '$_path/Voice.svg';
+  static const String arrowDown = '$_path/ArrowDown.svg';
 }

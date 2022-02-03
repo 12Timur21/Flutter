@@ -5,11 +5,10 @@ import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
 class Visualizer extends StatefulWidget {
   Visualizer({
     required this.recorderSubscription,
-    required this.isRecorderStreamInitialized,
     Key? key,
   }) : super(key: key);
-  StreamSubscription<RecordingDisposition>? recorderSubscription;
-  bool isRecorderStreamInitialized;
+  Stream<RecordingDisposition>? recorderSubscription;
+
   @override
   _VisualizerState createState() => _VisualizerState();
 }
@@ -17,6 +16,7 @@ class Visualizer extends StatefulWidget {
 class _VisualizerState extends State<Visualizer> {
   List<double> dbLevels = [0];
   bool _isRemoveModeEnable = false;
+  bool _streamIsOpen = false;
 
   void enableRemoveMode() {
     _isRemoveModeEnable = true;
@@ -24,18 +24,18 @@ class _VisualizerState extends State<Visualizer> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isRecorderStreamInitialized) {
-      widget.recorderSubscription?.onData(
-        (data) {
-          setState(() {
-            dbLevels.add(data.decibels ?? 0);
-            if (_isRemoveModeEnable) {
-              dbLevels.removeAt(0);
-            }
-          });
-        },
-      );
+    if (_streamIsOpen == false) {
+      widget.recorderSubscription?.listen((event) {
+        setState(() {
+          _streamIsOpen = true;
+          dbLevels.add(event.decibels ?? 0);
+          if (_isRemoveModeEnable) {
+            dbLevels.removeAt(0);
+          }
+        });
+      });
     }
+
     return CustomPaint(
       size: const Size(400, double.infinity),
       painter: Painter(dbLevels, enableRemoveMode, _isRemoveModeEnable),

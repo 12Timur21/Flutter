@@ -6,7 +6,6 @@ class ListBuilderState {
   final bool isPlayAllTalesMode;
 
   final List<TaleModel>? allTales;
-  final List<TaleModel>? selectedTales;
 
   final int? currentPlayTaleIndex;
 
@@ -15,7 +14,6 @@ class ListBuilderState {
     this.isPlay = false,
     this.isPlayAllTalesMode = false,
     this.allTales,
-    this.selectedTales,
     this.currentPlayTaleIndex,
   });
 
@@ -32,7 +30,6 @@ class ListBuilderState {
       isPlay: isPlay ?? this.isPlay,
       isPlayAllTalesMode: isPlayAllTalesMode ?? this.isPlayAllTalesMode,
       allTales: allTales ?? this.allTales,
-      selectedTales: selectedTales ?? this.selectedTales,
       currentPlayTaleIndex: currentPlayTaleIndex ?? this.currentPlayTaleIndex,
     );
   }
@@ -44,14 +41,12 @@ class PlayTaleState extends ListBuilderState {
     required bool isPlay,
     required bool isPlayAllTalesMode,
     List<TaleModel>? allTales,
-    List<TaleModel>? selectedTales,
     required int? currentPlayTaleIndex,
   }) : super(
           isInit: isInit,
           isPlay: isPlay,
           isPlayAllTalesMode: isPlayAllTalesMode,
           allTales: allTales,
-          selectedTales: selectedTales,
           currentPlayTaleIndex: currentPlayTaleIndex,
         );
 }
@@ -62,14 +57,12 @@ class StopTaleState extends ListBuilderState {
     required bool isPlay,
     required bool isPlayAllTalesMode,
     List<TaleModel>? allTales,
-    List<TaleModel>? selectedTales,
     required int? currentPlayTaleIndex,
   }) : super(
           isInit: isInit,
           isPlay: isPlay,
           isPlayAllTalesMode: isPlayAllTalesMode,
           allTales: allTales,
-          selectedTales: selectedTales,
           currentPlayTaleIndex: currentPlayTaleIndex,
         );
 }

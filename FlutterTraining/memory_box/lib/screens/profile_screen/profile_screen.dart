@@ -10,7 +10,9 @@ import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/repositories/storage_service.dart';
+import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/circle_textField.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
 import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 import 'package:image_picker/image_picker.dart';
@@ -26,123 +28,137 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileState extends State<ProfileScreen> {
-  final _phoneInputContoller = TextEditingController();
-  final _nameInputController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _phoneInputContoller = TextEditingController();
+  final TextEditingController _nameInputController = TextEditingController();
+
   bool _isEditMode = false;
 
-  UserModel? user;
+  UserModel? _user;
 
   String? _userName;
   String? _phoneNumber;
-
   XFile? _selectedImage, _oldImage;
+
+  late final SessionBloc _sessionBloc;
 
   @override
   void initState() {
+    _sessionBloc = BlocProvider.of<SessionBloc>(context);
     asyncInitState();
     super.initState();
   }
 
   void asyncInitState() async {
-    user = await AuthService.instance.currentUser();
+    _user = await AuthService.instance.currentUser();
 
-    updatePhoneField(user?.phoneNumber);
+    _updateUserName(
+      userName: _user?.displayName,
+    );
+    _updatePhoneNumber(
+      phoneNumber: _user?.phoneNumber,
+    );
   }
 
-  void updatePhoneField(String? phoneNumber) {
+  void _updateUserName({String? userName}) {
+    _nameInputController.text = userName ?? 'Без имени';
+  }
+
+  void _updatePhoneNumber({String? phoneNumber}) {
     _phoneInputContoller.text = PhoneInputFormatter().mask(
       _phoneNumber ?? '',
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final storage = StorageService.instance;
-    final database = DatabaseService.instance;
+  Future<void> _pickImage() async {
+    XFile? image = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
 
-    final authenticationBloc = BlocProvider.of<SessionBloc>(context);
+    setState(() {
+      _selectedImage = image;
+    });
+  }
 
-    Future<void> _pickImage() async {
-      XFile? image = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-      );
-
-      setState(() {
-        _selectedImage = image;
-      });
-    }
-
-    void saveChanges() async {
-      String? uid = user?.uid;
-      String? path = _selectedImage?.path;
-      if (uid != null) {
-        if (path != null) {
-          // await storage.uploadFile(
-          //   file: File(path),
-          //   fileName: uid,
-          //   fileType: FileType.avatar,
-          // );
-        }
-
-        authenticationBloc.add(
-          UpdateAccount(
-            uid: uid,
-            displayName: _nameInputController.text,
-            phoneNumber: toNumericString(_phoneInputContoller.text),
-          ),
-        );
+  void saveChanges() async {
+    String? uid = _user?.uid;
+    String? path = _selectedImage?.path;
+    if (uid != null) {
+      if (path != null) {
+        // await storage.uploadFile(
+        //   file: File(path),
+        //   fileName: uid,
+        //   fileType: FileType.avatar,
+        // );
       }
-      setState(() {
+
+      _sessionBloc.add(
+        UpdateAccount(
+          uid: uid,
+          displayName: _nameInputController.text,
+          phoneNumber: toNumericString(_phoneInputContoller.text),
+        ),
+      );
+    }
+    setState(() {
+      _userName = _nameInputController.text;
+      _phoneNumber = _phoneInputContoller.text;
+    });
+  }
+
+  void undoChanges() {
+    setState(() {
+      _nameInputController.text = _userName ?? '';
+      _phoneInputContoller.text = _phoneNumber ?? '';
+      _selectedImage = _oldImage;
+      _isEditMode = false;
+    });
+  }
+
+  void _toogleMode() {
+    setState(() {
+      _isEditMode = !_isEditMode;
+      if (_isEditMode) {
         _userName = _nameInputController.text;
         _phoneNumber = _phoneInputContoller.text;
-      });
-    }
-
-    void undoChanges() {
-      setState(() {
-        _nameInputController.text = _userName ?? '';
-        _phoneInputContoller.text = _phoneNumber ?? '';
-        _selectedImage = _oldImage;
-        _isEditMode = false;
-      });
-    }
-
-    void _toogleMode() {
-      setState(() {
-        _isEditMode = !_isEditMode;
-        if (_isEditMode) {
-          _userName = _nameInputController.text;
-          _phoneNumber = _phoneInputContoller.text;
-          _oldImage = _selectedImage;
-        } else {
-          saveChanges();
-        }
-      });
-    }
-
-    void logOut() {
-      authenticationBloc.add(LogOut());
-    }
-
-    void deleteAccount() async {
-      bool? isDelete = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return const DeleteAlert(
-            title: 'Точно удалить аккаунт?',
-            content:
-                'Все аудиофайлы исчезнут и восстановить аккаунт будет невозможно',
-          );
-        },
-      );
-      if (isDelete == true && user?.uid != null) {
-        authenticationBloc.add(DeleteAccount(
-          uid: user!.uid!,
-        ));
+        _oldImage = _selectedImage;
+      } else {
+        saveChanges();
       }
-    }
+    });
+  }
 
+  void logOut() {
+    _sessionBloc.add(LogOut());
+    Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+      SplashScreen.routeName,
+      (route) => false,
+    );
+  }
+
+  void deleteAccount() async {
+    bool? isDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return const DeleteAlert(
+          title: 'Точно удалить аккаунт?',
+          content:
+              'Все аудиофайлы исчезнут и восстановить аккаунт будет невозможно',
+        );
+      },
+    );
+    if (isDelete == true && _user?.uid != null) {
+      _sessionBloc.add(DeleteAccount(
+        uid: _user!.uid!,
+      ));
+      Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+        SplashScreen.routeName,
+        (route) => false,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return BackgroundPattern(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -196,11 +212,11 @@ class _ProfileState extends State<ProfileScreen> {
           ),
           elevation: 0,
         ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 40,
-            ),
+        body: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 40,
+          ),
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 const SizedBox(
@@ -263,40 +279,37 @@ class _ProfileState extends State<ProfileScreen> {
                 const SizedBox(
                   height: 8,
                 ),
-                // Form(
-                //   key: _formKey,
-                //   child: Builder(
-                //     builder: (context) {
-                //       String? _errorText;
-                //       return StatefulBuilder(
-                //         builder: (BuildContext context, setState) {
-                //           // return CircleTextField(
-                //           //   controller: _phoneController,
-                //           //   inputFormatters: [PhoneInputFormatter()],
-                //           //   errorText: _errorText,
-                //           //   validator: (value) {
-                //           //     int length = toNumericString(value).length;
-                //           //     bool isError = false;
-                //           //     if (length < 8) {
-                //           //       _errorText = 'Укажите полный номер телефона';
-                //           //       isError = true;
-                //           //     }
-                //           //     if (value == null || value.isEmpty) {
-                //           //       _errorText = 'Поле не может быть пустым';
-                //           //       isError = true;
-                //           //     }
-                //           //     if (!isError) {
-                //           //       _errorText = null;
-                //           //     }
-                //           //     setState(() {});
-                //           //     return _errorText;
-                //           //   },
-                //           // );
-                //         },
-                //       );
-                //     },
-                //   ),
-                // ),
+                Builder(
+                  builder: (context) {
+                    String? _errorText;
+                    return StatefulBuilder(
+                      builder: (BuildContext context, setState) {
+                        return CircleTextField(
+                          controller: _phoneInputContoller,
+                          inputFormatters: [PhoneInputFormatter()],
+                          errorText: _errorText,
+                          validator: (value) {
+                            int length = toNumericString(value).length;
+                            bool isError = false;
+                            if (length < 8) {
+                              _errorText = 'Укажите полный номер телефона';
+                              isError = true;
+                            }
+                            if (value == null || value.isEmpty) {
+                              _errorText = 'Поле не может быть пустым';
+                              isError = true;
+                            }
+                            if (!isError) {
+                              _errorText = null;
+                            }
+                            setState(() {});
+                            return _errorText;
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
                 const SizedBox(
                   height: 0,
                 ),
@@ -358,7 +371,7 @@ class _ProfileState extends State<ProfileScreen> {
                   height: 5,
                 ),
                 if (!_isEditMode) const Text('150/500 мб'),
-                const Spacer(),
+                // const Spacer(),
                 if (!_isEditMode)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -366,22 +379,12 @@ class _ProfileState extends State<ProfileScreen> {
                       TextButton(
                         onPressed: () {
                           logOut();
-                          // AuthService.instance.signOut();
-                          // Navigator.pushReplacementNamed(
-                          //   context,
-                          //   Root.routeName,
-                          // );
                         },
                         child: const Text('Выйти из приложения'),
                       ),
                       TextButton(
                         onPressed: () {
                           deleteAccount();
-                          // AuthService.instance.deleteAccount();
-                          // Navigator.pushReplacementNamed(
-                          //   context,
-                          //   Root.routeName,
-                          // );
                         },
                         child: const Text(
                           'Удалить аккаунт',

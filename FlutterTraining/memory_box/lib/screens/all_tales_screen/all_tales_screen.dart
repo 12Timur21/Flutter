@@ -24,6 +24,7 @@ class AllTalesScreen extends StatefulWidget {
 
 class _AllTalesScreenState extends State<AllTalesScreen> {
   bool _isRepitMode = false;
+  int _durationSumInMS = 0;
 
   @override
   void dispose() {
@@ -35,14 +36,12 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Duration _durationSum = Duration.zero;
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => ListBuilderBloc()
             ..add(
-              InitializeListBuilder(
+              InitializeListBuilderWithFutureRequest(
                 DatabaseService.instance.getAllNotDeletedTaleModels(),
               ),
             ),
@@ -110,18 +109,11 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
               }
             },
             builder: (context, listBuilderState) {
-              //!FIX
-              _durationSum = Duration.zero;
-              listBuilderState.allTales?.forEach(
-                (TaleModel taleModel) {
-                  if (taleModel.duration?.inMilliseconds != null) {
-                    _durationSum = Duration(
-                      seconds: _durationSum.inSeconds +
-                          taleModel.duration!.inSeconds,
-                    );
-                  }
-                },
-              );
+              _durationSumInMS = 0;
+              listBuilderState.allTales?.forEach((TaleModel taleModel) {
+                _durationSumInMS += taleModel.duration?.inMilliseconds ?? 0;
+              });
+
               return Stack(
                 children: [
                   Padding(
@@ -149,7 +141,9 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                                 ),
                                 Text(
                                   '${convertDurationToString(
-                                    duration: _durationSum,
+                                    duration: Duration(
+                                      milliseconds: _durationSumInMS,
+                                    ),
                                     formattingType:
                                         TimeFormattingType.hourMinute,
                                   )} часов',
@@ -238,7 +232,6 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
 
                                     return TaleListTileWithPopupMenu(
                                       key: UniqueKey(),
-                                      // index: index,
                                       isPlayMode: isPlay,
                                       taleModel: taleModel,
                                       onAddToPlaylist: () {},
@@ -258,21 +251,17 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                                             );
                                       },
                                       onRename: (String newTitle) {
-                                        print('rename');
-                                        if (taleModel.ID != null) {
-                                          context.read<ListBuilderBloc>().add(
-                                                RenameTale(
-                                                  taleModel.ID!,
-                                                  newTitle,
-                                                ),
-                                              );
-                                        }
+                                        context.read<ListBuilderBloc>().add(
+                                              RenameTale(
+                                                taleModel.ID!,
+                                                newTitle,
+                                              ),
+                                            );
                                       },
                                       onShare: () {
                                         Share.share(taleModel.url!);
                                       },
                                       onUndoRenaming: () {
-                                        print('undo');
                                         context.read<ListBuilderBloc>().add(
                                               UndoRenameTale(),
                                             );
@@ -289,8 +278,12 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                   ),
                   BlocConsumer<AudioplayerBloc, AudioplayerState>(
                     listener: (context, audioPlayerState) {
-                      print('listener is tale end');
                       if (audioPlayerState.isTaleEnd) {
+                        if (!listBuilderState.isPlayAllTalesMode) {
+                          context.read<AudioplayerBloc>().add(
+                                AnnulAudioPlayer(),
+                              );
+                        }
                         context.read<ListBuilderBloc>().add(
                               TaleEndPlay(),
                             );
@@ -315,18 +308,15 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                               context.read<ListBuilderBloc>().add(NextTale());
                             },
                             pause: () {
-                              print(listBuilderState.currentPlayTaleIndex!);
-
+                              context.read<ListBuilderBloc>().add(
+                                    StopTale(),
+                                  );
+                            },
+                            play: () {
                               context.read<ListBuilderBloc>().add(
                                     PlayTale(
                                       listBuilderState.currentPlayTaleIndex!,
                                     ),
-                                  );
-                              // context.read<ListBuilderBloc>().add(StopTale());
-                            },
-                            play: () {
-                              context.read<ListBuilderBloc>().add(
-                                    StopTale(),
                                   );
                             },
                             seek: (double durationInMs) {

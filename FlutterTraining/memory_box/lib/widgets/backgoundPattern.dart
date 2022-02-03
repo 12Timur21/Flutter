@@ -24,6 +24,7 @@ class BackgroundPattern extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color.fromRGBO(246, 246, 246, 1),
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           CustomPaint(

@@ -63,30 +63,15 @@ class DatabaseService {
   //??[Start] Tale
 
   Future<void> createTale({
-    required String taleID,
-    required String title,
-    required Duration duration,
-    String? taleUrl,
+    required TaleModel taleModel,
   }) async {
     String? uid = AuthService.userID;
-
-    Map<String, dynamic> taleCollection = {
-      'taleID': taleID,
-      'title': title,
-      'durationInMS': duration.inMilliseconds,
-      'isDeleted': {
-        'status': false,
-        'deleteDate': null,
-      },
-      'taleUrl': taleUrl,
-      'searchKey': title.toLowerCase(),
-    };
 
     await _talesCollection
         .doc(uid)
         .collection('allTales')
-        .doc(taleID)
-        .set(taleCollection);
+        .doc(taleModel.ID)
+        .set(taleModel.toMap());
   }
 
   Future<void> updateTaleData({
@@ -249,7 +234,7 @@ class DatabaseService {
 
   Future<void> finalDeleteTaleRecord(String taleID) async {
     String? uid = AuthService.userID;
-    print(taleID);
+
     await _talesCollection.doc(uid).collection('allTales').doc(taleID).delete();
     await StorageService.instance.deleteTale(
       taleID: taleID,
@@ -282,7 +267,7 @@ class DatabaseService {
 
   //??[Start] PlayList
   Future<void> createPlaylist({
-    required String playListID,
+    required String playlistID,
     required String title,
     String? description,
     List<String>? talesIDs,
@@ -292,7 +277,7 @@ class DatabaseService {
     int tilesSumDurationInMs = await calculateTalesInMS(talesIDs);
 
     Map<String, dynamic> collection = {
-      'ID': playListID,
+      'ID': playlistID,
       'title': title,
       'description': description,
       'taleIDsList': talesIDs,
@@ -303,7 +288,7 @@ class DatabaseService {
     await _playListsCollection
         .doc(uid)
         .collection('allPlaylists')
-        .doc(playListID)
+        .doc(playlistID)
         .set(collection);
   }
 

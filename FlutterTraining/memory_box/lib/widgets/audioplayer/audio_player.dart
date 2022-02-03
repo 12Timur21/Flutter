@@ -12,10 +12,11 @@ class AudioPlayer extends StatefulWidget {
     required this.taleModel,
     this.isPlay = false,
     required this.currentPlayDuration,
-    required this.next,
+    this.next,
     required this.pause,
     required this.play,
     required this.seek,
+    this.isNextButtonAvalible = true,
     Key? key,
   }) : super(key: key);
 
@@ -26,7 +27,9 @@ class AudioPlayer extends StatefulWidget {
   final Function pause;
   final Function play;
   final Function(double) seek;
-  final Function next;
+  final Function? next;
+
+  final bool isNextButtonAvalible;
 
   @override
   _AudioPlayerState createState() => _AudioPlayerState();
@@ -40,26 +43,17 @@ class _AudioPlayerState extends State<AudioPlayer> {
   void _tooglePlayMode() {
     print(widget.isPlay);
     if (widget.isPlay) {
-      widget.play();
-    } else {
       widget.pause();
+    } else {
+      widget.play();
     }
   }
 
   void _nextTale() {
-    widget.next();
+    if (widget.next != null) {
+      widget.next!();
+    }
   }
-  // if (isPlay == true) {
-  //   _audioplayerBloc.add(
-  //     Pause(),
-  //   );
-  // } else {
-  //   _audioplayerBloc.add(
-  //     Play(
-  //       taleModel: _audioplayerBloc.state.taleModel,
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -123,17 +117,23 @@ class _AudioPlayerState extends State<AudioPlayer> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                right: 10,
-              ),
-              child: GestureDetector(
-                onTap: _nextTale,
-                child: SvgPicture.asset(
-                  AppIcons.arrowNext,
-                ),
-              ),
-            ),
+            widget.isNextButtonAvalible
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      right: 10,
+                    ),
+                    child: GestureDetector(
+                      onTap: _nextTale,
+                      child: SvgPicture.asset(
+                        AppIcons.arrowNext,
+                      ),
+                    ),
+                  )
+                : Container(
+                    padding: const EdgeInsets.only(
+                      right: 10,
+                    ),
+                  ),
           ],
         ),
       ),

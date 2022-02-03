@@ -1,126 +1,169 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
 import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
+import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/screens/recording_screen/widgets/bottom_sheet_wrapper.dart';
 import 'package:memory_box/screens/recording_screen/widgets/tale_controls_buttons.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class RecordingPreviewScreen extends StatefulWidget {
-  const RecordingPreviewScreen({
+  static const routeName = 'RecordingPreviewScreen';
+
+  RecordingPreviewScreen({
+    required this.taleModel,
     Key? key,
   }) : super(key: key);
+
+  TaleModel taleModel;
 
   @override
   _RecordingPreviewScreenState createState() => _RecordingPreviewScreenState();
 }
 
 class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
-  final _textEditingController = TextEditingController();
+  late final TextEditingController _textEditingController;
 
   bool _isEditMode = false;
-  String? audioLabel;
 
-  AudioplayerBloc? _audioBloc;
-  String? _pathToSaveAudio;
+  late AudioplayerBloc _audioBloc;
 
   @override
   void initState() {
     _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
+    _audioBloc.add(AnnulAudioPlayer());
 
-    audioLabel = _audioBloc?.state.taleModel.title;
+    _textEditingController = TextEditingController(
+      text: widget.taleModel.title,
+    );
 
-    _textEditingController.text = audioLabel ?? '';
-    changeRecordingButton();
+    BlocProvider.of<BottomNavigationIndexControlCubit>(context).changeIcon(
+      RecorderButtonStates.closeSheet,
+    );
 
-    // _audioBloc?.add(
-    //   InitPlayer(
-    //     soundUrl: '/sdcard/download/test2.aac',
-    //     soundTitle: widget.soundTitle,
-    //   ),
-    // );
     super.initState();
   }
 
   @override
   void dispose() {
-    _audioBloc?.add(DisposePlayer());
+    _audioBloc.add(
+      DisposePlayer(),
+    );
     _textEditingController.dispose();
     super.dispose();
   }
 
   void closeWindow() {
-    _audioBloc?.add(DisposePlayer());
     Navigator.of(context).pop();
-  }
-
-  void changeRecordingButton() {
-    BlocProvider.of<BottomNavigationIndexControlCubit>(context).changeIcon(
-      RecorderButtonStates.withIcon,
-    );
   }
 
   void changeEditMode() {
     setState(() {
       _isEditMode = !_isEditMode;
-      if (_isEditMode) {
-        audioLabel = _textEditingController.text;
-      }
     });
   }
 
   void saveChanges() async {
-    // String? ID = _audioBloc?.state.soundModel?.ID;
-    // if (ID != null && audioLabel != null) {
-    //   await DatabaseService.instance.updateTaleData(
-    //     taleID: ID,
-    //     title: _textEditingController.text,
-    //   );
-    // }
-    changeEditMode();
+    if (_textEditingController.text.isEmpty) {
+    } else {
+      await DatabaseService.instance.updateTaleData(
+        taleID: widget.taleModel.ID!,
+        title: _textEditingController.text,
+      );
+
+      widget.taleModel = widget.taleModel.copyWith(
+        title: _textEditingController.text,
+      );
+
+      changeEditMode();
+    }
   }
 
   void undoChanges() {
     setState(() {
-      _textEditingController.text = audioLabel ?? '';
+      _textEditingController.text = widget.taleModel.title!;
     });
     changeEditMode();
   }
 
   void _moveBackward() {
-    _audioBloc?.add(
+    _audioBloc.add(
       MoveBackward15Sec(),
     );
   }
 
   void _moveForward() {
-    _audioBloc?.add(
+    _audioBloc.add(
       MoveForward15Sec(),
     );
   }
 
   void _onSlidedChangeEnd(double value) {
-    _audioBloc?.add(
+    _audioBloc.add(
       Seek(currentPlayTimeInSec: value),
     );
   }
 
   void _tooglePlay() {
-    bool? isPlay = _audioBloc?.state.isPlay;
+    bool isPlay = _audioBloc.state.isPlay;
     if (isPlay == true) {
-      _audioBloc?.add(
+      _audioBloc.add(
         Pause(),
       );
     } else {
-      _audioBloc?.add(
+      _audioBloc.add(
         Play(
-          taleModel: _audioBloc!.state.taleModel,
+          taleModel: _audioBloc.state.taleModel,
         ),
       );
     }
+  }
+
+  Future<void> _localDownload() async {
+    late String downloadDirectory;
+
+    Directory appDirectory = await getApplicationDocumentsDirectory();
+
+    String _pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
+    await Directory('/sdcard/Download/MemoryBox').create();
+
+    if (Platform.isAndroid) {
+      downloadDirectory =
+          '/sdcard/Download/MemoryBox/${widget.taleModel.title}.aac';
+    } else {
+      return;
+    }
+
+    File fileAudio = File(_pathToSaveAudio);
+
+    try {
+      await fileAudio.rename(downloadDirectory);
+    } on FileSystemException catch (_) {
+      await fileAudio.copy(downloadDirectory);
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+            "Файл `${widget.taleModel.title}` сохранён в директорию Download/MemoryBox"),
+      ),
+    );
+  }
+
+  Future<void> _deleteTale() async {
+    DatabaseService.instance.setTaleDeleteStatus(widget.taleModel.ID!);
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _shareTale() async {
+    Share.shareFiles([widget.taleModel.url!]);
   }
 
   @override
@@ -140,11 +183,12 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
     );
 
     return BottomSheetWrapeer(
-      height: 640,
+      paddingTop: 70,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 20,
-          horizontal: 30,
+        padding: const EdgeInsets.only(
+          top: 20,
+          right: 30,
+          left: 30,
         ),
         child: Column(
           children: [
@@ -153,18 +197,14 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          undoChanges();
-                        },
+                        onPressed: undoChanges,
                         child: Text(
                           'Отменить',
                           style: editMenuTextStyle,
                         ),
                       ),
                       TextButton(
-                        onPressed: () {
-                          saveChanges();
-                        },
+                        onPressed: saveChanges,
                         child: Text(
                           'Готово',
                           style: editMenuTextStyle,
@@ -176,15 +216,12 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        onPressed: () {
-                          closeWindow();
-                        },
+                        onPressed: closeWindow,
                         icon: SvgPicture.asset(
                           AppIcons.hideCircle,
                         ),
                       ),
                       PopupMenuButton(
-                        offset: const Offset(7, 15),
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(20.0),
@@ -220,7 +257,7 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                           ),
                           PopupMenuItem(
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: _shareTale,
                               child: Text(
                                 "Поделиться",
                                 style: popupMenuTextStyle,
@@ -229,7 +266,7 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                           ),
                           PopupMenuItem(
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: _localDownload,
                               child: Text(
                                 "Скачать",
                                 style: popupMenuTextStyle,
@@ -238,7 +275,7 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                           ),
                           PopupMenuItem(
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: _deleteTale,
                               child: Text(
                                 "Удалить",
                                 style: popupMenuTextStyle,
@@ -284,9 +321,6 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                 fontSize: 24,
               ),
             ),
-            const SizedBox(
-              height: 5,
-            ),
             Container(
               margin: const EdgeInsets.symmetric(
                 horizontal: 60,
@@ -321,20 +355,36 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
             ),
             Expanded(
               child: BlocBuilder<AudioplayerBloc, AudioplayerState>(
-                  builder: (context, state) {
-                return AudioSlider(
-                  onChanged: () {},
-                  onChangeEnd: _onSlidedChangeEnd,
-                  currentPlayDuration: state.currentPlayDuration,
-                  taleDuration: state.taleModel.duration,
-                );
-              }),
+                builder: (context, state) {
+                  if (state.isTaleEnd) {
+                    context.read<AudioplayerBloc>().add(
+                          AnnulAudioPlayer(),
+                        );
+                  }
+                  return Column(
+                    children: [
+                      const Spacer(),
+                      AudioSlider(
+                        onChanged: () {},
+                        onChangeEnd: _onSlidedChangeEnd,
+                        currentPlayDuration: state.currentPlayDuration,
+                        taleDuration: state.taleModel.duration,
+                      ),
+                      const Spacer(),
+                      TaleControlButtons(
+                        tooglePlay: _tooglePlay,
+                        moveBackward: _moveBackward,
+                        moveForward: _moveForward,
+                        isPlay: state.isPlay,
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
-            TaleControlButtons(
-              tooglePlay: _tooglePlay,
-              moveBackward: _moveBackward,
-              moveForward: _moveForward,
-            )
           ],
         ),
       ),

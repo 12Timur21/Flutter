@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 
 class TaleDeleteStatus {
   bool isDeleted;
@@ -10,14 +13,14 @@ class TaleDeleteStatus {
   });
 }
 
-class TaleModel {
+class TaleModel extends Equatable {
   final String? ID;
   final String? title;
   final String? url;
   final Duration? duration;
   final TaleDeleteStatus? deleteStatus;
 
-  TaleModel({
+  const TaleModel({
     this.ID,
     this.duration,
     this.title,
@@ -41,27 +44,8 @@ class TaleModel {
     );
   }
 
-  //!
-  // Map<String, dynamic> toMap() {
-  //   return {
-  //     'title': title ?? '',
-  //     'id': ID ?? 0,
-  //     'duration': duration ?? Duration.zero,
-  //     'isDeleted': ,
-  //   };
-  // }
-
-  // factory TaleModel.toList(QuerySnapshot<Map<String, dynamic>> snapshot) {
-  //   TaleModel? tm;
-
-  //   snapshot.docs.forEach((doc) {
-  //     Map<String, dynamic> json = doc.data();
-
-  //     tm = TaleModel.fromJson(json[0]);
-  //   });
-
-  //   return tm;
-  // }
+  @override
+  List<Object?> get props => [ID, title, url, duration, deleteStatus];
 
   factory TaleModel.fromJson(Map<String, dynamic> json) {
     Timestamp? timeStamp = (json['isDeleted']['deleteDate'] as Timestamp?);
@@ -82,18 +66,17 @@ class TaleModel {
     );
   }
 
-  // factory TaleModel.fromQueryDocumentSnapshot(
-  //     QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
-  //   return TaleModel(
-  //     ID: snapshot['taleID'],
-  //     title: snapshot['title'],
-  //     url: snapshot['taleUrl'],
-  //     isDeleted: {
-  //       status: snapshot['isDeleted'],
-  //     },
-  //     duration: Duration(
-  //       milliseconds: snapshot['durationInMS'],
-  //     ),
-  //   );
-  // }
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'taleID': ID,
+      'title': title,
+      'durationInMS': duration?.inMilliseconds ?? Duration.zero,
+      'isDeleted': {
+        'status': deleteStatus?.isDeleted ?? false,
+        'deleteDate': deleteStatus?.deleteDate,
+      },
+      'taleUrl': url,
+      'searchKey': title?.toLowerCase(),
+    };
+  }
 }

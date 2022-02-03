@@ -9,15 +9,19 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SoundRecorder {
-  String? pathToSaveAudio;
+  String? _pathToSaveAudio;
 
   FlutterSoundRecorder? _soundRecorder;
 
   bool _isRecorderInitialised = false;
 
+  Stream<RecordingDisposition>? get recorderStream =>
+      _soundRecorder?.onProgress;
+
   Future<void> init() async {
     final Directory appDirectory = await getApplicationDocumentsDirectory();
-    pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
+    _pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
+
     try {
       bool isPermissionsReceived = await _checkPermission();
       if (isPermissionsReceived) {
@@ -26,9 +30,11 @@ class SoundRecorder {
         await _soundRecorder?.openAudioSession();
         await _soundRecorder?.setSubscriptionDuration(
           const Duration(
-            milliseconds: 20,
+            milliseconds: 9,
           ),
         );
+      } else {
+        openAppSettings();
       }
     } catch (e) {
       dispose();
@@ -46,7 +52,7 @@ class SoundRecorder {
   Future<void> startRecording() async {
     if (_isRecorderInitialised) {
       await _soundRecorder?.startRecorder(
-        toFile: pathToSaveAudio,
+        toFile: _pathToSaveAudio,
       );
     }
   }
@@ -58,18 +64,12 @@ class SoundRecorder {
     }
   }
 
-  Stream<RecordingDisposition>? get recorderStream {
-    if (_isRecorderInitialised) {
-      return _soundRecorder?.onProgress;
-    }
-  }
-
   Future<bool> _checkPermission() async {
     Map<Permission, PermissionStatus> permissions = await [
       Permission.storage,
       Permission.microphone,
     ].request();
-    // Permiti
+
     bool isGranted = permissions[Permission.storage]!.isGranted &&
         permissions[Permission.microphone]!.isGranted;
 

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_bloc.dart';
-import 'package:memory_box/blocks/bottomSheetNavigation/bottomSheet_state.dart';
 import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
 import 'package:memory_box/routes/app_router.dart';
 import 'package:memory_box/screens/home_screen/home_screen.dart';
+import 'package:memory_box/screens/profile_screen/profile_screen.dart';
 import 'package:memory_box/screens/recording_screen/recording_barrel.dart';
 
 import 'package:memory_box/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
@@ -17,6 +16,9 @@ class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
   static final GlobalKey<NavigatorState> navigationKey =
       GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> recordingNavigatorKey =
+      GlobalKey<NavigatorState>();
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -25,49 +27,20 @@ class _MainPageState extends State<MainPage> {
   bool isOpenBottomSheet = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
-  void initState() {
-    // NavigationService.instance.initKey(_navigationKey);
-    super.initState();
-  }
-
   void _showBottomSheet() {
     isOpenBottomSheet = true;
     _scaffoldKey.currentState
         ?.showBottomSheet(
           (BuildContext context) {
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider<BottomSheetBloc>(
-                  create: (context) => BottomSheetBloc(
-                    ListeningPageState(),
-                  ),
-                ),
-                BlocProvider(
-                  create: (context) => AudioplayerBloc(),
-                ),
-              ],
-              // child: GestureDetector(
-              // onVerticalDragDown: (_) {},
-              child: BlocBuilder<BottomSheetBloc, BottomSheetState>(
-                builder: (BuildContext context, BottomSheetState state) {
-                  if (state is RecorderPageState) {
-                    return const RecordingScreen();
-                  }
-                  if (state is ListeningPageState) {
-                    // return Container();
-                    return const ListeningScreen();
-                  }
-                  if (state is PreviewPageState) {
-                    return const RecordingPreviewScreen();
-                  }
-                  return Container();
-                },
+            return BlocProvider(
+              create: (context) => AudioplayerBloc(),
+              child: Navigator(
+                key: MainPage.recordingNavigatorKey,
+                onGenerateRoute: AppRouter.generateRoute,
+                initialRoute: RecordingScreen.routeName,
               ),
-              // ),
             );
           },
-          // transitionAnimationController: transition,
           backgroundColor: Colors.transparent,
         )
         .closed
@@ -78,6 +51,7 @@ class _MainPageState extends State<MainPage> {
                   .changeIcon(
                 RecorderButtonStates.withIcon,
               );
+
               isOpenBottomSheet = false;
             });
           }
@@ -92,11 +66,10 @@ class _MainPageState extends State<MainPage> {
       drawer: const CustomDrawer(),
       body: Navigator(
         key: MainPage.navigationKey,
-        initialRoute: HomeScreen.routeName,
+        initialRoute: ProfileScreen.routeName,
         onGenerateRoute: AppRouter.generateRoute,
       ),
       bottomNavigationBar: BottomNavBar(
-        // navigationKey: _navigationKey,
         openButtomSheet: _showBottomSheet,
       ),
     );

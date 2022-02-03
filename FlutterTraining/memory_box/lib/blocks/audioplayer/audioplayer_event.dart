@@ -37,8 +37,14 @@ class MoveForward15Sec extends AudioplayerEvent {}
 
 class MoveBackward15Sec extends AudioplayerEvent {}
 
-//!Заменить
-class UpdateTaleModel extends AudioplayerEvent {
-  final String newTitle;
-  UpdateTaleModel(this.newTitle);
+class AnnulAudioPlayer extends AudioplayerEvent {}
+
+class UpdateAudioPlayerDuration extends AudioplayerEvent {
+  final Duration currentPlayDuration;
+  final Duration taleDuration;
+
+  UpdateAudioPlayerDuration({
+    required this.currentPlayDuration,
+    required this.taleDuration,
+  });
 }

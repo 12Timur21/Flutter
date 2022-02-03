@@ -3,19 +3,26 @@ import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/models/tale_model.dart';
 
 class TaleListTileWithCheckBox extends StatefulWidget {
-  TaleListTileWithCheckBox({
+  const TaleListTileWithCheckBox({
     required this.taleModel,
+    this.isPlayMode = false,
+    this.isSelected = false,
     Key? key,
     required this.subscribeTale,
     required this.unSubscribeTale,
-    this.isSelected = false,
+    required this.onPlay,
+    required this.onPause,
   }) : super(key: key);
 
   final TaleModel taleModel;
-  bool isSelected;
+  final bool isSelected;
+  final bool isPlayMode;
 
-  final Function(String) subscribeTale;
-  final Function(String) unSubscribeTale;
+  final VoidCallback subscribeTale;
+  final VoidCallback unSubscribeTale;
+
+  final VoidCallback onPlay;
+  final VoidCallback onPause;
 
   @override
   _TaleListTileWithCheckBoxState createState() =>
@@ -23,24 +30,20 @@ class TaleListTileWithCheckBox extends StatefulWidget {
 }
 
 class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
-  late final TaleModel _taleModel;
-  bool _isPlay = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _taleModel = widget.taleModel;
+  void _selectTale() {
+    if (widget.isSelected) {
+      widget.unSubscribeTale();
+    } else {
+      widget.subscribeTale();
+    }
   }
 
-  void _selectTale() {
-    setState(() {
-      widget.isSelected = !widget.isSelected;
-      if (widget.isSelected) {
-        widget.subscribeTale(_taleModel.ID ?? '');
-      } else {
-        widget.unSubscribeTale(_taleModel.ID ?? '');
-      }
-    });
+  void _tooglePlayMode() {
+    if (widget.isPlayMode) {
+      widget.onPause();
+    } else {
+      widget.onPlay();
+    }
   }
 
   @override
@@ -60,21 +63,21 @@ class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
           horizontal: 10,
         ),
         leading: GestureDetector(
-          onTap: () {},
+          onTap: _tooglePlayMode,
           child: SvgPicture.asset(
-            _isPlay
+            widget.isPlayMode
                 ? 'assets/icons/StopCircle.svg'
-                : 'assets/icons/CirclePlay.svg',
+                : 'assets/icons/PlayCircle.svg',
             color: const Color.fromRGBO(113, 165, 159, 1),
             width: 50,
           ),
         ),
-        title: Text(_taleModel.title ?? ''),
+        title: Text(widget.taleModel.title ?? ''),
         horizontalTitleGap: 20,
         subtitle: Text(
-          _taleModel.duration?.inMinutes != 0
-              ? '${_taleModel.duration?.inMinutes ?? 0} минут'
-              : '${_taleModel.duration?.inSeconds ?? 0} секунд',
+          widget.taleModel.duration?.inMinutes != 0
+              ? '${widget.taleModel.duration?.inMinutes ?? 0} минут'
+              : '${widget.taleModel.duration?.inSeconds ?? 0} секунд',
           style: const TextStyle(
             fontSize: 14,
             fontFamily: 'TTNorms',

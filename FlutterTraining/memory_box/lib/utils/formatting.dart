@@ -17,16 +17,16 @@ String convertDurationToString({
   if (duration != null) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String oneDigitHours = twoDigits(duration.inHours.remainder(60));
+    String twoDigitsHours = twoDigits(duration.inHours.remainder(24));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
 
     if (formattingType == TimeFormattingType.minuteSecond) {
       return "$twoDigitMinutes:$twoDigitSeconds";
     }
     if (formattingType == TimeFormattingType.hourMinute) {
-      return "$oneDigitHours:$twoDigitMinutes";
+      return "$twoDigitsHours:$twoDigitMinutes";
     }
-    return "${duration.inHours}:$twoDigitMinutes:$twoDigitSeconds";
+    return "$twoDigitsHours:$twoDigitMinutes:$twoDigitSeconds";
   }
   return '00:00:00';
 }

@@ -1,46 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:memory_box/resources/app_coloros.dart';
 
 class BottomSheetWrapeer extends StatelessWidget {
   const BottomSheetWrapeer({
     required this.child,
-    this.height,
+    this.paddingTop = 130,
     Key? key,
   }) : super(key: key);
 
   final Widget child;
-  final double? height;
+  final double paddingTop;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height ?? 500,
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(
-        horizontal: 5,
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 5,
+        right: 5,
+        top: paddingTop,
       ),
-      decoration: const BoxDecoration(
-        color: Color.fromRGBO(246, 246, 246, 1),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.silverPhoenix,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              spreadRadius: 0.3,
+            ),
+            BoxShadow(
+              color: Colors.black,
+              offset: Offset(0, 15),
+              spreadRadius: 1,
+            ),
+            BoxShadow(
+              color: AppColors.silverPhoenix,
+              offset: Offset(0, 15),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            spreadRadius: 0.5,
-          ),
-          BoxShadow(
-            color: Colors.black,
-            offset: Offset(0, 15),
-            spreadRadius: 0.5,
-          ),
-          BoxShadow(
-            color: Color.fromRGBO(239, 239, 247, 1),
-            offset: Offset(0, 15),
-          ),
-        ],
+        child: child,
       ),
-      child: child,
     );
   }
 }

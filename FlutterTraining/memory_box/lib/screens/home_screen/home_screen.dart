@@ -263,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         BlocProvider(
                           create: (context) => ListBuilderBloc()
                             ..add(
-                              InitializeListBuilder(
+                              InitializeListBuilderWithFutureRequest(
                                 DatabaseService.instance
                                     .getAllNotDeletedTaleModels(),
                               ),

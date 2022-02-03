@@ -4,6 +4,7 @@ enum RecorderButtonStates {
   defaultIcon,
   withIcon,
   withLine,
+  closeSheet,
 }
 
 class BottomNavigationIndexControlState {

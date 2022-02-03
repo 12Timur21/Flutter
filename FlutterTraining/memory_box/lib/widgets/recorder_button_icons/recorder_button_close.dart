@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/resources/app_icons.dart';
 
-class RecorderButtonWithIcon extends StatelessWidget {
-  const RecorderButtonWithIcon({Key? key}) : super(key: key);
+class RecorderButtonClose extends StatelessWidget {
+  const RecorderButtonClose({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,8 @@ class RecorderButtonWithIcon extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.only(top: 3),
           child: SvgPicture.asset(
-            AppIcons.voice,
+            AppIcons.arrowDown,
+            color: Colors.white,
             height: 28,
           ),
         ),

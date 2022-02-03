@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memory_box/blocks/playListNavigation/playListNavigation_bloc.dart';
+import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/screens/all_tales_screen/all_tales_screen.dart';
 import 'package:memory_box/screens/deleted_tales_screen/deleted_tales_screen.dart';
 import 'package:memory_box/screens/home_screen/home_screen.dart';
@@ -12,8 +12,11 @@ import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
 import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 
-import 'package:memory_box/screens/playlist_screen/select_playlist_tales.dart';
+import 'package:memory_box/screens/playlist_screen/select_tales_to_playlist_screen.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
+import 'package:memory_box/screens/recording_screen/listening_screen.dart';
+import 'package:memory_box/screens/recording_screen/recording_preview_screen.dart';
+import 'package:memory_box/screens/recording_screen/recording_screen.dart';
 import 'package:memory_box/screens/search_tales_screen/search_tales_screen.dart';
 import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/screens/subscription_screen/subscription_screen.dart';
@@ -85,22 +88,21 @@ class AppRouter {
 
       case CreatePlaylistScreen.routeName:
         {
-          final PlayListCreationState? args =
-              arguments as PlayListCreationState?;
+          // final PlayListCreationState? args =
+          //     arguments as PlayListCreationState?;
 
           builder = (_) => CreatePlaylistScreen(
-                collectionCreationState: args,
+              // collectionCreationState: args,
               );
         }
         break;
 
-      case SelectPlaylistTales.routeName:
+      case SelectTalesToPlaylistScreen.routeName:
         {
-          final PlayListCreationState? args =
-              arguments as PlayListCreationState?;
+          final List<TaleModel>? args = arguments as List<TaleModel>?;
 
-          builder = (_) => SelectPlaylistTales(
-                collectionCreationState: args,
+          builder = (_) => SelectTalesToPlaylistScreen(
+                listTaleModels: args,
               );
         }
         break;
@@ -124,6 +126,26 @@ class AppRouter {
       case SubscriptionScreen.routeName:
         builder = (_) => const SubscriptionScreen();
         break;
+
+      //*[START] Recording screen
+      case RecordingScreen.routeName:
+        builder = (_) => const RecordingScreen();
+        break;
+
+      case ListeningScreen.routeName:
+        builder = (_) => const ListeningScreen();
+        break;
+
+      case RecordingPreviewScreen.routeName:
+        {
+          final TaleModel args = arguments as TaleModel;
+
+          builder = (_) => RecordingPreviewScreen(
+                taleModel: args,
+              );
+          break;
+        }
+      //*[END] Recording screen
 
       default:
         throw Exception('Invalid route: ${settings.name}');

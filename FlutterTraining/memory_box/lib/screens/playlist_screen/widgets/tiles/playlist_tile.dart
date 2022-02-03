@@ -1,31 +1,30 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/resources/app_coloros.dart';
-import 'package:memory_box/utils/formatting.dart';
 
 class PlaylistTile extends StatefulWidget {
   const PlaylistTile({
-    required this.taleID,
-    required this.title,
-    required this.audioCount,
-    required this.sumAudioDuration,
-    required this.coverUrl,
+    // required this.playlistID,
+    // required this.title,
+    // required this.audioCount,
+    // required this.sumAudioDuration,
+    // required this.coverUrl,
+    required this.playlistModel,
     required this.index,
-    required this.onSelelct,
-    required this.onUnselect,
+    required this.onTap,
     Key? key,
   }) : super(key: key);
 
-  final String taleID;
-  final String title;
-  final int audioCount;
-  final Duration sumAudioDuration;
-  final String coverUrl;
+  // final String playlistID;
+  // final String title;
+  // final int audioCount;
+  // final Duration sumAudioDuration;
+  // final String coverUrl;
+  final PlaylistModel playlistModel;
   final int index;
 
-  final Function(String) onSelelct;
-  final Function(String) onUnselect;
+  final VoidCallback onTap;
 
   @override
   _PlaylistTileState createState() => _PlaylistTileState();
@@ -33,19 +32,6 @@ class PlaylistTile extends StatefulWidget {
 
 class _PlaylistTileState extends State<PlaylistTile> {
   bool isSelect = false;
-
-  void _toogleTile() {
-    setState(() {
-      isSelect = !isSelect;
-
-      if (isSelect) {
-        widget.onSelelct(widget.taleID);
-      } else {
-        widget.onUnselect(widget.taleID);
-      }
-    });
-    print(isSelect);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +48,7 @@ class _PlaylistTileState extends State<PlaylistTile> {
           );
 
     return GestureDetector(
-      onTap: _toogleTile,
+      onTap: widget.onTap,
       child: Container(
         height: 240,
         width: 190,
@@ -74,7 +60,8 @@ class _PlaylistTileState extends State<PlaylistTile> {
               child: Stack(
                 children: [
                   CachedNetworkImage(
-                    imageUrl: widget.coverUrl,
+                    imageUrl: widget.playlistModel.coverURL ??
+                        'https://lightning.od-cdn.com/static/img/no-cover_en_US.a8920a302274ea37cfaecb7cf318890e.jpg',
                     height: 240,
                     fit: BoxFit.fill,
                     placeholder: (context, url) => const Center(
@@ -109,7 +96,7 @@ class _PlaylistTileState extends State<PlaylistTile> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  widget.title,
+                                  widget.playlistModel.title,
                                   style: const TextStyle(
                                     fontFamily: 'TTNorms',
                                     fontWeight: FontWeight.bold,
@@ -124,7 +111,7 @@ class _PlaylistTileState extends State<PlaylistTile> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${widget.audioCount} аудио',
+                                    '${widget.playlistModel.taleModels?.length ?? 0} аудио',
                                     style: const TextStyle(
                                       fontFamily: 'TTNorms',
                                       fontWeight: FontWeight.w400,

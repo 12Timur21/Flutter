@@ -22,26 +22,19 @@ class UpdateSelectListTaleModels extends SelectListBuilderEvent {
 
 class DeleteFewTales extends SelectListBuilderEvent {}
 
-class SelectTale extends SelectListBuilderEvent {
-  TaleModel taleModel;
-  SelectTale(this.taleModel);
-}
-
-class UnselectTale extends SelectListBuilderEvent {
-  TaleModel taleModel;
-  UnselectTale(this.taleModel);
+class ToggleSelectMode extends SelectListBuilderEvent {
+  final TaleModel taleModel;
+  ToggleSelectMode(this.taleModel);
 }
 
 class AddFewTalesToPlaylist extends SelectListBuilderEvent {}
 
 class ShareTales extends SelectListBuilderEvent {}
 
-class PlaySelectTale extends SelectListBuilderEvent {
+class TooglePlayMode extends SelectListBuilderEvent {
   TaleModel taleModel;
 
-  PlaySelectTale(this.taleModel);
+  TooglePlayMode(this.taleModel);
 }
 
-class StopSelectTale extends SelectListBuilderEvent {}
-
-class TaleSelectEndPlay extends SelectListBuilderEvent {}
+class TaleEndPlay extends SelectListBuilderEvent {}

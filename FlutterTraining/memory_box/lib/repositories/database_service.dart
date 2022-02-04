@@ -71,7 +71,9 @@ class DatabaseService {
         .doc(uid)
         .collection('allTales')
         .doc(taleModel.ID)
-        .set(taleModel.toMap());
+        .set(
+          taleModel.toJson(),
+        );
   }
 
   Future<void> updateTaleData({

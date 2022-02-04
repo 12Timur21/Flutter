@@ -43,8 +43,8 @@ class SelectListBuilderState extends Equatable {
       ];
 }
 
-class PlaySelectTaleState extends SelectListBuilderState {
-  const PlaySelectTaleState({
+class PlayTaleState extends SelectListBuilderState {
+  const PlayTaleState({
     required bool isInit,
     required bool isPlay,
     required List<TaleModel> allTales,
@@ -59,8 +59,8 @@ class PlaySelectTaleState extends SelectListBuilderState {
         );
 }
 
-class StopSelectTaleState extends SelectListBuilderState {
-  const StopSelectTaleState({
+class StopTaleState extends SelectListBuilderState {
+  const StopTaleState({
     required bool isInit,
     required bool isPlay,
     required List<TaleModel> allTales,

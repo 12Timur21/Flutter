@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'database_service.dart';
 
@@ -28,7 +29,7 @@ class AuthService {
 
   Future<void> verifyPhoneNumberAndSendOTP({
     required String phoneNumber,
-    required void Function() codeAutoRetrievalTimeout,
+    required VoidCallback codeAutoRetrievalTimeout,
     required void Function(String?) verificationFailed,
     required void Function(PhoneAuthCredential credential)
         verificationCompleted,
@@ -52,15 +53,6 @@ class AuthService {
         }
       },
     );
-
-    // return completer.future;
-    // await completer.future.then((value) {
-    //   verifyAuthModel.verficationIds = value;
-    // }).catchError((e) {
-    //   verifyAuthModel.error = e;
-    // });
-
-    // return verifyAuthModel;
   }
 
   Future<UserModel?> verifyOTPCode({

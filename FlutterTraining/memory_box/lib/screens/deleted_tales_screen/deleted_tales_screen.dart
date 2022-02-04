@@ -42,65 +42,65 @@ class _DeletedTalesScreenState extends State<DeletedTalesScreen> {
               const SizedBox(
                 height: 110,
               ),
-              Expanded(
-                child: FutureBuilder<List<TaleModel>>(
-                  future: DatabaseService.instance.getAllDeletedTaleModels(),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<List<TaleModel>> snapshot,
-                  ) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      Map<String, List<TaleModel>> talesByDate = {};
-                      snapshot.data?.forEach((element) {
-                        String date = convertDateTimeToString(
-                          date: element.deleteStatus?.deleteDate,
-                          dayTimeFormattingType:
-                              DayTimeFormattingType.dayMonthYear,
-                        );
+              // Expanded(
+              //   child: FutureBuilder<List<TaleModel>>(
+              //     future: DatabaseService.instance.getAllDeletedTaleModels(),
+              //     builder: (
+              //       BuildContext context,
+              //       AsyncSnapshot<List<TaleModel>> snapshot,
+              //     ) {
+              //       if (snapshot.connectionState == ConnectionState.done) {
+              //         Map<String, List<TaleModel>> talesByDate = {};
+              //         snapshot.data?.forEach((element) {
+              //           String date = convertDateTimeToString(
+              //             date: element.deleteStatus?.deleteDate,
+              //             dayTimeFormattingType:
+              //                 DayTimeFormattingType.dayMonthYear,
+              //           );
 
-                        if (talesByDate[date] != null) {
-                          talesByDate[date]?.add(element);
-                        } else {
-                          talesByDate[date] = [element];
-                        }
-                      });
+              //           if (talesByDate[date] != null) {
+              //             talesByDate[date]?.add(element);
+              //           } else {
+              //             talesByDate[date] = [element];
+              //           }
+              //         });
 
-                      return ListView.builder(
-                        itemCount: talesByDate.length,
-                        itemBuilder: (context, index) {
-                          String key = talesByDate.keys.elementAt(index);
-                          List<Widget> customColumn = [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 15,
-                              ),
-                              child: Text(
-                                key,
-                                style: const TextStyle(
-                                  color: Color.fromRGBO(58, 58, 85, 0.5),
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            )
-                          ];
+              //         return ListView.builder(
+              //           itemCount: talesByDate.length,
+              //           itemBuilder: (context, index) {
+              //             String key = talesByDate.keys.elementAt(index);
+              //             List<Widget> customColumn = [
+              //               Padding(
+              //                 padding: const EdgeInsets.symmetric(
+              //                   vertical: 15,
+              //                 ),
+              //                 child: Text(
+              //                   key,
+              //                   style: const TextStyle(
+              //                     color: Color.fromRGBO(58, 58, 85, 0.5),
+              //                     fontWeight: FontWeight.w500,
+              //                     fontSize: 14,
+              //                   ),
+              //                 ),
+              //               )
+              //             ];
 
-                          talesByDate[key]?.forEach((TaleModel taleModel) {
-                            customColumn.add(TaleListTileWithDeleteButton(
-                              taleModel: taleModel,
-                            ));
-                          });
+              //             talesByDate[key]?.forEach((TaleModel taleModel) {
+              //               customColumn.add(TaleListTileWithDeleteButton(
+              //                 taleModel: taleModel,
+              //               ));
+              //             });
 
-                          return Column(children: customColumn);
-                        },
-                      );
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
-              ),
+              //             return Column(children: customColumn);
+              //           },
+              //         );
+              //       }
+              //       return const Center(
+              //         child: CircularProgressIndicator(),
+              //       );
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),

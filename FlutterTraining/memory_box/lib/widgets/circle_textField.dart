@@ -11,7 +11,6 @@ class CircleTextField extends StatefulWidget {
     required this.controller,
     this.inputFormatters,
     this.editable = true,
-    this.labelText,
     this.validator,
     this.errorText,
     this.maxLength,
@@ -22,7 +21,6 @@ class CircleTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final bool editable;
   final String? Function(String?)? validator;
-  final String? labelText;
   final String? errorText;
   final int? maxLength;
 
@@ -31,10 +29,15 @@ class CircleTextField extends StatefulWidget {
 }
 
 class _CircleTextFieldState extends State<CircleTextField> {
+  String? _errorText;
+  @override
+  void initState() {
+    _errorText = widget.errorText;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    String? _errorText = widget.errorText;
-
     return Column(
       children: [
         Container(
@@ -46,7 +49,7 @@ class _CircleTextFieldState extends State<CircleTextField> {
               BoxShadow(
                 color: Color.fromRGBO(0, 0, 0, 0.17),
                 blurRadius: 11,
-                offset: Offset(0, 10),
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -67,7 +70,6 @@ class _CircleTextFieldState extends State<CircleTextField> {
               fontSize: 20,
             ),
             decoration: InputDecoration(
-              labelText: widget.labelText,
               counterText: '',
               errorText: null,
               errorStyle: const TextStyle(
@@ -80,25 +82,29 @@ class _CircleTextFieldState extends State<CircleTextField> {
               ),
               filled: true,
               fillColor: Colors.white,
+              border: InputBorder.none,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(41.0),
+                borderSide: const BorderSide(
+                  color: Colors.transparent,
+                ),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(41),
                 borderSide: BorderSide(
-                  color: _errorText != null ? Colors.red : Colors.blue,
+                  color: _errorText != null ? Colors.red : Colors.transparent,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(41),
                 borderSide: BorderSide(
-                  color: _errorText != null ? Colors.red : Colors.blue,
+                  color: _errorText != null ? Colors.red : Colors.transparent,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(41),
                 borderSide: const BorderSide(
-                  color: Colors.blue,
+                  color: Colors.transparent,
                 ),
               ),
             ),

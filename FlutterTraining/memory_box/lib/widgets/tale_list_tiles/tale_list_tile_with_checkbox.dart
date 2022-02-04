@@ -8,21 +8,16 @@ class TaleListTileWithCheckBox extends StatefulWidget {
     this.isPlayMode = false,
     this.isSelected = false,
     Key? key,
-    required this.subscribeTale,
-    required this.unSubscribeTale,
-    required this.onPlay,
-    required this.onPause,
+    required this.toogleSelectMode,
+    required this.tooglePlayMode,
   }) : super(key: key);
 
   final TaleModel taleModel;
   final bool isSelected;
   final bool isPlayMode;
 
-  final VoidCallback subscribeTale;
-  final VoidCallback unSubscribeTale;
-
-  final VoidCallback onPlay;
-  final VoidCallback onPause;
+  final VoidCallback toogleSelectMode;
+  final VoidCallback tooglePlayMode;
 
   @override
   _TaleListTileWithCheckBoxState createState() =>
@@ -30,22 +25,6 @@ class TaleListTileWithCheckBox extends StatefulWidget {
 }
 
 class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
-  void _selectTale() {
-    if (widget.isSelected) {
-      widget.unSubscribeTale();
-    } else {
-      widget.subscribeTale();
-    }
-  }
-
-  void _tooglePlayMode() {
-    if (widget.isPlayMode) {
-      widget.onPause();
-    } else {
-      widget.onPlay();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -63,7 +42,7 @@ class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
           horizontal: 10,
         ),
         leading: GestureDetector(
-          onTap: _tooglePlayMode,
+          onTap: widget.tooglePlayMode,
           child: SvgPicture.asset(
             widget.isPlayMode
                 ? 'assets/icons/StopCircle.svg'
@@ -87,7 +66,7 @@ class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
           ),
         ),
         trailing: IconButton(
-          onPressed: _selectTale,
+          onPressed: widget.toogleSelectMode,
           icon: widget.isSelected
               ? SvgPicture.asset(
                   'assets/icons/SubmitCircle.svg',

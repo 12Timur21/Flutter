@@ -25,29 +25,28 @@ class _RegistrationState extends State<RegistrationScreen> {
   @override
   void dispose() {
     _phoneController.dispose();
-
     super.dispose();
+  }
+
+  void anonAuth() async {
+    BlocProvider.of<RegistrationBloc>(context).add(
+      AnonRegistration(),
+    );
+  }
+
+  void verifyPhoneNumber() {
+    if (_formKey.currentState!.validate()) {
+      FocusScope.of(context).requestFocus(FocusNode());
+      BlocProvider.of<RegistrationBloc>(context).add(
+        VerifyPhoneNumber(
+          phoneNumber: toNumericString(_phoneController.text),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    void anonAuth() async {
-      BlocProvider.of<RegistrationBloc>(context).add(
-        AnonRegistration(),
-      );
-    }
-
-    void verifyPhoneNumber() {
-      if (_formKey.currentState!.validate()) {
-        FocusScope.of(context).requestFocus(FocusNode());
-        BlocProvider.of<RegistrationBloc>(context).add(
-          VerifyPhoneNumber(
-            phoneNumber: toNumericString(_phoneController.text),
-          ),
-        );
-      }
-    }
-
     return BlocListener<RegistrationBloc, RegistrationState>(
       listener: (BuildContext context, state) {
         //*[Start] AnonSession
@@ -57,9 +56,10 @@ class _RegistrationState extends State<RegistrationScreen> {
           );
         }
         if (state is AnonRegistrationFailrule) {
-          const snackBar = SnackBar(
+          const SnackBar snackBar = SnackBar(
             content: Text(
-                'Произошла какая-то ошибка c анонимным входом, попробуйте позже'),
+              'Произошла какая-то ошибка c анонимным входом, попробуйте позже',
+            ),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
@@ -74,10 +74,10 @@ class _RegistrationState extends State<RegistrationScreen> {
           );
         }
         if (state is VerifyPhoneNumberFailure) {
-          print('state VerifyPhoneNumberFailure');
-          const snackBar = SnackBar(
+          const SnackBar snackBar = SnackBar(
             content: Text(
-                'Произошла какая-то ошибка во время проверки вашего номера телефона, попробуйте ещё раз'),
+              'Произошла какая-то ошибка во время проверки вашего номера телефона, попробуйте ещё раз',
+            ),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
@@ -89,121 +89,128 @@ class _RegistrationState extends State<RegistrationScreen> {
             padding: const EdgeInsets.symmetric(
               horizontal: 40,
             ),
-            child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 275,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const <Widget>[
-                          FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              'Регистрация',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'TTNorms',
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 6,
-                                fontSize: 48,
+            child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 275,
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const <Widget>[
+                            FittedBox(
+                              fit: BoxFit.contain,
+                              child: Text(
+                                'Регистрация',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'TTNorms',
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 6,
+                                  fontSize: 48,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 35,
-                    ),
-                    const Text(
-                      'Введи номер телефона',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'TTNorms',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Form(
-                      key: _formKey,
-                      child: Builder(
-                        builder: (context) {
-                          String? _errorText;
-                          return StatefulBuilder(
-                            builder: (BuildContext context, setState) {
-                              return CircleTextField(
-                                controller: _phoneController,
-                                inputFormatters: [PhoneInputFormatter()],
-                                errorText: _errorText,
-                                validator: (value) {
-                                  int length = toNumericString(value).length;
-                                  bool isError = false;
-                                  if (length < 8) {
-                                    _errorText =
-                                        'Укажите полный номер телефона';
-                                    isError = true;
-                                  }
-                                  if (value == null || value.isEmpty) {
-                                    _errorText = 'Поле не может быть пустым';
-                                    isError = true;
-                                  }
-                                  if (!isError) {
-                                    _errorText = null;
-                                  }
-                                  // return _errorText;
-                                  setState(() {});
-                                  return _errorText;
-                                },
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 60,
-                    ),
-                    ElipseOrangeButton(
-                      text: 'Продолжить',
-                      onPress: verifyPhoneNumber,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextButton(
-                      onPressed: anonAuth,
-                      child: const Text(
-                        'Позже',
-                        style: TextStyle(
-                          fontFamily: 'TTNorms',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 24,
-                          color: Colors.black,
+                          ],
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    const HintPlate(
-                      label:
-                          'Регистрация привяжет твои сказки \n к облаку, после чего они всегда \n будут с тобой',
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                  ],
+                      const SizedBox(
+                        height: 35,
+                      ),
+                      const Text(
+                        'Введи номер телефона',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'TTNorms',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Form(
+                        key: _formKey,
+                        child: Builder(
+                          builder: (context) {
+                            String? _errorText;
+                            return StatefulBuilder(
+                              builder: (BuildContext context, setState) {
+                                return CircleTextField(
+                                  controller: _phoneController,
+                                  inputFormatters: [PhoneInputFormatter()],
+                                  errorText: _errorText,
+                                  validator: (value) {
+                                    int length = toNumericString(value).length;
+                                    bool isError = false;
+                                    if (length < 8) {
+                                      _errorText =
+                                          'Укажите полный номер телефона';
+                                      isError = true;
+                                    }
+                                    if (value == null || value.isEmpty) {
+                                      _errorText = 'Поле не может быть пустым';
+                                      isError = true;
+                                    }
+                                    if (!isError) {
+                                      _errorText = null;
+                                    }
+                                    // return _errorText;
+                                    setState(() {});
+                                    return _errorText;
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 60,
+                      ),
+                      ElipseOrangeButton(
+                        text: 'Продолжить',
+                        onPress: verifyPhoneNumber,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextButton(
+                        onPressed: anonAuth,
+                        child: const Text(
+                          'Позже',
+                          style: TextStyle(
+                            fontFamily: 'TTNorms',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 24,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      const HintPlate(
+                        label:
+                            'Регистрация привяжет твои сказки \n к облаку, после чего они всегда \n будут с тобой',
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            }),
           ),
         ),
       ),

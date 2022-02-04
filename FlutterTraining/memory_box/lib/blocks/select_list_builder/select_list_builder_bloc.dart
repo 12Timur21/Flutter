@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:ffi';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -47,10 +44,20 @@ class SelectListBuilderBloc
       // );
     });
 
-    on<PlaySelectTale>(
-      (event, emit) {
+    on<TooglePlayMode>((event, emit) {
+      if (state.isPlay) {
         emit(
-          PlaySelectTaleState(
+          StopTaleState(
+            isInit: state.isInit,
+            isPlay: false,
+            allTales: state.allTales,
+            selectedTales: state.selectedTales,
+            currentPlayTaleModel: state.currentPlayTaleModel,
+          ),
+        );
+      } else {
+        emit(
+          PlayTaleState(
             isInit: state.isInit,
             isPlay: true,
             allTales: state.allTales,
@@ -58,42 +65,34 @@ class SelectListBuilderBloc
             currentPlayTaleModel: event.taleModel,
           ),
         );
-      },
-    );
-    on<StopSelectTale>((event, emit) {
-      emit(
-        StopSelectTaleState(
-          isInit: state.isInit,
-          isPlay: false,
-          allTales: state.allTales,
-          selectedTales: state.selectedTales,
-          currentPlayTaleModel: state.currentPlayTaleModel,
-        ),
-      );
+      }
     });
-    on<SelectTale>((event, emit) {
-      // final List<TaleModel> updatedSelectList = state.selectedTales;
-      // updatedSelectList.add(event.taleModel);
 
-      emit(
-        state.copyWith(
-          selectedTales: [...state.selectedTales, event.taleModel],
-        ),
-      );
-    });
-    on<UnselectTale>((event, emit) {
-      List<TaleModel> updatedSelectedList = state.selectedTales;
-      updatedSelectedList.remove(event.taleModel);
+    on<ToggleSelectMode>((event, emit) {
+      final List<TaleModel> updatedSelectList = state.selectedTales.toList();
 
-      emit(
-        state.copyWith(
-          selectedTales: [...state.selectedTales, event.taleModel],
-        ),
-      );
+      final bool isHasAlreadySelected =
+          updatedSelectList.contains(event.taleModel);
+
+      if (isHasAlreadySelected) {
+        updatedSelectList.remove(event.taleModel);
+
+        emit(
+          state.copyWith(
+            selectedTales: updatedSelectList,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            selectedTales: [...updatedSelectList, event.taleModel],
+          ),
+        );
+      }
     });
 
     //!rename
-    on<TaleSelectEndPlay>((event, emit) {
+    on<TaleEndPlay>((event, emit) {
       emit(
         state.copyWith(
           isPlay: false,

@@ -17,27 +17,21 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
   @override
   Stream<RegistrationState> mapEventToState(RegistrationEvent event) async* {
     if (event is VerifyPhoneNumber) {
-      _authService.verifyPhoneNumberAndSendOTP(
+      await _authService.verifyPhoneNumberAndSendOTP(
         phoneNumber: event.phoneNumber,
         codeAutoRetrievalTimeout: () {
-          print('VerifyTimeEnd');
           emit(VerifyTimeEnd());
         },
         codeSent: (String verficationIds, int? resendingToken) {
-          print('codeSent');
           emit(VerifyPhoneNumberSucces(
             verificationIds: verficationIds,
             resendingToken: resendingToken,
           ));
         },
         verificationFailed: (String? error) {
-          print('verificationFailed 222');
           emit(VerifyPhoneNumberFailure(error: error));
         },
-        verificationCompleted: (PhoneAuthCredential credential) {
-          print('verificationCompleted');
-          print('verificationCompleted');
-        },
+        verificationCompleted: (_) {},
       );
     }
     if (event is VerifyOTPCode) {

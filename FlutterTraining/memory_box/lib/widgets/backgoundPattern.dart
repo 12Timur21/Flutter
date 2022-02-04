@@ -33,9 +33,7 @@ class BackgroundPattern extends StatelessWidget {
               patternColor: patternColor,
             ),
           ),
-          Container(
-            child: child,
-          )
+          child
         ],
       ),
     );

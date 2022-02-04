@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
 import 'package:memory_box/blocks/select_list_builder/select_list_builder_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
@@ -16,12 +16,12 @@ import 'package:memory_box/widgets/undoButton.dart';
 class SelectTalesToPlaylistScreen extends StatefulWidget {
   static const routeName = 'SelectPlaylistTales';
 
-  SelectTalesToPlaylistScreen({
+  const SelectTalesToPlaylistScreen({
     this.listTaleModels,
     Key? key,
   }) : super(key: key);
 
-  List<TaleModel>? listTaleModels;
+  final List<TaleModel>? listTaleModels;
 
   @override
   _SelectTalesToPlaylistScreenState createState() =>
@@ -32,6 +32,7 @@ class _SelectTalesToPlaylistScreenState
     extends State<SelectTalesToPlaylistScreen> {
   String? _searchValue;
   bool _searchHasFocus = false;
+
   final TextEditingController _searchFieldContoller = TextEditingController();
 
   void _onSearchValueChange(String value) {
@@ -53,36 +54,23 @@ class _SelectTalesToPlaylistScreenState
     // });
   }
 
-  @override
-  void initState() {
-    super.initState();
+  void _undoChanges() {
+    Navigator.of(context).pop();
+  }
+
+  void _saveChanges() {
+    Navigator.of(context).pop(
+        // talesIDs: _taleIDs,
+        );
+  }
+
+  void _search(String value) async {
+    List<TaleModel> taleModels =
+        await DatabaseService.instance.searchTalesByTitle(title: _searchValue);
   }
 
   @override
   Widget build(BuildContext context) {
-    void _undoChanges() {
-      Navigator.of(context).pop();
-    }
-
-    void _saveChanges() {
-      Navigator.of(context).pop(
-          // talesIDs: _taleIDs,
-          );
-    }
-
-    // void _subscibeTale(TaleModel taleModel) {
-    //   widget.listTaleModels?.add(taleModel);
-    // }
-
-    // void _unSubscribeTale(TaleModel taleModel) {
-    //   widget.listTaleModels?.remove(taleModel);
-    // }
-
-    void search(String value) async {
-      List<TaleModel> taleModels = await DatabaseService.instance
-          .searchTalesByTitle(title: _searchValue);
-    }
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -175,152 +163,71 @@ class _SelectTalesToPlaylistScreenState
                         height: 50,
                       ),
                 Expanded(
-                  child: BlocConsumer<SelectListBuilderBloc,
+                  child: BlocBuilder<SelectListBuilderBloc,
                       SelectListBuilderState>(
-                    listener: (context, listBuilderState) {
-                      if (listBuilderState is PlaySelectTaleState) {
-                        final TaleModel taleModel =
-                            listBuilderState.currentPlayTaleModel!;
-                        context.read<AudioplayerBloc>().add(
-                              Play(
-                                taleModel: taleModel,
-                                isAutoPlay: true,
-                              ),
-                            );
-                      }
+                    // listener: (context, listBuilderState) {
+                    //   // if (listBuilderState is PlaySelectTaleState) {
+                    //   //   final TaleModel taleModel =
+                    //   //       listBuilderState.currentPlayTaleModel!;
+                    //   //   context.read<AudioplayerBloc>().add(
+                    //   //         Play(
+                    //   //           taleModel: taleModel,
+                    //   //           isAutoPlay: true,
+                    //   //         ),
+                    //   //       );
+                    //   // }
 
-                      if (listBuilderState is StopSelectTaleState) {
-                        context.read<AudioplayerBloc>().add(
-                              Pause(),
-                            );
-                      }
-                    },
+                    //   // if (listBuilderState is StopSelectTaleState) {
+                    //   //   context.read<AudioplayerBloc>().add(
+                    //   //         Pause(),
+                    //   //       );
+                    //   // }
+                    // },
                     builder: (context, listBuilderState) {
-                      print('rebuild');
-                      return Stack(
-                        children: [
-                          Expanded(
-                            child: listBuilderState.isInit
-                                ? ListView.builder(
-                                    itemCount: listBuilderState.allTales.length,
-                                    itemBuilder: (context, index) {
-                                      TaleModel taleModel =
-                                          listBuilderState.allTales[index];
-                                      bool isPlay = false;
-                                      bool isSelected = false;
+                      return listBuilderState.isInit
+                          ? ListView.builder(
+                              itemCount: listBuilderState.allTales.length,
+                              itemBuilder: (context, index) {
+                                TaleModel taleModel =
+                                    listBuilderState.allTales[index];
+                                bool isPlay = false;
+                                bool isSelected = false;
 
-                                      if (listBuilderState
-                                                  .currentPlayTaleModel ==
-                                              taleModel &&
-                                          listBuilderState.isPlay) {
-                                        isPlay = true;
-                                      }
+                                // if (listBuilderState.currentPlayTaleModel ==
+                                //         taleModel &&
+                                //     listBuilderState.isPlay) {
+                                //   isPlay = true;
+                                // }
 
-                                      listBuilderState.selectedTales
-                                          .forEach((value) {
-                                        if (value == taleModel) {
-                                          isSelected = true;
-                                        }
-                                      });
-                                      print('heh');
+                                for (final TaleModel value
+                                    in listBuilderState.selectedTales) {
+                                  if (value == taleModel) {
+                                    isSelected = true;
+                                    log(value.toString());
+                                    break;
+                                  }
+                                }
 
-                                      return TaleListTileWithCheckBox(
-                                        key: UniqueKey(),
-                                        isPlayMode: isPlay,
-                                        isSelected: isSelected,
-                                        taleModel: taleModel,
-                                        onPause: () {
-                                          context
-                                              .read<SelectListBuilderBloc>()
-                                              .add(
-                                                StopSelectTale(),
-                                              );
-                                        },
-                                        onPlay: () {
-                                          context
-                                              .read<SelectListBuilderBloc>()
-                                              .add(
-                                                PlaySelectTale(taleModel),
-                                              );
-                                        },
-                                        subscribeTale: () {
-                                          context
-                                              .read<SelectListBuilderBloc>()
-                                              .add(
-                                                SelectTale(taleModel),
-                                              );
-                                        },
-                                        unSubscribeTale: () {
-                                          context
-                                              .read<SelectListBuilderBloc>()
-                                              .add(
-                                                UnselectTale(taleModel),
-                                              );
-                                        },
-                                      );
-                                    },
-                                  )
-                                : const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                          ),
-                          BlocConsumer<AudioplayerBloc, AudioplayerState>(
-                            listener: (context, audioPlayerState) {
-                              if (audioPlayerState.isTaleEnd) {
-                                context.read<AudioplayerBloc>().add(
-                                      AnnulAudioPlayer(),
-                                    );
-
-                                context.read<SelectListBuilderBloc>().add(
-                                      TaleSelectEndPlay(),
-                                    );
-                              }
-                            },
-                            builder: (context, audioPlayerState) {
-                              if (listBuilderState.currentPlayTaleModel ==
-                                  null) {
-                                return Container();
-                              }
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 10,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: AudioPlayer(
-                                    taleModel: audioPlayerState.taleModel,
-                                    currentPlayDuration:
-                                        audioPlayerState.currentPlayDuration,
-                                    isPlay: listBuilderState.isPlay,
-                                    isNextButtonAvalible: false,
-                                    pause: () {
+                                return TaleListTileWithCheckBox(
+                                    key: UniqueKey(),
+                                    isPlayMode: isPlay,
+                                    isSelected: isSelected,
+                                    taleModel: taleModel,
+                                    tooglePlayMode: () {
                                       context.read<SelectListBuilderBloc>().add(
-                                            StopSelectTale(),
+                                            TooglePlayMode(taleModel),
                                           );
                                     },
-                                    play: () {
+                                    toogleSelectMode: () {
                                       context.read<SelectListBuilderBloc>().add(
-                                            PlaySelectTale(
-                                              listBuilderState
-                                                  .currentPlayTaleModel!,
-                                            ),
+                                            ToggleSelectMode(taleModel),
                                           );
-                                    },
-                                    seek: (double durationInMs) {
-                                      context.read<AudioplayerBloc>().add(
-                                            Seek(
-                                              currentPlayTimeInSec:
-                                                  durationInMs,
-                                            ),
-                                          );
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      );
+                                    });
+                              },
+                            )
+                          : const Center(
+                              child: CircularProgressIndicator(),
+                            );
                     },
                   ),
                 ),

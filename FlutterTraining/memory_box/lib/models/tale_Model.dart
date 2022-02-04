@@ -3,14 +3,17 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-class TaleDeleteStatus {
-  bool isDeleted;
-  DateTime? deleteDate;
+class TaleDeleteStatus extends Equatable {
+  final bool isDeleted;
+  final DateTime? deleteDate;
 
-  TaleDeleteStatus({
+  const TaleDeleteStatus({
     required this.isDeleted,
     this.deleteDate,
   });
+
+  @override
+  List<Object?> get props => [isDeleted, deleteDate];
 }
 
 class TaleModel extends Equatable {
@@ -59,14 +62,16 @@ class TaleModel extends Equatable {
       ),
       deleteStatus: TaleDeleteStatus(
         isDeleted: json['isDeleted']['status'],
-        deleteDate: DateTime.fromMicrosecondsSinceEpoch(
-          timeStamp?.microsecondsSinceEpoch ?? 0,
-        ),
+        deleteDate: timeStamp == null
+            ? null
+            : DateTime.fromMicrosecondsSinceEpoch(
+                timeStamp.microsecondsSinceEpoch,
+              ),
       ),
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'taleID': ID,
       'title': title,

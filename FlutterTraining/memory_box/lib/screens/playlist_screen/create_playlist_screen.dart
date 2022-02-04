@@ -291,21 +291,21 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                 // const SizedBox(
                 //   height: 10,
                 // ),
-                // listTaleModels != null
-                //     ? ListBuilderWithPopup(
-                //         initListBuilderEvent:
-                //             InitializeListBuilderWithTaleModels(
-                //           listTaleModels!,
-                //         ),
-                //       )
-                //     : Container(
-                //         margin: const EdgeInsets.only(
-                //           top: 50,
-                //         ),
-                //         child: Center(
-                //           child: _addSongButton,
-                //         ),
-                //       ),
+                listTaleModels != null
+                    ? ListBuilderWithPopup(
+                        initListBuilderEvent:
+                            InitializeListBuilderWithTaleModels(
+                          listTaleModels!,
+                        ),
+                      )
+                    : Container(
+                        margin: const EdgeInsets.only(
+                          top: 50,
+                        ),
+                        child: Center(
+                          child: _addSongButton,
+                        ),
+                      ),
               ],
             ),
           ),

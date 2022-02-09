@@ -59,6 +59,7 @@ class _ListeningScreenState extends State<ListeningScreen> {
 
     TaleModel _taleModel = TaleModel(
       url: _pathToSaveAudio,
+      title: 'Запись №',
       ID: const Uuid().v4(),
     );
 
@@ -85,7 +86,7 @@ class _ListeningScreenState extends State<ListeningScreen> {
     if (_isPlay == false) {
       _audioBloc.add(
         Play(
-          taleModel: _audioBloc.state.taleModel,
+          taleModel: _audioBloc.state.taleModel!,
         ),
       );
     } else {
@@ -150,8 +151,9 @@ class _ListeningScreenState extends State<ListeningScreen> {
   }
 
   void _saveSound() async {
+    //!Пересмотреть
     final File file = File(_pathToSaveAudio!);
-    TaleModel updatedTaleModel = _audioBloc.state.taleModel.copyWith(
+    TaleModel? updatedTaleModel = _audioBloc.state.taleModel?.copyWith(
       title: _taleTitle,
     );
 
@@ -161,7 +163,7 @@ class _ListeningScreenState extends State<ListeningScreen> {
 
     await StorageService.instance.uploadTaleFIle(
       file: file,
-      taleModel: updatedTaleModel,
+      taleModel: updatedTaleModel!,
     );
 
     MainPage.recordingNavigatorKey.currentState?.pushNamed(
@@ -273,8 +275,8 @@ class _ListeningScreenState extends State<ListeningScreen> {
                               child: AudioSlider(
                                 onChanged: () {},
                                 onChangeEnd: _onSlidedChangeEnd,
-                                currentPlayDuration: state.currentPlayDuration,
-                                taleDuration: state.taleModel.duration,
+                                currentPlayDuration: state.currentPlayPosition,
+                                taleDuration: state.taleModel?.duration,
                               ),
                             ),
                             TaleControlButtons(

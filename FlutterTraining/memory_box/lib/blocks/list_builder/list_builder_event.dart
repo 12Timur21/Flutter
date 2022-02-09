@@ -9,7 +9,7 @@ class InitializeListBuilderWithFutureRequest extends ListBuilderEvent {
 }
 
 class InitializeListBuilderWithTaleModels extends ListBuilderEvent {
-  List<TaleModel> initializationTales;
+  List<TaleModel>? initializationTales;
 
   InitializeListBuilderWithTaleModels(this.initializationTales);
 }
@@ -33,20 +33,13 @@ class RenameTale extends ListBuilderEvent {
 
 class AddTaleToPlaylist extends ListBuilderEvent {}
 
-class PlayTale extends ListBuilderEvent {
-  int taleIndex;
-
-  PlayTale(this.taleIndex);
+class TooglePlayMode extends ListBuilderEvent {
+  TooglePlayMode({this.taleModel});
+  final TaleModel? taleModel;
 }
 
-class StopTale extends ListBuilderEvent {}
-
-class TaleEndPlay extends ListBuilderEvent {}
-
-class PlayAllTales extends ListBuilderEvent {
-  bool isPlayAllTales;
-
-  PlayAllTales(this.isPlayAllTales);
+class TooglePlayAllMode extends ListBuilderEvent {
+  TooglePlayAllMode();
 }
 
 class NextTale extends ListBuilderEvent {}

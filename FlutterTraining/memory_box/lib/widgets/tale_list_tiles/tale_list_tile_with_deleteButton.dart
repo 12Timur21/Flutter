@@ -59,7 +59,7 @@ class _TaleListTileWithDeleteButtonState
               width: 50,
             ),
           ),
-          title: Text(widget.taleModel.title ?? ''),
+          title: Text(widget.taleModel.title),
           horizontalTitleGap: 20,
           subtitle: Text(
             widget.taleModel.duration?.inMinutes != 0

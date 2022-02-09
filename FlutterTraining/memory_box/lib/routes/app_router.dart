@@ -102,7 +102,7 @@ class AppRouter {
           final List<TaleModel>? args = arguments as List<TaleModel>?;
 
           builder = (_) => SelectTalesToPlaylistScreen(
-                listTaleModels: args,
+                selectedListTaleModels: args,
               );
         }
         break;

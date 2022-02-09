@@ -58,13 +58,7 @@ class SoundPlayer {
     return taleDuration ?? Duration.zero;
   }
 
-  // void whenFinished() {
-  //   print('начало конца --------------------');
-  //   whenFinishedController.add(null);
-  // }
-
   Future<void> dispose() async {
-    print('dispose disepo sesease');
     await _flutterSoundPlayer?.stopPlayer();
 
     await _flutterSoundPlayer?.closeAudioSession();
@@ -74,7 +68,7 @@ class SoundPlayer {
   }
 
   Future<void> resumePlayer() async {
-    _flutterSoundPlayer?.resumePlayer();
+    await _flutterSoundPlayer?.resumePlayer();
   }
 
   Future<void> pausePlayer() async {

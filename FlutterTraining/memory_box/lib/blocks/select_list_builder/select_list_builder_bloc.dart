@@ -11,10 +11,12 @@ class SelectListBuilderBloc
   SelectListBuilderBloc() : super(const SelectListBuilderState()) {
     on<InitializeSelectListBuilderWithFutureRequest>((event, emit) async {
       List<TaleModel> allTales = await event.initializationTales;
+
       emit(
         state.copyWith(
           isInit: true,
           allTales: allTales,
+          selectedTales: event.selectedTaleModels,
         ),
       );
     });
@@ -26,12 +28,9 @@ class SelectListBuilderBloc
         ),
       );
     });
-    on<UpdateSelectListTaleModels>((event, emit) async {
-      emit(state.copyWith(
-        allTales: event.newTaleModels,
-      ));
-    });
+
     on<DeleteFewTales>((event, emit) async {
+      print('popopopo');
       // String? taleID = state.allTales?[event.index].ID;
       // if (taleID != null) {
       //   await DatabaseService.instance.setTaleDeleteStatus(taleID);
@@ -45,7 +44,8 @@ class SelectListBuilderBloc
     });
 
     on<TooglePlayMode>((event, emit) {
-      if (state.isPlay) {
+      if (state.isPlay && state.currentPlayTaleModel == event.taleModel ||
+          event.taleModel == null) {
         emit(
           StopTaleState(
             isInit: state.isInit,
@@ -69,7 +69,7 @@ class SelectListBuilderBloc
     });
 
     on<ToggleSelectMode>((event, emit) {
-      final List<TaleModel> updatedSelectList = state.selectedTales.toList();
+      final List<TaleModel> updatedSelectList = [...state.selectedTales];
 
       final bool isHasAlreadySelected =
           updatedSelectList.contains(event.taleModel);
@@ -91,7 +91,6 @@ class SelectListBuilderBloc
       }
     });
 
-    //!rename
     on<TaleEndPlay>((event, emit) {
       emit(
         state.copyWith(

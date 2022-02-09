@@ -5,25 +5,12 @@ import 'package:memory_box/resources/app_coloros.dart';
 
 class PlaylistTile extends StatefulWidget {
   const PlaylistTile({
-    // required this.playlistID,
-    // required this.title,
-    // required this.audioCount,
-    // required this.sumAudioDuration,
-    // required this.coverUrl,
     required this.playlistModel,
-    required this.index,
     required this.onTap,
     Key? key,
   }) : super(key: key);
 
-  // final String playlistID;
-  // final String title;
-  // final int audioCount;
-  // final Duration sumAudioDuration;
-  // final String coverUrl;
   final PlaylistModel playlistModel;
-  final int index;
-
   final VoidCallback onTap;
 
   @override
@@ -35,24 +22,11 @@ class _PlaylistTileState extends State<PlaylistTile> {
 
   @override
   Widget build(BuildContext context) {
-    EdgeInsets margin = widget.index % 2 == 0
-        ? const EdgeInsets.only(
-            top: 20,
-            left: 15,
-            right: 8,
-          )
-        : const EdgeInsets.only(
-            top: 20,
-            right: 15,
-            left: 8,
-          );
-
     return GestureDetector(
       onTap: widget.onTap,
-      child: Container(
+      child: SizedBox(
         height: 240,
         width: 190,
-        margin: margin,
         child: Stack(
           children: [
             ClipRRect(

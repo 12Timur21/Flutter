@@ -5,16 +5,16 @@ class ListBuilderState {
   final bool isPlay;
   final bool isPlayAllTalesMode;
 
-  final List<TaleModel>? allTales;
+  final List<TaleModel> allTales;
 
-  final int? currentPlayTaleIndex;
+  final TaleModel? currentPlayTaleModel;
 
   ListBuilderState({
     this.isInit = false,
     this.isPlay = false,
     this.isPlayAllTalesMode = false,
-    this.allTales,
-    this.currentPlayTaleIndex,
+    this.allTales = const [],
+    this.currentPlayTaleModel,
   });
 
   ListBuilderState copyWith({
@@ -23,14 +23,14 @@ class ListBuilderState {
     bool? isPlayAllTalesMode,
     List<TaleModel>? allTales,
     List<TaleModel>? selectedTales,
-    int? currentPlayTaleIndex,
+    TaleModel? currentPlayTaleModel,
   }) {
     return ListBuilderState(
       isInit: isInit ?? this.isInit,
       isPlay: isPlay ?? this.isPlay,
       isPlayAllTalesMode: isPlayAllTalesMode ?? this.isPlayAllTalesMode,
       allTales: allTales ?? this.allTales,
-      currentPlayTaleIndex: currentPlayTaleIndex ?? this.currentPlayTaleIndex,
+      currentPlayTaleModel: currentPlayTaleModel ?? this.currentPlayTaleModel,
     );
   }
 }
@@ -40,14 +40,14 @@ class PlayTaleState extends ListBuilderState {
     required bool isInit,
     required bool isPlay,
     required bool isPlayAllTalesMode,
-    List<TaleModel>? allTales,
-    required int? currentPlayTaleIndex,
+    required List<TaleModel> allTales,
+    required TaleModel? currentPlayTaleModel,
   }) : super(
           isInit: isInit,
           isPlay: isPlay,
           isPlayAllTalesMode: isPlayAllTalesMode,
           allTales: allTales,
-          currentPlayTaleIndex: currentPlayTaleIndex,
+          currentPlayTaleModel: currentPlayTaleModel,
         );
 }
 
@@ -56,13 +56,13 @@ class StopTaleState extends ListBuilderState {
     required bool isInit,
     required bool isPlay,
     required bool isPlayAllTalesMode,
-    List<TaleModel>? allTales,
-    required int? currentPlayTaleIndex,
+    required List<TaleModel> allTales,
+    required TaleModel? currentPlayTaleModel,
   }) : super(
           isInit: isInit,
           isPlay: isPlay,
           isPlayAllTalesMode: isPlayAllTalesMode,
           allTales: allTales,
-          currentPlayTaleIndex: currentPlayTaleIndex,
+          currentPlayTaleModel: currentPlayTaleModel,
         );
 }

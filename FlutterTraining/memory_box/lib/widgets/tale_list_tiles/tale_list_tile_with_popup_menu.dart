@@ -13,8 +13,7 @@ import 'package:share_plus/share_plus.dart';
 class TaleListTileWithPopupMenu extends StatefulWidget {
   const TaleListTileWithPopupMenu({
     required this.taleModel,
-    required this.onPlay,
-    required this.onPause,
+    required this.tooglePlayMode,
     required this.onRename,
     required this.onUndoRenaming,
     required this.onAddToPlaylist,
@@ -27,8 +26,8 @@ class TaleListTileWithPopupMenu extends StatefulWidget {
   final TaleModel taleModel;
   final bool isPlayMode;
 
-  final VoidCallback onPlay;
-  final VoidCallback onPause;
+  final VoidCallback tooglePlayMode;
+
   final Function(String) onRename;
   final VoidCallback onUndoRenaming;
   final VoidCallback onAddToPlaylist;
@@ -67,14 +66,6 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
     });
   }
 
-  void _tooglePlayMode() {
-    if (widget.isPlayMode) {
-      widget.onPlay();
-    } else {
-      widget.onPause();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -92,7 +83,7 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
           horizontal: 10,
         ),
         leading: GestureDetector(
-          onTap: _tooglePlayMode,
+          onTap: widget.tooglePlayMode,
           child: SvgPicture.asset(
             widget.isPlayMode ? AppIcons.stopCircle : AppIcons.playCircle,
             color: AppColors.lightBlue,

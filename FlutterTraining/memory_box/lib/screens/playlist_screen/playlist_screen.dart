@@ -49,19 +49,24 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                       PlaylistModel playlistModel =
                           PlaylistModel(ID: 'ID', title: '3123123');
                       //!PADDING ВЫНЕСТИ
-                      return PlaylistTile(
-                        playlistModel: playlistModel,
-                        // taleID: snapshot.data?[index].ID ?? '',
-                        // title: snapshot.data?[index].title ?? '',
-                        // audioCount:
-                        //     snapshot.data?[index].taleIDsList?.length ?? 0,
-                        // coverUrl: snapshot.data?[index].coverUrl ?? '',
-                        // sumAudioDuration:
-                        //     snapshot.data?[index].duration ?? Duration.zero,
-                        index: index,
-                        onTap: () {
-                          print('on tap');
-                        },
+                      return Container(
+                        margin: index % 2 == 0
+                            ? const EdgeInsets.only(
+                                top: 20,
+                                left: 15,
+                                right: 8,
+                              )
+                            : const EdgeInsets.only(
+                                top: 20,
+                                right: 15,
+                                left: 8,
+                              ),
+                        child: PlaylistTile(
+                          playlistModel: playlistModel,
+                          onTap: () {
+                            print('on tap');
+                          },
+                        ),
                       );
                     },
                   ),

@@ -33,6 +33,10 @@ class Seek extends AudioplayerEvent {
   });
 }
 
+class EnablePositionNotifyer extends AudioplayerEvent {}
+
+class DisablePositionNotifyer extends AudioplayerEvent {}
+
 class MoveForward15Sec extends AudioplayerEvent {}
 
 class MoveBackward15Sec extends AudioplayerEvent {}
@@ -40,11 +44,11 @@ class MoveBackward15Sec extends AudioplayerEvent {}
 class AnnulAudioPlayer extends AudioplayerEvent {}
 
 class UpdateAudioPlayerDuration extends AudioplayerEvent {
-  final Duration currentPlayDuration;
+  final Duration currentPlayPosition;
   final Duration taleDuration;
 
   UpdateAudioPlayerDuration({
-    required this.currentPlayDuration,
+    required this.currentPlayPosition,
     required this.taleDuration,
   });
 }

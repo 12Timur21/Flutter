@@ -4,27 +4,24 @@ abstract class SelectListBuilderEvent {}
 
 class InitializeSelectListBuilderWithFutureRequest
     extends SelectListBuilderEvent {
-  Future<List<TaleModel>> initializationTales;
-
-  InitializeSelectListBuilderWithFutureRequest(this.initializationTales);
+  InitializeSelectListBuilderWithFutureRequest({
+    required this.initializationTales,
+    this.selectedTaleModels,
+  });
+  final Future<List<TaleModel>> initializationTales;
+  final List<TaleModel>? selectedTaleModels;
 }
 
 class InitializeSelectListBuilderWithTaleModels extends SelectListBuilderEvent {
-  List<TaleModel> initializationTales;
-
   InitializeSelectListBuilderWithTaleModels(this.initializationTales);
-}
-
-class UpdateSelectListTaleModels extends SelectListBuilderEvent {
-  final List<TaleModel> newTaleModels;
-  UpdateSelectListTaleModels(this.newTaleModels);
+  final List<TaleModel> initializationTales;
 }
 
 class DeleteFewTales extends SelectListBuilderEvent {}
 
 class ToggleSelectMode extends SelectListBuilderEvent {
-  final TaleModel taleModel;
   ToggleSelectMode(this.taleModel);
+  final TaleModel taleModel;
 }
 
 class AddFewTalesToPlaylist extends SelectListBuilderEvent {}
@@ -32,9 +29,8 @@ class AddFewTalesToPlaylist extends SelectListBuilderEvent {}
 class ShareTales extends SelectListBuilderEvent {}
 
 class TooglePlayMode extends SelectListBuilderEvent {
-  TaleModel taleModel;
-
-  TooglePlayMode(this.taleModel);
+  TooglePlayMode({this.taleModel});
+  final TaleModel? taleModel;
 }
 
 class TaleEndPlay extends SelectListBuilderEvent {}

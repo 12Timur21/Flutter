@@ -9,25 +9,26 @@ import 'package:memory_box/widgets/audioSlider.dart';
 
 class AudioPlayer extends StatefulWidget {
   const AudioPlayer({
-    required this.taleModel,
+    this.taleModel,
     this.isPlay = false,
-    required this.currentPlayDuration,
+    required this.currentPlayPosition,
     this.next,
-    required this.pause,
-    required this.play,
-    required this.seek,
+    required this.tooglePlayMode,
+    required this.onSliderChanged,
+    required this.onSliderChangeEnd,
     this.isNextButtonAvalible = true,
     Key? key,
   }) : super(key: key);
 
-  final TaleModel taleModel;
+  final TaleModel? taleModel;
   final bool isPlay;
-  final Duration? currentPlayDuration;
+  final Duration? currentPlayPosition;
 
-  final Function pause;
-  final Function play;
-  final Function(double) seek;
-  final Function? next;
+  final VoidCallback tooglePlayMode;
+
+  final VoidCallback onSliderChanged;
+  final Function(double) onSliderChangeEnd;
+  final VoidCallback? next;
 
   final bool isNextButtonAvalible;
 
@@ -36,25 +37,6 @@ class AudioPlayer extends StatefulWidget {
 }
 
 class _AudioPlayerState extends State<AudioPlayer> {
-  void _onSlidedChangeEnd(double value) {
-    widget.seek(value);
-  }
-
-  void _tooglePlayMode() {
-    print(widget.isPlay);
-    if (widget.isPlay) {
-      widget.pause();
-    } else {
-      widget.play();
-    }
-  }
-
-  void _nextTale() {
-    if (widget.next != null) {
-      widget.next!();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -79,7 +61,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-              onPressed: _tooglePlayMode,
+              onPressed: widget.tooglePlayMode,
               padding: const EdgeInsets.all(0),
               alignment: Alignment.center,
               icon: SvgPicture.asset(
@@ -98,7 +80,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.taleModel.title ?? '',
+                      widget.taleModel!.title,
                       style: const TextStyle(
                         color: Colors.white,
                         fontFamily: 'TTNorms',
@@ -107,10 +89,10 @@ class _AudioPlayerState extends State<AudioPlayer> {
                       ),
                     ),
                     AudioSlider(
-                      onChanged: () {},
-                      onChangeEnd: _onSlidedChangeEnd,
-                      currentPlayDuration: widget.currentPlayDuration,
-                      taleDuration: widget.taleModel.duration,
+                      onChanged: widget.onSliderChanged,
+                      onChangeEnd: (value) => widget.onSliderChangeEnd(value),
+                      currentPlayDuration: widget.currentPlayPosition,
+                      taleDuration: widget.taleModel!.duration,
                       primaryColor: Colors.white,
                     )
                   ],
@@ -123,7 +105,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
                       right: 10,
                     ),
                     child: GestureDetector(
-                      onTap: _nextTale,
+                      onTap: widget.next,
                       child: SvgPicture.asset(
                         AppIcons.arrowNext,
                       ),

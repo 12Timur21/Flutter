@@ -245,11 +245,10 @@ class DatabaseService {
 
   Future<int> calculateTalesInMS(List<String>? taleIDs) async {
     int sumTimeInMS = 0;
-    String? uid = AuthService.userID;
 
     QuerySnapshot<Map<String, dynamic>> documentSnapshot =
         await _talesCollection
-            .doc(uid)
+            .doc(AuthService.userID)
             .collection('allTales')
             .where(
               'taleID',
@@ -262,7 +261,7 @@ class DatabaseService {
       Map<String, dynamic> data = e.data();
       sumTimeInMS += data['durationInMS'] as int;
     }
-    print(sumTimeInMS);
+
     return sumTimeInMS;
   }
   //??[End] Tale
@@ -272,17 +271,24 @@ class DatabaseService {
     required String playlistID,
     required String title,
     String? description,
-    List<String>? talesIDs,
+    List<TaleModel>? talesModels,
     required String coverUrl,
   }) async {
     String? uid = AuthService.userID;
-    int tilesSumDurationInMs = await calculateTalesInMS(talesIDs);
+    print('c');
+
+    List<String> taleIDs = [];
+    talesModels?.forEach((element) {
+      taleIDs.add(element.ID!);
+    });
+
+    int tilesSumDurationInMs = await calculateTalesInMS(taleIDs);
 
     Map<String, dynamic> collection = {
       'ID': playlistID,
       'title': title,
       'description': description,
-      'taleIDsList': talesIDs,
+      'taleIDsList': taleIDs,
       'tilesSumDurationInMs': tilesSumDurationInMs,
       'coverUrl': coverUrl,
     };

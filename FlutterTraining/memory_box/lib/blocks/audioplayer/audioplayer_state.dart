@@ -1,8 +1,8 @@
 part of 'audioplayer_bloc.dart';
 
 class AudioplayerState extends Equatable {
-  final TaleModel taleModel;
-  final Duration currentPlayDuration;
+  final TaleModel? taleModel;
+  final Duration? currentPlayPosition;
   final bool isPlay;
   final bool isPlayerInit;
   final bool isTaleInit;
@@ -10,8 +10,8 @@ class AudioplayerState extends Equatable {
   final String? errorText;
 
   const AudioplayerState({
-    required this.taleModel,
-    required this.currentPlayDuration,
+    this.taleModel,
+    this.currentPlayPosition,
     this.isPlay = false,
     this.isPlayerInit = false,
     this.isTaleInit = false,
@@ -30,7 +30,7 @@ class AudioplayerState extends Equatable {
   }) {
     return AudioplayerState(
       taleModel: newTaleModel ?? this.taleModel,
-      currentPlayDuration: newPlayDuration ?? this.currentPlayDuration,
+      currentPlayPosition: newPlayDuration ?? this.currentPlayPosition,
       isPlay: isPlay ?? this.isPlay,
       isPlayerInit: isPlayerInit ?? this.isPlayerInit,
       isTaleInit: isTaleInit ?? this.isTaleInit,
@@ -42,7 +42,7 @@ class AudioplayerState extends Equatable {
   @override
   List<Object?> get props => [
         taleModel,
-        currentPlayDuration,
+        currentPlayPosition,
         isPlay,
         isPlayerInit,
         isTaleInit,

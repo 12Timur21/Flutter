@@ -129,7 +129,7 @@ class _SearchTalesScreenState extends State<SearchTalesScreen> {
                                       top: index == 0 ? 0 : 25,
                                     ),
                                     child: Text(
-                                      taleModel.title ?? '',
+                                      taleModel.title,
                                       style: const TextStyle(
                                         fontFamily: 'TTNorms',
                                         fontSize: 16,

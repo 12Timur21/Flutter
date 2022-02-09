@@ -88,7 +88,7 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
 
   void undoChanges() {
     setState(() {
-      _textEditingController.text = widget.taleModel.title!;
+      _textEditingController.text = widget.taleModel.title;
     });
     changeEditMode();
   }
@@ -113,14 +113,14 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
 
   void _tooglePlay() {
     bool isPlay = _audioBloc.state.isPlay;
-    if (isPlay == true) {
+    if (isPlay) {
       _audioBloc.add(
         Pause(),
       );
     } else {
       _audioBloc.add(
         Play(
-          taleModel: _audioBloc.state.taleModel,
+          taleModel: _audioBloc.state.taleModel!,
         ),
       );
     }
@@ -367,8 +367,8 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                       AudioSlider(
                         onChanged: () {},
                         onChangeEnd: _onSlidedChangeEnd,
-                        currentPlayDuration: state.currentPlayDuration,
-                        taleDuration: state.taleModel.duration,
+                        currentPlayDuration: state.currentPlayPosition,
+                        taleDuration: state.taleModel?.duration,
                       ),
                       const Spacer(),
                       TaleControlButtons(

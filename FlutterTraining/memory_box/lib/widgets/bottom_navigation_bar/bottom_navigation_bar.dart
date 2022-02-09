@@ -65,6 +65,28 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    BottomNavigationBarItem _bottomNavigationBarItem({
+      required String iconName,
+      required String label,
+      bool isSelected = false,
+    }) {
+      return BottomNavigationBarItem(
+        icon: SvgPicture.asset(
+          iconName,
+          color: isSelected ? AppColors.blueMagenta : null,
+        ),
+        title: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'TTNorms',
+            fontWeight: FontWeight.normal,
+            fontSize: 11,
+            color: isSelected ? AppColors.blueMagenta : null,
+          ),
+        ),
+      );
+    }
+
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -101,38 +123,26 @@ class _BottomNavBarState extends State<BottomNavBar> {
           child: BlocListener<BottomNavigationIndexControlCubit,
               BottomNavigationIndexControlState>(
             listener: (context, state) {
-              setState(
-                () {
-                  _selectedIndex = state.index;
-                  _iconState = state.recorderButtonState;
-                },
-              );
+              setState(() {
+                _selectedIndex = state.index;
+                _iconState = state.recorderButtonState;
+              });
             },
             child: BottomNavigationBar(
               backgroundColor: AppColors.wildSand,
               type: BottomNavigationBarType.fixed,
-              selectedItemColor: AppColors.blueMagenta,
               onTap: _onBottomNavigatorTapped,
+              selectedItemColor: AppColors.darkPurple,
               items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    AppIcons.home,
-                    color: _selectedIndex == 0 ? AppColors.blueMagenta : null,
-                  ),
-                  title: Text(
-                    'Главная',
-                    style: _bottomNavigationBarTextStyle,
-                  ),
+                _bottomNavigationBarItem(
+                  iconName: AppIcons.home,
+                  label: 'Главная',
+                  isSelected: _selectedIndex == 0,
                 ),
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    AppIcons.category,
-                    color: _selectedIndex == 1 ? AppColors.blueMagenta : null,
-                  ),
-                  title: Text(
-                    'Подборки',
-                    style: _bottomNavigationBarTextStyle,
-                  ),
+                _bottomNavigationBarItem(
+                  iconName: AppIcons.category,
+                  label: 'Подборки',
+                  isSelected: _selectedIndex == 1,
                 ),
                 BottomNavigationBarItem(
                   icon: _getIcon(_iconState),
@@ -140,28 +150,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     'Запись',
                     style: const TextStyle(
                       color: AppColors.tacao,
-                    ).merge(_bottomNavigationBarTextStyle),
+                    ).merge(
+                      const TextStyle(
+                        fontFamily: 'TTNorms',
+                        fontWeight: FontWeight.normal,
+                        fontSize: 10,
+                      ),
+                    ),
                   ),
                 ),
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    AppIcons.document,
-                    color: _selectedIndex == 3 ? AppColors.blueMagenta : null,
-                  ),
-                  title: Text(
-                    'Аудиозаписи',
-                    style: _bottomNavigationBarTextStyle,
-                  ),
+                _bottomNavigationBarItem(
+                  iconName: AppIcons.document,
+                  label: 'Аудиозаписи',
+                  isSelected: _selectedIndex == 3,
                 ),
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    AppIcons.profile,
-                    color: _selectedIndex == 4 ? AppColors.blueMagenta : null,
-                  ),
-                  title: Text(
-                    'Профиль',
-                    style: _bottomNavigationBarTextStyle,
-                  ),
+                _bottomNavigationBarItem(
+                  iconName: AppIcons.profile,
+                  label: 'Профиль',
+                  isSelected: _selectedIndex == 4,
                 ),
               ],
             ),
@@ -170,16 +176,4 @@ class _BottomNavBarState extends State<BottomNavBar> {
       ),
     );
   }
-
-  final TextStyle _bottomNavigationBarTextStyle = const TextStyle(
-    fontFamily: 'TTNorms',
-    fontWeight: FontWeight.w400,
-    fontSize: 11,
-  );
-
-  // Widget _selectedBarItem(
-  //   {required icon}
-  // ) {
-  //   return
-  // }
 }

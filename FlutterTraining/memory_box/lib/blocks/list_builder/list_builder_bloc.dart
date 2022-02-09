@@ -15,8 +15,9 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
         ),
       );
     });
+
     on<InitializeListBuilderWithTaleModels>((event, emit) async {
-      List<TaleModel> allTales = event.initializationTales;
+      List<TaleModel>? allTales = event.initializationTales;
       emit(
         state.copyWith(
           isInit: true,
@@ -25,13 +26,13 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
       );
     });
     on<DeleteTale>((event, emit) async {
-      String? taleID = state.allTales?[event.index].ID;
+      String? taleID = state.allTales[event.index].ID;
       if (taleID != null) {
         await DatabaseService.instance.setTaleDeleteStatus(taleID);
       }
 
       List<TaleModel>? updatedTaled = state.allTales;
-      updatedTaled?.removeAt(event.index);
+      updatedTaled.removeAt(event.index);
       emit(
         state.copyWith(allTales: updatedTaled),
       );
@@ -48,83 +49,65 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
 
       List<TaleModel>? updatedTaleList = state.allTales;
 
-      int? renamedIndex = state.allTales?.indexWhere(
+      int? renamedIndex = state.allTales.indexWhere(
         (element) => element.ID == event.taleID,
       );
 
-      if (renamedIndex != null) {
-        updatedTaleList?[renamedIndex] =
-            state.allTales![renamedIndex].copyWith(title: event.newTitle);
-      }
+      updatedTaleList[renamedIndex] =
+          state.allTales[renamedIndex].copyWith(title: event.newTitle);
 
       emit(
         state.copyWith(allTales: updatedTaleList),
       );
     });
 
-    on<PlayTale>(
-      (event, emit) {
+    on<TooglePlayMode>((event, emit) {
+      if (state.isPlay && state.currentPlayTaleModel == event.taleModel ||
+          event.taleModel == null) {
+        emit(
+          StopTaleState(
+            isInit: state.isInit,
+            isPlay: false,
+            allTales: state.allTales,
+            currentPlayTaleModel: state.currentPlayTaleModel,
+            isPlayAllTalesMode: state.isPlayAllTalesMode,
+          ),
+        );
+      } else {
         emit(
           PlayTaleState(
             isInit: state.isInit,
             isPlay: true,
-            isPlayAllTalesMode: state.isPlayAllTalesMode,
             allTales: state.allTales,
-            currentPlayTaleIndex: event.taleIndex,
+            currentPlayTaleModel: event.taleModel,
+            isPlayAllTalesMode: state.isPlayAllTalesMode,
           ),
         );
-      },
-    );
-    on<StopTale>((event, emit) {
-      emit(
-        StopTaleState(
-          isInit: state.isInit,
-          isPlay: false,
-          isPlayAllTalesMode: state.isPlayAllTalesMode,
-          allTales: state.allTales,
-          currentPlayTaleIndex: state.currentPlayTaleIndex,
-        ),
-      );
-    });
-
-    on<TaleEndPlay>((event, emit) {
-      if (state.isPlayAllTalesMode) {
-        add(
-          NextTale(),
-        );
       }
-
-      // add(
-      //   NextTale(),
-      // );
-
-      emit(
-        state.copyWith(
-          isPlay: false,
-          // currentPlayTaleIndex: null,
-        ),
-      );
     });
 
-    on<PlayAllTales>((event, emit) {
+    on<TooglePlayAllMode>((event, emit) {
       emit(
         state.copyWith(
-          isPlayAllTalesMode: event.isPlayAllTales,
+          isPlayAllTalesMode: !state.isPlayAllTalesMode,
         ),
       );
     });
 
     on<NextTale>((event, emit) {
-      if (state.currentPlayTaleIndex == null) return;
+      if (state.currentPlayTaleModel == null) return;
+      int nextIndex = state.allTales
+              .indexWhere((element) => element == state.currentPlayTaleModel) +
+          1;
 
-      int nextTaleIndex = state.currentPlayTaleIndex! + 1;
-
-      if (nextTaleIndex >= state.allTales!.length) {
-        nextTaleIndex = 0;
+      if (nextIndex >= state.allTales.length) {
+        nextIndex = 0;
       }
 
       add(
-        PlayTale(nextTaleIndex),
+        TooglePlayMode(
+          taleModel: state.allTales[nextIndex],
+        ),
       );
     });
   }

@@ -258,108 +258,108 @@ class _HomeScreenState extends State<HomeScreen> {
                       // expandedHeight: 30,
                       // collapsedHeight: 150,
                     ),
-                    MultiBlocProvider(
-                      providers: [
-                        BlocProvider(
-                          create: (context) => ListBuilderBloc()
-                            ..add(
-                              InitializeListBuilderWithFutureRequest(
-                                DatabaseService.instance
-                                    .getAllNotDeletedTaleModels(),
-                              ),
-                            ),
-                        ),
-                        BlocProvider(
-                          create: (context) => AudioplayerBloc()
-                            ..add(
-                              InitPlayer(),
-                            ),
-                        ),
-                      ],
-                      child: BlocConsumer<ListBuilderBloc, ListBuilderState>(
-                        listener: (context, listBuilderState) {
-                          if (listBuilderState is PlayTaleState) {
-                            final int index =
-                                listBuilderState.currentPlayTaleIndex!;
-                            context.read<AudioplayerBloc>().add(
-                                  Play(
-                                    taleModel:
-                                        listBuilderState.allTales![index],
-                                    isAutoPlay: true,
-                                  ),
-                                );
-                          }
+                    // MultiBlocProvider(
+                    //   providers: [
+                    //     BlocProvider(
+                    //       create: (context) => ListBuilderBloc()
+                    //         ..add(
+                    //           InitializeListBuilderWithFutureRequest(
+                    //             DatabaseService.instance
+                    //                 .getAllNotDeletedTaleModels(),
+                    //           ),
+                    //         ),
+                    //     ),
+                    //     BlocProvider(
+                    //       create: (context) => AudioplayerBloc()
+                    //         ..add(
+                    //           InitPlayer(),
+                    //         ),
+                    //     ),
+                    //   ],
+                    //   child: BlocConsumer<ListBuilderBloc, ListBuilderState>(
+                    //     listener: (context, listBuilderState) {
+                    //       if (listBuilderState is PlayTaleState) {
+                    //         final int index =
+                    //             listBuilderState.currentPlayTaleIndex!;
+                    //         context.read<AudioplayerBloc>().add(
+                    //               Play(
+                    //                 taleModel:
+                    //                     listBuilderState.allTales![index],
+                    //                 isAutoPlay: true,
+                    //               ),
+                    //             );
+                    //       }
 
-                          if (listBuilderState is StopTaleState) {
-                            context.read<AudioplayerBloc>().add(
-                                  Pause(),
-                                );
-                          }
-                        },
-                        builder: (context, listBuilderState) {
-                          return SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                TaleModel taleModel =
-                                    listBuilderState.allTales![index];
-                                bool isPlay = false;
+                    //       if (listBuilderState is StopTaleState) {
+                    //         context.read<AudioplayerBloc>().add(
+                    //               Pause(),
+                    //             );
+                    //       }
+                    //     },
+                    //     builder: (context, listBuilderState) {
+                    //       return SliverList(
+                    //         delegate: SliverChildBuilderDelegate(
+                    //           (context, index) {
+                    //             TaleModel taleModel =
+                    //                 listBuilderState.allTales![index];
+                    //             bool isPlay = false;
 
-                                if (listBuilderState.currentPlayTaleIndex ==
-                                        index &&
-                                    listBuilderState.isPlay) {
-                                  isPlay = true;
-                                }
+                    //             if (listBuilderState.currentPlayTaleIndex ==
+                    //                     index &&
+                    //                 listBuilderState.isPlay) {
+                    //               isPlay = true;
+                    //             }
 
-                                return TaleListTileWithPopupMenu(
-                                  key: UniqueKey(),
-                                  // index: index,
-                                  isPlayMode: isPlay,
-                                  taleModel: taleModel,
-                                  onAddToPlaylist: () {},
-                                  onDelete: () {
-                                    context.read<ListBuilderBloc>().add(
-                                          DeleteTale(index),
-                                        );
-                                  },
-                                  onPause: () {
-                                    context.read<ListBuilderBloc>().add(
-                                          PlayTale(index),
-                                        );
-                                  },
-                                  onPlay: () {
-                                    context.read<ListBuilderBloc>().add(
-                                          StopTale(),
-                                        );
-                                  },
-                                  onRename: (String newTitle) {
-                                    print('rename');
-                                    if (taleModel.ID != null) {
-                                      context.read<ListBuilderBloc>().add(
-                                            RenameTale(
-                                              taleModel.ID!,
-                                              newTitle,
-                                            ),
-                                          );
-                                    }
-                                  },
-                                  onShare: () {
-                                    Share.share(taleModel.url!);
-                                  },
-                                  onUndoRenaming: () {
-                                    print('undo');
-                                    context.read<ListBuilderBloc>().add(
-                                          UndoRenameTale(),
-                                        );
-                                  },
-                                );
-                              },
-                              childCount: listBuilderState.allTales?.length ??
-                                  0, // 1000 list items
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    //             return TaleListTileWithPopupMenu(
+                    //               key: UniqueKey(),
+                    //               // index: index,
+                    //               isPlayMode: isPlay,
+                    //               taleModel: taleModel,
+                    //               onAddToPlaylist: () {},
+                    //               onDelete: () {
+                    //                 context.read<ListBuilderBloc>().add(
+                    //                       DeleteTale(index),
+                    //                     );
+                    //               },
+                    //               onPause: () {
+                    //                 context.read<ListBuilderBloc>().add(
+                    //                       PlayTale(index),
+                    //                     );
+                    //               },
+                    //               onPlay: () {
+                    //                 context.read<ListBuilderBloc>().add(
+                    //                       StopTale(),
+                    //                     );
+                    //               },
+                    //               onRename: (String newTitle) {
+                    //                 print('rename');
+                    //                 if (taleModel.ID != null) {
+                    //                   context.read<ListBuilderBloc>().add(
+                    //                         RenameTale(
+                    //                           taleModel.ID!,
+                    //                           newTitle,
+                    //                         ),
+                    //                       );
+                    //                 }
+                    //               },
+                    //               onShare: () {
+                    //                 Share.share(taleModel.url!);
+                    //               },
+                    //               onUndoRenaming: () {
+                    //                 print('undo');
+                    //                 context.read<ListBuilderBloc>().add(
+                    //                       UndoRenameTale(),
+                    //                     );
+                    //               },
+                    //             );
+                    //           },
+                    //           childCount: listBuilderState.allTales?.length ??
+                    //               0, // 1000 list items
+                    //         ),
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

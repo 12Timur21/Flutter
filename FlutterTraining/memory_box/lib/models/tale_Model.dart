@@ -18,7 +18,7 @@ class TaleDeleteStatus extends Equatable {
 
 class TaleModel extends Equatable {
   final String? ID;
-  final String? title;
+  final String title;
   final String? url;
   final Duration? duration;
   final TaleDeleteStatus? deleteStatus;
@@ -26,7 +26,7 @@ class TaleModel extends Equatable {
   const TaleModel({
     this.ID,
     this.duration,
-    this.title,
+    required this.title,
     this.url,
     this.deleteStatus,
   });
@@ -48,7 +48,7 @@ class TaleModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [ID, title, url, duration, deleteStatus];
+  List<Object?> get props => [ID, title, url, deleteStatus];
 
   factory TaleModel.fromJson(Map<String, dynamic> json) {
     Timestamp? timeStamp = (json['isDeleted']['deleteDate'] as Timestamp?);
@@ -81,7 +81,7 @@ class TaleModel extends Equatable {
         'deleteDate': deleteStatus?.deleteDate,
       },
       'taleUrl': url,
-      'searchKey': title?.toLowerCase(),
+      'searchKey': title.toLowerCase(),
     };
   }
 }

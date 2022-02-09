@@ -11,8 +11,8 @@ class AudioSlider extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  final Function onChanged;
-  final Function(double) onChangeEnd;
+  final VoidCallback onChanged;
+  final void Function(double) onChangeEnd;
   final Duration? currentPlayDuration;
   final Duration? taleDuration;
   final Color primaryColor;

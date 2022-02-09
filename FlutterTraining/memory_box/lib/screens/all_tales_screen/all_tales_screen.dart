@@ -23,7 +23,6 @@ class AllTalesScreen extends StatefulWidget {
 }
 
 class _AllTalesScreenState extends State<AllTalesScreen> {
-  bool _isRepitMode = false;
   int _durationSumInMS = 0;
 
   @override
@@ -91,18 +90,18 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
             actionsOnPress: () {},
           ),
           body: BlocConsumer<ListBuilderBloc, ListBuilderState>(
-            listener: (context, listBuilderState) {
-              if (listBuilderState is PlayTaleState) {
-                final int index = listBuilderState.currentPlayTaleIndex!;
+            listener: (context, state) {
+              if (state is PlayTaleState) {
+                final TaleModel taleModel = state.currentPlayTaleModel!;
                 context.read<AudioplayerBloc>().add(
                       Play(
-                        taleModel: listBuilderState.allTales![index],
+                        taleModel: taleModel,
                         isAutoPlay: true,
                       ),
                     );
               }
 
-              if (listBuilderState is StopTaleState) {
+              if (state is StopTaleState) {
                 context.read<AudioplayerBloc>().add(
                       Pause(),
                     );
@@ -110,9 +109,9 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
             },
             builder: (context, listBuilderState) {
               _durationSumInMS = 0;
-              listBuilderState.allTales?.forEach((TaleModel taleModel) {
+              for (final TaleModel taleModel in listBuilderState.allTales) {
                 _durationSumInMS += taleModel.duration?.inMilliseconds ?? 0;
-              });
+              }
 
               return Stack(
                 children: [
@@ -133,7 +132,7 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  '${listBuilderState.allTales?.length ?? 0} аудио',
+                                  '${listBuilderState.allTales.length} аудио',
                                   style: Theme.of(context).textTheme.headline1,
                                 ),
                                 const SizedBox(
@@ -152,26 +151,18 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                               ],
                             ),
                             GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _isRepitMode = !_isRepitMode;
-                                });
-                                if (_isRepitMode) {
-                                  context.read<ListBuilderBloc>().add(
-                                        PlayAllTales(true),
-                                      );
-                                } else {
-                                  context.read<ListBuilderBloc>().add(
-                                        PlayAllTales(false),
-                                      );
-                                }
-                              },
+                              onTap: () => context.read<ListBuilderBloc>().add(
+                                    TooglePlayAllMode(),
+                                  ),
                               child: Container(
                                   width: 222,
                                   height: 50,
                                   decoration: BoxDecoration(
                                     color: AppColors.wildSand.withOpacity(
-                                      _isRepitMode == false ? 0.5 : 0.2,
+                                      listBuilderState.isPlayAllTalesMode ==
+                                              false
+                                          ? 0.5
+                                          : 0.2,
                                     ),
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -202,7 +193,11 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                                         child: SvgPicture.asset(
                                           AppIcons.repeat,
                                           color: AppColors.wildSand.withOpacity(
-                                            _isRepitMode == false ? 0.5 : 1,
+                                            listBuilderState
+                                                        .isPlayAllTalesMode ==
+                                                    false
+                                                ? 0.5
+                                                : 1,
                                           ),
                                         ),
                                       ),
@@ -215,121 +210,144 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                           height: 60,
                         ),
                         Expanded(
-                          child: listBuilderState.isInit
-                              ? ListView.builder(
-                                  itemCount:
-                                      listBuilderState.allTales?.length ?? 0,
-                                  itemBuilder: (context, index) {
-                                    TaleModel taleModel =
-                                        listBuilderState.allTales![index];
-                                    bool isPlay = false;
+                          child: Stack(
+                            children: [
+                              //LIST
+                              RefreshIndicator(
+                                onRefresh: () {
+                                  context.read<ListBuilderBloc>().add(
+                                        InitializeListBuilderWithFutureRequest(
+                                          DatabaseService.instance
+                                              .getAllNotDeletedTaleModels(),
+                                        ),
+                                      );
+                                  return Future.value();
+                                },
+                                child: listBuilderState.isInit
+                                    ? ListView.builder(
+                                        itemCount:
+                                            listBuilderState.allTales.length,
+                                        itemBuilder: (context, index) {
+                                          TaleModel taleModel =
+                                              listBuilderState.allTales[index];
+                                          bool isPlayMode = false;
 
-                                    if (listBuilderState.currentPlayTaleIndex ==
-                                            index &&
-                                        listBuilderState.isPlay) {
-                                      isPlay = true;
+                                          if (listBuilderState
+                                                      .currentPlayTaleModel ==
+                                                  taleModel &&
+                                              listBuilderState.isPlay) {
+                                            isPlayMode = true;
+                                          }
+
+                                          return TaleListTileWithPopupMenu(
+                                            key: UniqueKey(),
+                                            isPlayMode: isPlayMode,
+                                            taleModel: taleModel,
+                                            onAddToPlaylist: () {},
+                                            onDelete: () => context
+                                                .read<ListBuilderBloc>()
+                                                .add(
+                                                  DeleteTale(index),
+                                                ),
+                                            onRename: (String newTitle) =>
+                                                context
+                                                    .read<ListBuilderBloc>()
+                                                    .add(
+                                                      RenameTale(
+                                                        taleModel.ID!,
+                                                        newTitle,
+                                                      ),
+                                                    ),
+                                            onShare: () =>
+                                                Share.share(taleModel.url!),
+                                            onUndoRenaming: () => context
+                                                .read<ListBuilderBloc>()
+                                                .add(
+                                                  UndoRenameTale(),
+                                                ),
+                                            tooglePlayMode: () => context
+                                                .read<ListBuilderBloc>()
+                                                .add(
+                                                  TooglePlayMode(
+                                                    taleModel: taleModel,
+                                                  ),
+                                                ),
+                                          );
+                                        },
+                                      )
+                                    : const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                              ),
+                              //AudioPlayer
+                              BlocConsumer<AudioplayerBloc, AudioplayerState>(
+                                listener: (context, state) {
+                                  if (state.isTaleEnd) {
+                                    if (listBuilderState.isPlayAllTalesMode) {
+                                      context.read<ListBuilderBloc>().add(
+                                            NextTale(),
+                                          );
+                                    } else {
+                                      context.read<ListBuilderBloc>().add(
+                                            TooglePlayMode(),
+                                          );
+                                      context.read<AudioplayerBloc>().add(
+                                            AnnulAudioPlayer(),
+                                          );
                                     }
-
-                                    return TaleListTileWithPopupMenu(
-                                      key: UniqueKey(),
-                                      isPlayMode: isPlay,
-                                      taleModel: taleModel,
-                                      onAddToPlaylist: () {},
-                                      onDelete: () {
-                                        context.read<ListBuilderBloc>().add(
-                                              DeleteTale(index),
-                                            );
-                                      },
-                                      onPause: () {
-                                        context.read<ListBuilderBloc>().add(
-                                              PlayTale(index),
-                                            );
-                                      },
-                                      onPlay: () {
-                                        context.read<ListBuilderBloc>().add(
-                                              StopTale(),
-                                            );
-                                      },
-                                      onRename: (String newTitle) {
-                                        context.read<ListBuilderBloc>().add(
-                                              RenameTale(
-                                                taleModel.ID!,
-                                                newTitle,
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if (state.isTaleInit) {
+                                    return Container(
+                                      alignment: Alignment.bottomCenter,
+                                      margin: const EdgeInsets.only(
+                                        bottom: 10,
+                                      ),
+                                      child: AudioPlayer(
+                                          taleModel: state.taleModel,
+                                          currentPlayPosition:
+                                              state.currentPlayPosition,
+                                          isPlay: listBuilderState.isPlay,
+                                          isNextButtonAvalible: true,
+                                          tooglePlayMode: () {
+                                            print('1');
+                                            context.read<ListBuilderBloc>().add(
+                                                  TooglePlayMode(
+                                                    taleModel: state.taleModel,
+                                                  ),
+                                                );
+                                          },
+                                          onSliderChangeEnd: (value) {
+                                            context.read<AudioplayerBloc>().add(
+                                                  Seek(
+                                                      currentPlayTimeInSec:
+                                                          value),
+                                                );
+                                            // context.read<AudioplayerBloc>().add(
+                                            //       EnablePositionNotifyer(),
+                                            //     );
+                                          },
+                                          next: () => context
+                                              .read<ListBuilderBloc>()
+                                              .add(
+                                                NextTale(),
                                               ),
-                                            );
-                                      },
-                                      onShare: () {
-                                        Share.share(taleModel.url!);
-                                      },
-                                      onUndoRenaming: () {
-                                        context.read<ListBuilderBloc>().add(
-                                              UndoRenameTale(),
-                                            );
-                                      },
+                                          onSliderChanged: () => {}
+                                          // context.read<AudioplayerBloc>().add(
+                                          //       DisablePositionNotifyer(),
+                                          //     ),
+                                          ),
                                     );
-                                  },
-                                )
-                              : const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
+                                  }
+                                  return Container();
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  BlocConsumer<AudioplayerBloc, AudioplayerState>(
-                    listener: (context, audioPlayerState) {
-                      if (audioPlayerState.isTaleEnd) {
-                        if (!listBuilderState.isPlayAllTalesMode) {
-                          context.read<AudioplayerBloc>().add(
-                                AnnulAudioPlayer(),
-                              );
-                        }
-                        context.read<ListBuilderBloc>().add(
-                              TaleEndPlay(),
-                            );
-                      }
-                    },
-                    builder: (context, audioPlayerState) {
-                      if (listBuilderState.currentPlayTaleIndex == null) {
-                        return Container();
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 10,
-                        ),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: AudioPlayer(
-                            taleModel: audioPlayerState.taleModel,
-                            currentPlayDuration:
-                                audioPlayerState.currentPlayDuration,
-                            isPlay: listBuilderState.isPlay,
-                            next: () {
-                              context.read<ListBuilderBloc>().add(NextTale());
-                            },
-                            pause: () {
-                              context.read<ListBuilderBloc>().add(
-                                    StopTale(),
-                                  );
-                            },
-                            play: () {
-                              context.read<ListBuilderBloc>().add(
-                                    PlayTale(
-                                      listBuilderState.currentPlayTaleIndex!,
-                                    ),
-                                  );
-                            },
-                            seek: (double durationInMs) {
-                              context.read<AudioplayerBloc>().add(
-                                    Seek(
-                                      currentPlayTimeInSec: durationInMs,
-                                    ),
-                                  );
-                            },
-                          ),
-                        ),
-                      );
-                    },
                   ),
                 ],
               );

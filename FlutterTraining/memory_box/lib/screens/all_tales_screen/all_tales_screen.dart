@@ -110,7 +110,7 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
             builder: (context, listBuilderState) {
               _durationSumInMS = 0;
               for (final TaleModel taleModel in listBuilderState.allTales) {
-                _durationSumInMS += taleModel.duration?.inMilliseconds ?? 0;
+                _durationSumInMS += taleModel.duration.inMilliseconds;
               }
 
               return Stack(
@@ -254,12 +254,12 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                                                     .read<ListBuilderBloc>()
                                                     .add(
                                                       RenameTale(
-                                                        taleModel.ID!,
+                                                        taleModel.ID,
                                                         newTitle,
                                                       ),
                                                     ),
                                             onShare: () =>
-                                                Share.share(taleModel.url!),
+                                                Share.share(taleModel.url),
                                             onUndoRenaming: () => context
                                                 .read<ListBuilderBloc>()
                                                 .add(

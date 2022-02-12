@@ -103,8 +103,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30.0),
-          topRight: Radius.circular(30.0),
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
         ),
         child: Container(
           decoration: const BoxDecoration(

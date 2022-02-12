@@ -123,9 +123,9 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
         subtitle: _isEditMode
             ? null
             : Text(
-                widget.taleModel.duration?.inMinutes != 0
-                    ? '${widget.taleModel.duration?.inMinutes ?? 0} минут'
-                    : '${widget.taleModel.duration?.inSeconds ?? 0} секунд',
+                widget.taleModel.duration.inMinutes != 0
+                    ? '${widget.taleModel.duration.inMinutes} минут'
+                    : '${widget.taleModel.duration.inSeconds} секунд',
                 style: TextStyle(
                   fontSize: 14,
                   fontFamily: 'TTNorms',

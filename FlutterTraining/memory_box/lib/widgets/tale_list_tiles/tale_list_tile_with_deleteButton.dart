@@ -62,9 +62,9 @@ class _TaleListTileWithDeleteButtonState
           title: Text(widget.taleModel.title),
           horizontalTitleGap: 20,
           subtitle: Text(
-            widget.taleModel.duration?.inMinutes != 0
-                ? '${widget.taleModel.duration?.inMinutes ?? 0} минут'
-                : '${widget.taleModel.duration?.inSeconds ?? 0} секунд',
+            widget.taleModel.duration.inMinutes != 0
+                ? '${widget.taleModel.duration.inMinutes} минут'
+                : '${widget.taleModel.duration.inSeconds} секунд',
             style: const TextStyle(
               fontSize: 14,
               fontFamily: 'TTNorms',

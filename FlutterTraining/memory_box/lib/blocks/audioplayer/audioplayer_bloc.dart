@@ -166,7 +166,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
     on<MoveForward15Sec>((event, emit) async {
       Duration newPlayDuration = await _soundPlayer.moveForward15Sec(
         currentPlayDuration: state.currentPlayPosition!,
-        taleDuration: state.taleModel!.duration!,
+        taleDuration: state.taleModel!.duration,
       );
 
       emit(

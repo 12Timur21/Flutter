@@ -58,9 +58,10 @@ class _ListeningScreenState extends State<ListeningScreen> {
     _pathToSaveAudio = appDirectory.path + '/' + 'Аудиозапись' + '.aac';
 
     TaleModel _taleModel = TaleModel(
-      url: _pathToSaveAudio,
+      url: _pathToSaveAudio!,
       title: 'Запись №',
       ID: const Uuid().v4(),
+      duration: Duration.zero,
     );
 
     _audioBloc.add(InitPlayer());

@@ -28,7 +28,10 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
     on<DeleteTale>((event, emit) async {
       String? taleID = state.allTales[event.index].ID;
       if (taleID != null) {
-        await DatabaseService.instance.setTaleDeleteStatus(taleID);
+        await DatabaseService.instance.updateTale(
+          taleID: taleID,
+          isDeleted: true,
+        );
       }
 
       List<TaleModel>? updatedTaled = state.allTales;
@@ -42,7 +45,7 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
       emit(state.copyWith());
     });
     on<RenameTale>((event, emit) {
-      DatabaseService.instance.updateTaleData(
+      DatabaseService.instance.updateTale(
         taleID: event.taleID,
         title: event.newTitle,
       );

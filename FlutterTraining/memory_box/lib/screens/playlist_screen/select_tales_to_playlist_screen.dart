@@ -38,7 +38,7 @@ class _SelectTalesToPlaylistScreenState
   void initState() {
     futureRequest =
         DatabaseService.instance.searchTalesByTitle(title: _searchValue);
-    print(widget.selectedListTaleModels);
+
     super.initState();
   }
 
@@ -186,6 +186,8 @@ class _SelectTalesToPlaylistScreenState
                           //Secect list
                           RefreshIndicator(
                             onRefresh: () {
+                              futureRequest = DatabaseService.instance
+                                  .searchTalesByTitle(title: _searchValue);
                               context.read<SelectListBuilderBloc>().add(
                                     InitializeSelectListBuilderWithFutureRequest(
                                       initializationTales: futureRequest,

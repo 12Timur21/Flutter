@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memory_box/models/playlist_model.dart';
+import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/screens/playlist_screen/widgets/appBars/viewing_appbar.dart';
@@ -17,8 +18,9 @@ class PlaylistScreen extends StatefulWidget {
 }
 
 class _PlaylistScreenState extends State<PlaylistScreen> {
-  void _createNewPlaylist() {
-    Navigator.of(context).pushReplacementNamed(CreatePlaylistScreen.routeName);
+  Future<void> _createNewPlaylist() async {
+    await Navigator.of(context).pushNamed(CreatePlaylistScreen.routeName);
+    setState(() {});
   }
 
   @override
@@ -46,9 +48,6 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                   children: List.generate(
                     snapshot.data?.length ?? 0,
                     (index) {
-                      PlaylistModel playlistModel =
-                          PlaylistModel(ID: 'ID', title: '3123123');
-                      //!PADDING ВЫНЕСТИ
                       return Container(
                         margin: index % 2 == 0
                             ? const EdgeInsets.only(
@@ -62,7 +61,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                                 left: 8,
                               ),
                         child: PlaylistTile(
-                          playlistModel: playlistModel,
+                          playlistModel: snapshot.data![index],
                           onTap: () {
                             print('on tap');
                           },
@@ -72,7 +71,9 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                   ),
                 );
               }
-              return const CircularProgressIndicator();
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             },
           ),
         ),

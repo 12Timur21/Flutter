@@ -17,18 +17,20 @@ class TaleDeleteStatus extends Equatable {
 }
 
 class TaleModel extends Equatable {
-  final String? ID;
+  final String ID;
   final String title;
-  final String? url;
-  final Duration? duration;
-  final TaleDeleteStatus? deleteStatus;
+  final String url;
+  final Duration duration;
+  final TaleDeleteStatus deleteStatus;
 
   const TaleModel({
-    this.ID,
-    this.duration,
+    required this.ID,
+    required this.duration,
     required this.title,
-    this.url,
-    this.deleteStatus,
+    required this.url,
+    this.deleteStatus = const TaleDeleteStatus(
+      isDeleted: false,
+    ),
   });
 
   TaleModel copyWith({
@@ -75,10 +77,10 @@ class TaleModel extends Equatable {
     return <String, dynamic>{
       'taleID': ID,
       'title': title,
-      'durationInMS': duration?.inMilliseconds ?? Duration.zero,
+      'durationInMS': duration.inMilliseconds,
       'isDeleted': {
-        'status': deleteStatus?.isDeleted ?? false,
-        'deleteDate': deleteStatus?.deleteDate,
+        'status': deleteStatus.isDeleted,
+        'deleteDate': deleteStatus.deleteDate,
       },
       'taleUrl': url,
       'searchKey': title.toLowerCase(),

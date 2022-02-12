@@ -31,13 +31,14 @@ class CreatePlaylistScreen extends StatefulWidget {
 
 class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
   final _formKey = GlobalKey<FormState>();
-  late BuildContext _context;
+  final _scrollController = ScrollController();
+  ListBuilderBloc? _listBuilderBloc;
 
   bool isImageValid = false;
 
   String? _title;
   String? _description;
-  File? _playlitst_cover;
+  File? _playlistCover;
 
   @override
   Widget build(BuildContext context) {
@@ -73,24 +74,23 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
     void saveCollection() async {
       bool isTitleValidate = true; //.currentState?.validate() ?? false;
       bool isPhotoValidate = validateImageField();
-      if (isTitleValidate && isPhotoValidate) {
-        String uuid = const Uuid().v4();
+      // if (isTitleValidate && isPhotoValidate) {
+      String playlistID = const Uuid().v4();
 
-        String coverUrl = await StorageService.instance.uploadPlayListCover(
-          file: _playlitst_cover!,
-          coverID: uuid,
-        );
+      String coverUrl = await StorageService.instance.uploadPlayListCover(
+        file: _playlistCover!,
+        coverID: playlistID,
+      );
 
-        await DatabaseService.instance.createPlaylist(
-          playlistID: uuid,
-          title: _title!,
-          description: _description,
-          talesModels: _context.read<ListBuilderBloc>().state.allTales,
-          coverUrl: coverUrl,
-        );
+      await DatabaseService.instance.createPlaylist(
+        playlistID: playlistID,
+        title: _title!,
+        description: _description,
+        talesModels: _listBuilderBloc?.state.allTales,
+        coverUrl: coverUrl,
+      );
 
-        Navigator.of(context).pop();
-      }
+      Navigator.of(context).pop();
     }
 
     Future<void> _pickImage() async {
@@ -101,7 +101,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
       if (path != null) {
         setState(() {
           isImageValid = true;
-          _playlitst_cover = File(path);
+          _playlistCover = File(path);
         });
       }
     }
@@ -110,40 +110,25 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
       Navigator.of(context).pop();
     }
 
-    Future<void> addSongs() async {
+    Future<void> _addTales() async {
       List<TaleModel>? _listTaleModels = await Navigator.of(context).pushNamed(
         SelectTalesToPlaylistScreen.routeName,
-        arguments: _context.read<ListBuilderBloc>().state.allTales,
+        arguments: _listBuilderBloc?.state.allTales,
       ) as List<TaleModel>?;
 
-      _context.read<ListBuilderBloc>().add(
-            InitializeListBuilderWithTaleModels(_listTaleModels),
-          );
-
-      ;
+      _listBuilderBloc?.add(
+        InitializeListBuilderWithTaleModels(_listTaleModels),
+      );
+      setState(() {});
     }
 
-    TextButton _addSongButton = TextButton(
-      onPressed: addSongs,
-      child: const Text(
-        'Добавить аудиофайл',
-        style: TextStyle(
-          // height: 2,
-          fontFamily: 'TTNorms',
-          fontWeight: FontWeight.w500,
-          fontSize: 14,
-          color: Colors.transparent,
-          decoration: TextDecoration.underline,
-          decorationColor: Colors.black,
-          shadows: [
-            Shadow(
-              color: Colors.black,
-              offset: Offset(0, -5),
-            ),
-          ],
-        ),
-      ),
-    );
+    void _scrollDown() {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+    }
 
     return MultiBlocProvider(
       providers: [
@@ -212,6 +197,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             ),
             alignment: Alignment.topCenter,
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,12 +248,12 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                             width: double.infinity,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(15),
-                              child: _playlitst_cover != null
+                              child: _playlistCover != null
                                   ? Image.file(
-                                      _playlitst_cover ?? File(''),
+                                      _playlistCover!,
                                       fit: BoxFit.fitWidth,
                                     )
-                                  : Container(),
+                                  : null,
                             ),
                           ),
                           Center(
@@ -282,18 +268,39 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                   ),
                   TextFormField(
                     style: const TextStyle(fontSize: 22),
-                    // initialValue: collectionState.description,
                     decoration: const InputDecoration(
                       hintText: 'Введите описание...',
+                      focusColor: Colors.red,
                     ),
                     onChanged: onDescriptionChanged,
-                    maxLines: 5,
+                    maxLines: 3,
                     minLines: 1,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _addSongButton,
+                      _listBuilderBloc?.state.allTales.isNotEmpty ?? false
+                          ? TextButton(
+                              onPressed: _addTales,
+                              child: const Text(
+                                'Изменить список',
+                                style: TextStyle(
+                                  fontFamily: 'TTNorms',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  color: Colors.transparent,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.black,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black,
+                                      offset: Offset(0, -5),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(),
                       TextButton(
                         onPressed: () {},
                         child: const Text(
@@ -311,10 +318,8 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-
-                  ////
                   SizedBox(
-                    height: 500,
+                    height: 300,
                     child: BlocConsumer<ListBuilderBloc, ListBuilderState>(
                         listener: (context, state) {
                       if (state is PlayTaleState) {
@@ -333,70 +338,85 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
                             );
                       }
                     }, builder: (context, listBuilderState) {
-                      _context = context;
+                      _listBuilderBloc = context.read<ListBuilderBloc>();
                       return Stack(
                         children: [
                           //LIST
-                          RefreshIndicator(
-                            onRefresh: () {
-                              context.read<ListBuilderBloc>().add(
-                                    InitializeListBuilderWithFutureRequest(
-                                      DatabaseService.instance
-                                          .getAllNotDeletedTaleModels(),
-                                    ),
-                                  );
-                              return Future.value();
-                            },
-                            child: listBuilderState.isInit
-                                ? ListView.builder(
-                                    itemCount: listBuilderState.allTales.length,
-                                    itemBuilder: (context, index) {
-                                      TaleModel taleModel =
-                                          listBuilderState.allTales[index];
-                                      bool isPlayMode = false;
+                          _listBuilderBloc?.state.allTales.isNotEmpty ?? true
+                              ? ListView.builder(
+                                  itemCount:
+                                      listBuilderState.allTales.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (listBuilderState.allTales.length ==
+                                        index) {
+                                      return const SizedBox(
+                                        height: 90,
+                                      );
+                                    }
+                                    TaleModel taleModel =
+                                        listBuilderState.allTales[index];
+                                    bool isPlayMode = false;
 
-                                      if (listBuilderState
-                                                  .currentPlayTaleModel ==
-                                              taleModel &&
-                                          listBuilderState.isPlay) {
-                                        isPlayMode = true;
-                                      }
+                                    if (listBuilderState.currentPlayTaleModel ==
+                                            taleModel &&
+                                        listBuilderState.isPlay) {
+                                      isPlayMode = true;
+                                    }
 
-                                      return TaleListTileWithPopupMenu(
+                                    return TaleListTileWithPopupMenu(
                                         key: UniqueKey(),
                                         isPlayMode: isPlayMode,
                                         taleModel: taleModel,
                                         onAddToPlaylist: () {},
-                                        onDelete: () =>
-                                            context.read<ListBuilderBloc>().add(
-                                                  DeleteTale(index),
-                                                ),
+                                        onDelete: () => _listBuilderBloc?.add(
+                                              DeleteTale(index),
+                                            ),
                                         onRename: (String newTitle) =>
-                                            context.read<ListBuilderBloc>().add(
-                                                  RenameTale(
-                                                    taleModel.ID!,
-                                                    newTitle,
-                                                  ),
-                                                ),
+                                            _listBuilderBloc?.add(
+                                              RenameTale(
+                                                taleModel.ID,
+                                                newTitle,
+                                              ),
+                                            ),
                                         onShare: () =>
-                                            Share.share(taleModel.url!),
+                                            Share.share(taleModel.url),
                                         onUndoRenaming: () =>
-                                            context.read<ListBuilderBloc>().add(
-                                                  UndoRenameTale(),
-                                                ),
-                                        tooglePlayMode: () =>
-                                            context.read<ListBuilderBloc>().add(
-                                                  TooglePlayMode(
-                                                    taleModel: taleModel,
-                                                  ),
-                                                ),
-                                      );
-                                    },
-                                  )
-                                : const Center(
-                                    child: CircularProgressIndicator(),
+                                            _listBuilderBloc?.add(
+                                              UndoRenameTale(),
+                                            ),
+                                        tooglePlayMode: () {
+                                          _scrollDown();
+                                          _listBuilderBloc?.add(
+                                            TooglePlayMode(
+                                              taleModel: taleModel,
+                                            ),
+                                          );
+                                        });
+                                  },
+                                )
+                              : Center(
+                                  child: TextButton(
+                                    onPressed: _addTales,
+                                    child: const Text(
+                                      'Добавить аудиофайл',
+                                      style: TextStyle(
+                                        // height: 2,
+                                        fontFamily: 'TTNorms',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                        color: Colors.transparent,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: Colors.black,
+                                        shadows: [
+                                          Shadow(
+                                            color: Colors.black,
+                                            offset: Offset(0, -5),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                          ),
+                                ),
                           //AudioPlayer
                           BlocConsumer<AudioplayerBloc, AudioplayerState>(
                             listener: (context, state) {

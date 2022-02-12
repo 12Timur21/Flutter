@@ -11,7 +11,7 @@ enum FileType {
   tale,
   file,
   avatar,
-  playListCover,
+  playlistCover,
 }
 
 class StorageService {
@@ -31,7 +31,7 @@ class StorageService {
     if (fileType == FileType.file) destination = 'files';
     if (fileType == FileType.tale) destination = 'audiofiles';
     if (fileType == FileType.avatar) destination = 'avatars';
-    if (fileType == FileType.playListCover) destination = 'playListCovers';
+    if (fileType == FileType.playlistCover) destination = 'playlistCovers';
 
     if (uid != null) src = '$destination/$uid';
     if (fileName != null) src = '$destination/$fileName';
@@ -270,19 +270,19 @@ class StorageService {
 
   //??[End] Tale
 
-  //??[Start] PlayList
+  //??[Start] Playlist
   Future<String> uploadPlayListCover({
     required File file,
     required String coverID,
   }) async {
-    final destination = mapDestination(
+    final String destination = mapDestination(
       uid: AuthService.userID,
       fileName: coverID,
-      fileType: FileType.playListCover,
+      fileType: FileType.playlistCover,
     );
 
-    await _cloud.ref().child('/$destination').putFile(file);
-    return await _cloud.ref().child('/$destination').getDownloadURL();
+    await _cloud.ref().child(destination).putFile(file);
+    return await _cloud.ref().child(destination).getDownloadURL();
   }
 
   Future<void> deletePlayListCover({
@@ -291,7 +291,7 @@ class StorageService {
     final destination = mapDestination(
       uid: AuthService.userID,
       fileName: coverID,
-      fileType: FileType.playListCover,
+      fileType: FileType.playlistCover,
     );
 
     await _cloud.ref().child('/$destination').delete();
@@ -303,10 +303,10 @@ class StorageService {
     final destination = mapDestination(
       uid: AuthService.userID,
       fileName: coverID,
-      fileType: FileType.playListCover,
+      fileType: FileType.playlistCover,
     );
 
     await _cloud.ref().child('/$destination').getDownloadURL();
   }
-  //??[End] PlayList
+  //??[End] Playlist
 }

@@ -9,11 +9,11 @@ import 'package:memory_box/widgets/backgoundPattern.dart';
 
 class AddTaleToPlaylists extends StatefulWidget {
   const AddTaleToPlaylists({
-    this.taleID,
+    required this.taleID,
     Key? key,
   }) : super(key: key);
 
-  final String? taleID;
+  final String taleID;
 
   @override
   _AddTaleToPlaylistsState createState() => _AddTaleToPlaylistsState();
@@ -37,12 +37,12 @@ class _AddTaleToPlaylistsState extends State<AddTaleToPlaylists> {
 
   void _addTalesToPlaylist() async {
     String? taleID = widget.taleID;
-    if (taleID != null) {
-      await DatabaseService.instance.addOneTaleToFewPlaylist(
-        playListIDs: selectedTileIDs,
-        taleID: taleID,
-      );
-    }
+
+    await DatabaseService.instance.addTalesToFewPlaylist(
+      playlistIDs: selectedTileIDs,
+      taleIDs: [taleID],
+    );
+
     Navigator.of(context).pop();
   }
   //*[END] AdditionTaleToPlaylistMode
@@ -78,8 +78,8 @@ class _AddTaleToPlaylistsState extends State<AddTaleToPlaylists> {
                           taleID: snapshot.data?[index].ID ?? '',
                           title: snapshot.data?[index].title ?? '',
                           audioCount:
-                              snapshot.data?[index].taleModels?.length ?? 0,
-                          coverUrl: snapshot.data?[index].coverURL ?? '',
+                              snapshot.data?[index].taleModels.length ?? 0,
+                          coverUrl: snapshot.data?[index].coverUrl ?? '',
                           sumAudioDuration: Duration.zero,
                           // snapshot.data?[index].duration ?? Duration.zero,
                           index: index,

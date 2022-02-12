@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/resources/app_coloros.dart';
+import 'package:memory_box/utils/formatting.dart';
 
 class PlaylistTile extends StatefulWidget {
   const PlaylistTile({
@@ -34,24 +35,26 @@ class _PlaylistTileState extends State<PlaylistTile> {
               child: Stack(
                 children: [
                   CachedNetworkImage(
-                    imageUrl: widget.playlistModel.coverURL ??
-                        'https://lightning.od-cdn.com/static/img/no-cover_en_US.a8920a302274ea37cfaecb7cf318890e.jpg',
+                    imageUrl: widget.playlistModel.coverUrl,
                     height: 240,
                     fit: BoxFit.fill,
                     placeholder: (context, url) => const Center(
                       child: CircularProgressIndicator(),
                     ),
                     errorWidget: (context, url, error) => const Center(
-                      child: Icon(Icons.error),
+                      child: Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
                     ),
                   ),
                   Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: <Color>[
-                          Colors.black,
+                          Colors.black.withOpacity(0),
                           AppColors.gray,
                         ],
                       ),
@@ -85,7 +88,7 @@ class _PlaylistTileState extends State<PlaylistTile> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${widget.playlistModel.taleModels?.length ?? 0} аудио',
+                                    '${widget.playlistModel.taleModels.length} аудио',
                                     style: const TextStyle(
                                       fontFamily: 'TTNorms',
                                       fontWeight: FontWeight.w400,
@@ -96,20 +99,29 @@ class _PlaylistTileState extends State<PlaylistTile> {
                                   const SizedBox(
                                     height: 7,
                                   ),
-                                  // Text(
-                                  //   // sumAudioDuration?.inMilliseconds.toString() ?? '',
-                                  //   '${convertDurationToString(
-                                  //     duration: widget.sumAudioDuration,
-                                  //     formattingType:
-                                  //         TimeFormattingType.hourMinute,
-                                  //   )} ${widget.sumAudioDuration.inHours > 0 ? "часа" : "минут"}',
-                                  //   style: const TextStyle(
-                                  //     fontFamily: 'TTNorms',
-                                  //     fontWeight: FontWeight.w400,
-                                  //     fontSize: 12,
-                                  //     color: Colors.white,
-                                  //   ),
-                                  // ),
+                                  Text(
+                                    // sumAudioDuration?.inMilliseconds.toString() ?? '',
+                                    '${convertDurationToString(
+                                      duration: widget.playlistModel.taleModels
+                                          .fold<Duration>(
+                                        Duration.zero,
+                                        (Duration previousValue, element) =>
+                                            previousValue + element.duration,
+                                      ),
+                                      formattingType:
+                                          TimeFormattingType.hourMinute,
+                                    )} ${widget.playlistModel.taleModels.fold<Duration>(
+                                          Duration.zero,
+                                          (Duration previousValue, element) =>
+                                              previousValue + element.duration,
+                                        ).inHours > 0 ? "часа" : "минут"}',
+                                    style: const TextStyle(
+                                      fontFamily: 'TTNorms',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ],
                               )
                             ],

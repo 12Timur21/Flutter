@@ -73,8 +73,8 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
   void saveChanges() async {
     if (_textEditingController.text.isEmpty) {
     } else {
-      await DatabaseService.instance.updateTaleData(
-        taleID: widget.taleModel.ID!,
+      await DatabaseService.instance.updateTale(
+        taleID: widget.taleModel.ID,
         title: _textEditingController.text,
       );
 
@@ -158,12 +158,15 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
   }
 
   Future<void> _deleteTale() async {
-    DatabaseService.instance.setTaleDeleteStatus(widget.taleModel.ID!);
+    DatabaseService.instance.updateTale(
+      taleID: widget.taleModel.ID,
+      isDeleted: true,
+    );
     Navigator.of(context).pop();
   }
 
   Future<void> _shareTale() async {
-    Share.shareFiles([widget.taleModel.url!]);
+    Share.shareFiles([widget.taleModel.url]);
   }
 
   @override

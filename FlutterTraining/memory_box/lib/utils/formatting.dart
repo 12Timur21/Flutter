@@ -35,7 +35,7 @@ String convertDateTimeToString({
   DateTime? date,
   DayTimeFormattingType? dayTimeFormattingType,
 }) {
-  if (date != null && dayTimeFormattingType != null) {
+  if (date != null) {
     if (dayTimeFormattingType == DayTimeFormattingType.dayMonthYear) {
       return "${date.day}.${date.month}.${date.year}";
     }
@@ -45,6 +45,7 @@ String convertDateTimeToString({
     if (dayTimeFormattingType == DayTimeFormattingType.day) {
       return "${date.day}";
     }
+    return '';
   }
   return '';
 }

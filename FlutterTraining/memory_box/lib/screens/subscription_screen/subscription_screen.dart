@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   static const routeName = 'SubscriptionScreen';

@@ -18,7 +18,7 @@ class AppBarMultirowTitle extends StatelessWidget {
         textAlign: TextAlign.center,
         text: TextSpan(
           text: title,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: 'TTNorms',
             fontWeight: FontWeight.w700,
             fontSize: 36,
@@ -28,7 +28,7 @@ class AppBarMultirowTitle extends StatelessWidget {
               ? <TextSpan>[
                   TextSpan(
                     text: '\n $subtitile',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'TTNorms',
                       fontWeight: FontWeight.w500,
                       fontSize: 16,

@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-
-import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/resources/app_icons.dart';
-
-import 'package:share_plus/share_plus.dart';
 
 class TaleListTileWithPopupMenu extends StatefulWidget {
   const TaleListTileWithPopupMenu({

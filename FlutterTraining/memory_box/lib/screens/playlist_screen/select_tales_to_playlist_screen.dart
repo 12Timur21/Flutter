@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/blocks/select_list_builder/select_list_builder_bloc.dart';
+import 'package:memory_box/blocks/tale_builders/select_list_builder/select_list_builder_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_coloros.dart';
@@ -32,14 +32,21 @@ class _SelectTalesToPlaylistScreenState
 
   late Future<List<TaleModel>> futureRequest;
   final TextEditingController _searchFieldContoller = TextEditingController();
-  late BuildContext _context;
 
+  SelectListBuilderBloc? _selectListBuilderBloc;
+  AudioplayerBloc? _audioplayerBloc;
   @override
   void initState() {
     futureRequest =
         DatabaseService.instance.searchTalesByTitle(title: _searchValue);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _audioplayerBloc?.add(DisposePlayer());
+    super.dispose();
   }
 
   void _onSearchValueChange(String value) {
@@ -51,11 +58,11 @@ class _SelectTalesToPlaylistScreenState
       futureRequest =
           DatabaseService.instance.searchTalesByTitle(title: _searchValue);
 
-      _context.read<SelectListBuilderBloc>().add(
-            InitializeSelectListBuilderWithFutureRequest(
-              initializationTales: futureRequest,
-            ),
-          );
+      _selectListBuilderBloc?.add(
+        InitializeSelectListBuilderWithFutureRequest(
+          initializationTales: futureRequest,
+        ),
+      );
     });
   }
 
@@ -67,7 +74,7 @@ class _SelectTalesToPlaylistScreenState
 
   void _saveChanges() {
     Navigator.of(context).pop(
-      _context.read<SelectListBuilderBloc>().state.selectedTales,
+      _selectListBuilderBloc?.state.selectedTales,
     );
   }
 
@@ -180,7 +187,8 @@ class _SelectTalesToPlaylistScreenState
                       }
                     },
                     builder: (context, listBuilderState) {
-                      _context = context;
+                      _selectListBuilderBloc =
+                          context.read<SelectListBuilderBloc>();
                       return Stack(
                         children: [
                           //Secect list
@@ -188,17 +196,24 @@ class _SelectTalesToPlaylistScreenState
                             onRefresh: () {
                               futureRequest = DatabaseService.instance
                                   .searchTalesByTitle(title: _searchValue);
-                              context.read<SelectListBuilderBloc>().add(
-                                    InitializeSelectListBuilderWithFutureRequest(
-                                      initializationTales: futureRequest,
-                                    ),
-                                  );
+                              _selectListBuilderBloc?.add(
+                                InitializeSelectListBuilderWithFutureRequest(
+                                  initializationTales: futureRequest,
+                                ),
+                              );
                               return Future.value();
                             },
                             child: listBuilderState.isInit
                                 ? ListView.builder(
-                                    itemCount: listBuilderState.allTales.length,
+                                    itemCount:
+                                        listBuilderState.allTales.length + 1,
                                     itemBuilder: (context, index) {
+                                      if (listBuilderState.allTales.length ==
+                                          index) {
+                                        return const SizedBox(
+                                          height: 90,
+                                        );
+                                      }
                                       TaleModel taleModel =
                                           listBuilderState.allTales[index];
                                       bool isPlayMode = false;
@@ -220,18 +235,16 @@ class _SelectTalesToPlaylistScreenState
                                         isPlayMode: isPlayMode,
                                         isSelected: isSelected,
                                         taleModel: taleModel,
-                                        tooglePlayMode: () => context
-                                            .read<SelectListBuilderBloc>()
-                                            .add(
-                                              TooglePlayMode(
-                                                taleModel: taleModel,
-                                              ),
-                                            ),
-                                        toogleSelectMode: () => context
-                                            .read<SelectListBuilderBloc>()
-                                            .add(
-                                              ToggleSelectMode(taleModel),
-                                            ),
+                                        tooglePlayMode: () =>
+                                            _selectListBuilderBloc?.add(
+                                          TooglePlayMode(
+                                            taleModel: taleModel,
+                                          ),
+                                        ),
+                                        toogleSelectMode: () =>
+                                            _selectListBuilderBloc?.add(
+                                          ToggleSelectMode(taleModel),
+                                        ),
                                       );
                                     },
                                   )
@@ -246,12 +259,14 @@ class _SelectTalesToPlaylistScreenState
                                 context.read<AudioplayerBloc>().add(
                                       AnnulAudioPlayer(),
                                     );
-                                context.read<SelectListBuilderBloc>().add(
-                                      TooglePlayMode(),
-                                    );
+                                _selectListBuilderBloc?.add(
+                                  TooglePlayMode(),
+                                );
                               }
                             },
                             builder: (context, state) {
+                              _audioplayerBloc =
+                                  context.read<AudioplayerBloc>();
                               if (state.isTaleInit) {
                                 return Container(
                                   alignment: Alignment.bottomCenter,
@@ -264,24 +279,21 @@ class _SelectTalesToPlaylistScreenState
                                           state.currentPlayPosition,
                                       isPlay: listBuilderState.isPlay,
                                       isNextButtonAvalible: false,
-                                      tooglePlayMode: () {
-                                        print('1');
-                                        context
-                                            .read<SelectListBuilderBloc>()
-                                            .add(
-                                              TooglePlayMode(
-                                                taleModel: state.taleModel,
-                                              ),
-                                            );
-                                      },
-                                      onSliderChangeEnd: (value) {
-                                        context.read<AudioplayerBloc>().add(
-                                              Seek(currentPlayTimeInSec: value),
-                                            );
-                                        // context.read<AudioplayerBloc>().add(
-                                        //       EnablePositionNotifyer(),
-                                        //     );
-                                      },
+                                      tooglePlayMode: () =>
+                                          _selectListBuilderBloc?.add(
+                                            TooglePlayMode(
+                                              taleModel: state.taleModel,
+                                            ),
+                                          ),
+                                      onSliderChangeEnd: (value) => context
+                                          .read<AudioplayerBloc>()
+                                          .add(
+                                            Seek(currentPlayTimeInSec: value),
+                                          ),
+                                      // context.read<AudioplayerBloc>().add(
+                                      //       EnablePositionNotifyer(),
+                                      //     );
+
                                       onSliderChanged: () => {}
                                       // context.read<AudioplayerBloc>().add(
                                       //       DisablePositionNotifyer(),

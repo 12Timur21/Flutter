@@ -17,22 +17,20 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
     });
 
     on<InitializeListBuilderWithTaleModels>((event, emit) async {
-      List<TaleModel>? allTales = event.initializationTales;
       emit(
         state.copyWith(
           isInit: true,
-          allTales: allTales,
+          allTales: event.initializationTales,
         ),
       );
     });
+
     on<DeleteTale>((event, emit) async {
       String? taleID = state.allTales[event.index].ID;
-      if (taleID != null) {
-        await DatabaseService.instance.updateTale(
-          taleID: taleID,
-          isDeleted: true,
-        );
-      }
+      await DatabaseService.instance.updateTale(
+        taleID: taleID,
+        isDeleted: true,
+      );
 
       List<TaleModel>? updatedTaled = state.allTales;
       updatedTaled.removeAt(event.index);

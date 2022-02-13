@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ElipseOrangeButton extends StatefulWidget {
-  ElipseOrangeButton({
+  const ElipseOrangeButton({
     required this.onPress,
     required this.text,
     Key? key,
   }) : super(key: key);
 
-  VoidCallback onPress;
-  String text;
+  final VoidCallback onPress;
+  final String text;
   @override
   _ElipseOrangeButtonState createState() => _ElipseOrangeButtonState();
 }

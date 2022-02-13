@@ -23,16 +23,15 @@ class _TaleListTileWithDeleteButtonState
 
   void _deleteTale() {
     String? taleID = widget.taleModel.ID;
-    if (taleID != null) {
-      DatabaseService.instance.finalDeleteTaleRecord(taleID);
-      setState(() {
-        _isDeleted = true;
-      });
-    }
+    DatabaseService.instance.finalDeleteTaleRecord(taleID);
+    setState(() {
+      _isDeleted = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    //!!!УБРАТЬ И ДЕЛАТЬ ЧЕРЕЗ БЛОК
     return Visibility(
       visible: !_isDeleted,
       child: Container(

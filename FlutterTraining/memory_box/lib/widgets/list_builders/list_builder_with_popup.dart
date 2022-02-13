@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
-import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/database_service.dart';
-import 'package:memory_box/widgets/audioplayer/audio_player.dart';
-import 'package:memory_box/widgets/tale_list_tiles/tale_list_tile_with_popup_menu.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:memory_box/blocks/tale_builders/list_builder/list_builder_bloc.dart';
 
 class ListBuilderWithPopup extends StatefulWidget {
   const ListBuilderWithPopup({

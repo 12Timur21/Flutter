@@ -3,7 +3,6 @@ import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';
-import 'package:meta/meta.dart';
 
 part 'session_event.dart';
 part 'session_state.dart';

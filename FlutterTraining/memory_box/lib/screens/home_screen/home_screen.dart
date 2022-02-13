@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
-import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/screens/all_tales_screen/all_tales_screen.dart';
 import 'package:memory_box/screens/mainPage.dart';
-import 'package:memory_box/widgets/appBar_withButtons.dart';
-import 'package:memory_box/widgets/audioplayer/audio_player.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/tale_list_tiles/tale_list_tile_with_popup_menu.dart';
-import 'package:share_plus/share_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = 'HomeScreen';

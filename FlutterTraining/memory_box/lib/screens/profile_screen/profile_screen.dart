@@ -8,13 +8,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
-import 'package:memory_box/repositories/database_service.dart';
-import 'package:memory_box/repositories/storage_service.dart';
 import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
-import 'package:memory_box/widgets/circle_textField.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
-import 'package:memory_box/widgets/drawer/custom_drawer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memory_box/widgets/undoButton.dart';
 

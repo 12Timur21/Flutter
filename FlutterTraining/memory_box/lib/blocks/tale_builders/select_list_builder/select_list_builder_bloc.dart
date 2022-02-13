@@ -51,8 +51,8 @@ class SelectListBuilderBloc
             isInit: state.isInit,
             isPlay: false,
             allTales: state.allTales,
-            selectedTales: state.selectedTales,
             currentPlayTaleModel: state.currentPlayTaleModel,
+            selectedTales: state.selectedTales,
           ),
         );
       } else {

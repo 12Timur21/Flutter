@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/models/user_model.dart';
@@ -296,6 +294,7 @@ class DatabaseService {
       'description': description,
       'taleReferences': taleReferences,
       'coverUrl': coverUrl,
+      'creation_date': DateTime.now(),
     };
 
     await _playlistsCollection

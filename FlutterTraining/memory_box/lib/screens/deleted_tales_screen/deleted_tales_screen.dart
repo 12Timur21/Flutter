@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/database_service.dart';
-import 'package:memory_box/utils/formatting.dart';
 import 'package:memory_box/widgets/appBar/appBar_multirow_title.dart';
 import 'package:memory_box/widgets/appBar_withButtons.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 import 'package:memory_box/widgets/tale_list_tiles/tale_list_tile_with_deleteButton.dart';
-import 'package:memory_box/widgets/tale_list_tiles/tale_list_tile_with_popup_menu.dart';
 
 class DeletedTalesScreen extends StatefulWidget {
   static const routeName = 'DeletedTalesScreen';

@@ -1,15 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:memory_box/models/tale_model.dart';
-import 'package:share_plus/share_plus.dart';
 // import 'package:share/share.dart';
 
 class SoundPlayer {
-  SoundPlayer._();
-  static final SoundPlayer instance = SoundPlayer._();
-
   FlutterSoundPlayer? _flutterSoundPlayer;
 
   bool get isSoundPlay => _flutterSoundPlayer?.isPlaying ?? false;

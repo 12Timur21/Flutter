@@ -9,7 +9,7 @@ part 'audioplayer_state.dart';
 
 class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
   AudioplayerBloc() : super(const AudioplayerState()) {
-    SoundPlayer _soundPlayer = SoundPlayer.instance;
+    SoundPlayer _soundPlayer = SoundPlayer();
     StreamSubscription? _soundNotifyerController;
 
     on<InitPlayer>((event, emit) async {

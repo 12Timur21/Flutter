@@ -23,7 +23,6 @@ class SoundPlayer {
         mode: SessionMode.modeMeasurement,
         focus: AudioFocus.requestFocus,
       );
-
       await _flutterSoundPlayer?.setSubscriptionDuration(
         const Duration(
           seconds: 1,

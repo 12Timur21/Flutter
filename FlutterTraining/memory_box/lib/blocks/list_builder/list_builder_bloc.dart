@@ -1,13 +1,14 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 part 'list_builder_event.dart';
 part 'list_builder_state.dart';
 
 class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
-  ListBuilderBloc() : super(ListBuilderState()) {
+  ListBuilderBloc() : super(const ListBuilderState()) {
     on<InitializeListBuilderWithFutureRequest>((event, emit) async {
-      List<TaleModel> allTales = await event.initializationTales;
+      List<TaleModel> allTales = await event.talesInitRequest;
       emit(
         state.copyWith(
           isInit: true,
@@ -26,16 +27,15 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
     });
 
     on<DeleteTale>((event, emit) async {
-      String? taleID = state.allTales[event.index].ID;
       await DatabaseService.instance.updateTale(
-        taleID: taleID,
+        taleID: event.taleModel.ID,
         isDeleted: true,
       );
 
-      List<TaleModel>? updatedTaled = state.allTales;
-      updatedTaled.removeAt(event.index);
+      List<TaleModel> taleModels = [...state.allTales];
+      taleModels.remove(event.taleModel);
       emit(
-        state.copyWith(allTales: updatedTaled),
+        state.copyWith(allTales: taleModels),
       );
     });
 
@@ -88,6 +88,7 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
     });
 
     on<TooglePlayAllMode>((event, emit) {
+      print('123');
       emit(
         state.copyWith(
           isPlayAllTalesMode: !state.isPlayAllTalesMode,

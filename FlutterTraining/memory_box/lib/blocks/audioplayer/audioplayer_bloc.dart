@@ -8,10 +8,10 @@ part 'audioplayer_event.dart';
 part 'audioplayer_state.dart';
 
 class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
-  AudioplayerBloc() : super(const AudioplayerState()) {
-    SoundPlayer _soundPlayer = SoundPlayer();
-    StreamSubscription? _soundNotifyerController;
+  final SoundPlayer _soundPlayer = SoundPlayer();
+  StreamSubscription? _soundNotifyerController;
 
+  AudioplayerBloc() : super(const AudioplayerState()) {
     on<InitPlayer>((event, emit) async {
       bool _isPlayerInit = await _soundPlayer.initPlayer();
 
@@ -27,7 +27,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
             _soundPlayer.soundDurationStream?.listen((e) {
           print('${e.position.inMilliseconds} - ${e.duration.inMilliseconds}}');
           add(
-            UpdateAudioPlayerDuration(
+            UpdateAudioPlayerPosition(
               currentPlayPosition: Duration(
                 milliseconds: e.position.inMilliseconds,
               ),
@@ -41,18 +41,14 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
         );
       }
     });
-
-    on<EnablePositionNotifyer>((event, emit) async {
-      _soundNotifyerController?.resume();
-    });
-    on<DisablePositionNotifyer>((event, emit) async {
-      _soundNotifyerController?.pause();
-    });
-
-    on<DisposePlayer>((event, emit) async {
-      if (state.isPlay) await _soundPlayer.pausePlayer();
-      await _soundPlayer.dispose();
-      _soundNotifyerController?.cancel();
+    on<TooglePositionNotifyer>((event, emit) async {
+      if (_soundNotifyerController?.isPaused != null) {
+        if (_soundNotifyerController!.isPaused) {
+          _soundNotifyerController?.resume();
+        } else {
+          _soundNotifyerController?.pause();
+        }
+      }
     });
     on<InitTale>((event, emit) async {
       final Completer<void> whenFinished = Completer<void>();
@@ -86,7 +82,6 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
         );
       });
     });
-
     on<Play>((event, emit) async {
       print('3');
       //Если модель уже была инициализирована, то плеер продолжит с прошлого места
@@ -142,7 +137,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
         ),
       );
     });
-    on<UpdateAudioPlayerDuration>((event, emit) {
+    on<UpdateAudioPlayerPosition>((event, emit) {
       emit(
         state.copyWith(
           newPlayDuration: event.currentPlayPosition,
@@ -175,5 +170,12 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
         ),
       );
     });
+  }
+
+  @override
+  Future<void> close() {
+    _soundNotifyerController?.cancel();
+    _soundPlayer.dispose();
+    return super.close();
   }
 }

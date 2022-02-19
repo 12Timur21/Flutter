@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
-import 'package:memory_box/blocks/tale_builders/list_builder/list_builder_bloc.dart';
-
+import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/resources/app_icons.dart';
+import 'package:memory_box/screens/playlist_screen/add_tale_to_playlists_screen.dart';
 import 'package:memory_box/utils/formatting.dart';
 import 'package:memory_box/widgets/appBar_withButtons.dart';
 import 'package:memory_box/widgets/audioplayer/audio_player.dart';
@@ -27,14 +27,6 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
   int _durationSumInMS = 0;
 
   @override
-  void dispose() {
-    BlocProvider.of<AudioplayerBloc>(context).add(
-      DisposePlayer(),
-    );
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
@@ -42,7 +34,8 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
           create: (context) => ListBuilderBloc()
             ..add(
               InitializeListBuilderWithFutureRequest(
-                DatabaseService.instance.getAllNotDeletedTaleModels(),
+                talesInitRequest:
+                    DatabaseService.instance.getAllNotDeletedTaleModels(),
               ),
             ),
         ),
@@ -109,6 +102,7 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
               }
             },
             builder: (context, listBuilderState) {
+              //!Переделать на fold
               _durationSumInMS = 0;
               for (final TaleModel taleModel in listBuilderState.allTales) {
                 _durationSumInMS += taleModel.duration.inMilliseconds;
@@ -156,54 +150,51 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                                     TooglePlayAllMode(),
                                   ),
                               child: Container(
-                                  width: 222,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.wildSand.withOpacity(
-                                      listBuilderState.isPlayAllTalesMode ==
-                                              false
-                                          ? 0.5
-                                          : 0.2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(30),
+                                width: 222,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: AppColors.wildSand.withOpacity(
+                                    listBuilderState.isPlayAllTalesMode
+                                        ? 0.2
+                                        : 0.5,
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 168,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.wildSand,
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            SvgPicture.asset(
-                                              AppIcons.play,
-                                              width: 50,
-                                            ),
-                                            const Text('Запустить все'),
-                                          ],
-                                        ),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 168,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.wildSand,
+                                        borderRadius: BorderRadius.circular(30),
                                       ),
-                                      Container(
-                                        margin: const EdgeInsets.only(
-                                          left: 8,
-                                        ),
-                                        child: SvgPicture.asset(
-                                          AppIcons.repeat,
-                                          color: AppColors.wildSand.withOpacity(
-                                            listBuilderState
-                                                        .isPlayAllTalesMode ==
-                                                    false
-                                                ? 0.5
-                                                : 1,
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                            AppIcons.play,
+                                            width: 50,
                                           ),
+                                          const Text('Запустить все'),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                        left: 8,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        AppIcons.repeat,
+                                        color: AppColors.wildSand.withOpacity(
+                                          listBuilderState.isPlayAllTalesMode
+                                              ? 1
+                                              : 0.5,
                                         ),
                                       ),
-                                    ],
-                                  )),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -218,7 +209,8 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                                 onRefresh: () {
                                   context.read<ListBuilderBloc>().add(
                                         InitializeListBuilderWithFutureRequest(
-                                          DatabaseService.instance
+                                          talesInitRequest: DatabaseService
+                                              .instance
                                               .getAllNotDeletedTaleModels(),
                                         ),
                                       );
@@ -244,11 +236,16 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                                             key: UniqueKey(),
                                             isPlayMode: isPlayMode,
                                             taleModel: taleModel,
-                                            onAddToPlaylist: () {},
+                                            onAddToPlaylist: () {
+                                              Navigator.of(context).pushNamed(
+                                                AddTaleToPlaylists.routeName,
+                                                arguments: [taleModel],
+                                              );
+                                            },
                                             onDelete: () => context
                                                 .read<ListBuilderBloc>()
                                                 .add(
-                                                  DeleteTale(index),
+                                                  DeleteTale(taleModel),
                                                 ),
                                             onRename: (String newTitle) =>
                                                 context

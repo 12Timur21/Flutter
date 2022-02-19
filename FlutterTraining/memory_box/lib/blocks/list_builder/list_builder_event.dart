@@ -3,9 +3,11 @@ part of 'list_builder_bloc.dart';
 abstract class ListBuilderEvent {}
 
 class InitializeListBuilderWithFutureRequest extends ListBuilderEvent {
-  Future<List<TaleModel>> initializationTales;
+  Future<List<TaleModel>> talesInitRequest;
 
-  InitializeListBuilderWithFutureRequest(this.initializationTales);
+  InitializeListBuilderWithFutureRequest({
+    required this.talesInitRequest,
+  });
 }
 
 class InitializeListBuilderWithTaleModels extends ListBuilderEvent {
@@ -15,20 +17,19 @@ class InitializeListBuilderWithTaleModels extends ListBuilderEvent {
 }
 
 class DeleteTale extends ListBuilderEvent {
-  int index;
-
-  DeleteTale(this.index);
+  DeleteTale(this.taleModel);
+  final TaleModel taleModel;
 }
 
 class UndoRenameTale extends ListBuilderEvent {}
 
 class RenameTale extends ListBuilderEvent {
-  String taleID, newTitle;
-
   RenameTale(
     this.taleID,
     this.newTitle,
   );
+
+  final String taleID, newTitle;
 }
 
 class AddTaleToPlaylist extends ListBuilderEvent {}

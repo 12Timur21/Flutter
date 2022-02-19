@@ -19,6 +19,7 @@ class WelcomeRegistrationScreen extends StatelessWidget {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: BackgroundPattern(
         child: Padding(
           padding: const EdgeInsets.symmetric(

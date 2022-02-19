@@ -117,7 +117,7 @@ class StorageService {
 
   //??[Start] Tale
 
-  Future<void> uploadTaleFIle({
+  Future<void> uploadTaleFile({
     required File file,
     required TaleModel taleModel,
   }) async {

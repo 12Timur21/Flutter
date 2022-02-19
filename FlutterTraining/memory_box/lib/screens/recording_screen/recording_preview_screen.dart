@@ -8,6 +8,7 @@ import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigat
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_icons.dart';
+import 'package:memory_box/screens/playlist_screen/add_tale_to_playlists_screen.dart';
 import 'package:memory_box/screens/recording_screen/widgets/bottom_sheet_wrapper.dart';
 import 'package:memory_box/screens/recording_screen/widgets/tale_controls_buttons.dart';
 import 'package:memory_box/widgets/audioSlider.dart';
@@ -29,7 +30,7 @@ class RecordingPreviewScreen extends StatefulWidget {
 }
 
 class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
-  late final TextEditingController _textEditingController;
+  final TextEditingController _textEditingController = TextEditingController();
 
   bool _isEditMode = false;
 
@@ -40,7 +41,7 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
     _audioBloc = BlocProvider.of<AudioplayerBloc>(context);
     _audioBloc.add(AnnulAudioPlayer());
 
-    _textEditingController = TextEditingController(
+    _textEditingController.value = TextEditingValue(
       text: widget.taleModel.title,
     );
 
@@ -53,9 +54,6 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
 
   @override
   void dispose() {
-    _audioBloc.add(
-      DisposePlayer(),
-    );
     _textEditingController.dispose();
     super.dispose();
   }
@@ -242,7 +240,12 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                         itemBuilder: (context) => [
                           PopupMenuItem(
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () => Navigator.of(context).pushNamed(
+                                AddTaleToPlaylists.routeName,
+                                arguments: [
+                                  widget.taleModel,
+                                ],
+                              ),
                               child: Text(
                                 "Добавить в подборку",
                                 style: popupMenuTextStyle,

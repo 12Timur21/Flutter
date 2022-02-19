@@ -13,23 +13,26 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+
   flutter_svg: ^0.23.0+1
+  
   flutter_multi_formatter: ^2.4.1
+  readmore: ^2.1.0
+
   firebase_core: ^1.8.0
   firebase_auth: ^3.1.4
   firebase_storage: ^10.1.0
   cloud_firestore: ^2.5.4
 
   bloc: ^7.2.1
-  
   flutter_bloc: ^7.3.3
+
   image_picker: ^0.8.4+4
   flutter_sound_lite: ^8.4.2
   permission_handler: ^8.3.0
   path_provider: ^2.0.7
   share_plus: ^3.0.4
   uuid: 3.0.5
-  logger: ^1.1.0
   cached_network_image: ^3.2.0
   equatable: ^2.0.3
   

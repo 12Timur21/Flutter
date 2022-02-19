@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/models/tale_model.dart';
@@ -5,7 +7,7 @@ import 'package:memory_box/models/tale_model.dart';
 class TaleListTileWithCheckBox extends StatefulWidget {
   const TaleListTileWithCheckBox({
     required this.taleModel,
-    this.isPlayMode = false,
+    this.isPlay = false,
     this.isSelected = false,
     Key? key,
     required this.toogleSelectMode,
@@ -14,7 +16,7 @@ class TaleListTileWithCheckBox extends StatefulWidget {
 
   final TaleModel taleModel;
   final bool isSelected;
-  final bool isPlayMode;
+  final bool isPlay;
 
   final VoidCallback toogleSelectMode;
   final VoidCallback tooglePlayMode;
@@ -44,7 +46,7 @@ class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
         leading: GestureDetector(
           onTap: widget.tooglePlayMode,
           child: SvgPicture.asset(
-            widget.isPlayMode
+            widget.isPlay
                 ? 'assets/icons/StopCircle.svg'
                 : 'assets/icons/PlayCircle.svg',
             color: const Color.fromRGBO(113, 165, 159, 1),

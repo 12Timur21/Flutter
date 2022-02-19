@@ -1,32 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/utils/formatting.dart';
 
 class SelectPlaylistTile extends StatefulWidget {
   const SelectPlaylistTile({
-    required this.taleID,
-    required this.title,
-    required this.audioCount,
-    required this.sumAudioDuration,
-    required this.coverUrl,
-    required this.index,
-    required this.onSelelct,
-    required this.onUnselect,
+    required this.playlistModel,
+    required this.onSelect,
+    required this.isSelected,
     Key? key,
   }) : super(key: key);
 
-  final String taleID;
-  final String title;
-  final int audioCount;
-  final Duration sumAudioDuration;
-  final String coverUrl;
-  final int index;
-
-  final Function(String) onSelelct;
-  final Function(String) onUnselect;
+  final PlaylistModel playlistModel;
+  final bool isSelected;
+  final VoidCallback onSelect;
 
   @override
   _SelectPlaylistTileState createState() => _SelectPlaylistTileState();
@@ -35,39 +25,13 @@ class SelectPlaylistTile extends StatefulWidget {
 class _SelectPlaylistTileState extends State<SelectPlaylistTile> {
   bool isSelect = false;
 
-  void _toogleTile() {
-    setState(() {
-      isSelect = !isSelect;
-
-      if (isSelect) {
-        widget.onSelelct(widget.taleID);
-      } else {
-        widget.onUnselect(widget.taleID);
-      }
-    });
-    print(isSelect);
-  }
-
   @override
   Widget build(BuildContext context) {
-    EdgeInsets margin = widget.index % 2 == 0
-        ? const EdgeInsets.only(
-            top: 20,
-            left: 15,
-            right: 8,
-          )
-        : const EdgeInsets.only(
-            top: 20,
-            right: 15,
-            left: 8,
-          );
-
     return GestureDetector(
-      onTap: _toogleTile,
-      child: Container(
+      onTap: widget.onSelect,
+      child: SizedBox(
         height: 240,
         width: 190,
-        margin: margin,
         child: Stack(
           children: [
             ClipRRect(
@@ -75,105 +39,114 @@ class _SelectPlaylistTileState extends State<SelectPlaylistTile> {
               child: Stack(
                 children: [
                   CachedNetworkImage(
-                    imageUrl: widget.coverUrl,
+                    imageUrl: widget.playlistModel.coverUrl,
                     height: 240,
                     fit: BoxFit.fill,
-                    placeholder: (context, url) =>
-                        const Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) =>
-                        const Center(child: Icon(Icons.error)),
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
+                    ),
                   ),
                   Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: <Color>[
-                          Colors.black,
+                          Colors.black.withOpacity(0),
                           AppColors.gray,
                         ],
                       ),
                     ),
-                    child: Stack(
+                    child: Column(
                       children: [
-                        Column(
-                          children: [
-                            const Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: 20,
-                                left: 15,
-                                right: 15,
+                        const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 20,
+                            left: 15,
+                            right: 15,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  widget.playlistModel.title,
+                                  style: const TextStyle(
+                                    fontFamily: 'TTNorms',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    letterSpacing: 0.5,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Text(
-                                      widget.title,
-                                      style: const TextStyle(
-                                        fontFamily: 'TTNorms',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        letterSpacing: 0.5,
-                                        color: Colors.white,
-                                      ),
+                                  Text(
+                                    '${widget.playlistModel.taleModels.length} аудио',
+                                    style: const TextStyle(
+                                      fontFamily: 'TTNorms',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${widget.audioCount} аудио',
-                                        style: const TextStyle(
-                                          fontFamily: 'TTNorms',
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 7,
-                                      ),
-                                      // Text(
-                                      //   // sumAudioDuration?.inMilliseconds.toString() ?? '',
-                                      //   '${convertDurationToString(
-                                      //     duration: widget.sumAudioDuration,
-                                      //     formattingType: TimeFormattingType
-                                      //         .hourMinuteWithOneDigits,
-                                      //   )} ${widget.sumAudioDuration.inHours > 0 ? "часа" : "минут"}',
-                                      //   style: const TextStyle(
-                                      //     fontFamily: 'TTNorms',
-                                      //     fontWeight: FontWeight.w400,
-                                      //     fontSize: 12,
-                                      //     color: Colors.white,
-                                      //   ),
-                                      // ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          color:
-                              isSelect ? null : Colors.black.withOpacity(0.4),
-                          child: Center(
-                            child: isSelect
-                                ? SvgPicture.asset(
-                                    AppIcons.submitCircle,
-                                    color: Colors.white,
-                                  )
-                                : SvgPicture.asset(
-                                    AppIcons.circle,
-                                    color: Colors.white,
+                                  const SizedBox(
+                                    height: 7,
                                   ),
+                                  Text(
+                                    //!Переделать
+                                    // sumAudioDuration?.inMilliseconds.toString() ?? '',
+                                    '${convertDurationToString(
+                                      duration: widget.playlistModel.taleModels
+                                          .fold<Duration>(
+                                        Duration.zero,
+                                        (Duration previousValue, element) =>
+                                            previousValue + element.duration,
+                                      ),
+                                      formattingType:
+                                          TimeFormattingType.hourMinute,
+                                    )} ${widget.playlistModel.taleModels.fold<Duration>(
+                                          Duration.zero,
+                                          (Duration previousValue, element) =>
+                                              previousValue + element.duration,
+                                        ).inHours > 0 ? "часа" : "минут"}',
+                                    style: const TextStyle(
+                                      fontFamily: 'TTNorms',
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  Container(
+                    color: isSelect ? null : Colors.black.withOpacity(0.4),
+                    child: Center(
+                      child: widget.isSelected
+                          ? SvgPicture.asset(
+                              AppIcons.submitCircle,
+                              color: Colors.white,
+                            )
+                          : SvgPicture.asset(
+                              AppIcons.circle,
+                              color: Colors.white,
+                            ),
                     ),
                   ),
                 ],

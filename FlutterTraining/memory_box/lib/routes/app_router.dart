@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/screens/all_tales_screen/all_tales_screen.dart';
 import 'package:memory_box/screens/deleted_tales_screen/deleted_tales_screen.dart';
@@ -9,7 +10,9 @@ import 'package:memory_box/screens/login_screen/registration_screens/registratio
 import 'package:memory_box/screens/login_screen/registration_screens/verifyOTP_screen.dart';
 import 'package:memory_box/screens/login_screen/registration_screens/welcome_registration_screen.dart';
 import 'package:memory_box/screens/mainPage.dart';
+import 'package:memory_box/screens/playlist_screen/add_tale_to_playlists_screen.dart';
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
+import 'package:memory_box/screens/playlist_screen/detailed_playlist_screen.dart';
 import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 
 import 'package:memory_box/screens/playlist_screen/select_tales_to_playlist_screen.dart';
@@ -25,8 +28,6 @@ class AppRouter {
   const AppRouter._();
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
-    String? currentRouteName;
-
     final Object? arguments = settings.arguments;
 
     WidgetBuilder builder;
@@ -44,12 +45,11 @@ class AppRouter {
         builder = (_) => const RegistrationScreen();
         break;
       case VerifyOTPScreen.routeName:
-        {
-          final String args = arguments as String;
-          builder = (_) => VerifyOTPScreen(
-                verficationId: args,
-              );
-        }
+        final String args = arguments as String;
+        builder = (_) => VerifyOTPScreen(
+              verficationId: args,
+            );
+
         break;
       case GratitudeRegistrationScreen.routeName:
         builder = (_) => const GratitudeRegistrationScreen();
@@ -81,41 +81,41 @@ class AppRouter {
         builder = (_) => const SearchTalesScreen();
         break;
 
-      //*[START] Play list
+      //*[START] Playlist
       case PlaylistScreen.routeName:
         builder = (_) => const PlaylistScreen();
         break;
 
       case CreatePlaylistScreen.routeName:
-        {
-          // final PlayListCreationState? args =
-          //     arguments as PlayListCreationState?;
-
-          builder = (_) => CreatePlaylistScreen(
-              // collectionCreationState: args,
-              );
-        }
+        builder = (_) => const CreatePlaylistScreen();
         break;
 
       case SelectTalesToPlaylistScreen.routeName:
-        {
-          final List<TaleModel>? args = arguments as List<TaleModel>?;
+        final List<TaleModel>? args = arguments as List<TaleModel>?;
 
-          builder = (_) => SelectTalesToPlaylistScreen(
-                selectedListTaleModels: args,
-              );
-        }
+        builder = (_) => SelectTalesToPlaylistScreen(
+              selectedTales: args,
+            );
+
         break;
 
-      // case DetailedViewPlaylist.routeName:
-      //   {
-      //     final String playListID = arguments as String;
+      case DetailedPlaylistScreen.routeName:
+        final PlaylistModel args = arguments as PlaylistModel;
 
-      //     builder = (_) => DetailedViewPlaylist(
-      //           playListID: playListID,
-      //         );
-      //   }
-      //   break;
+        builder = (_) => DetailedPlaylistScreen(
+              playlistModel: args,
+            );
+
+        break;
+
+      case AddTaleToPlaylists.routeName:
+        final List<TaleModel> args = arguments as List<TaleModel>;
+
+        builder = (_) => AddTaleToPlaylists(
+              taleModels: args,
+            );
+
+        break;
 
       //*[END] Play list
 
@@ -137,14 +137,13 @@ class AppRouter {
         break;
 
       case RecordingPreviewScreen.routeName:
-        {
-          final TaleModel args = arguments as TaleModel;
+        final TaleModel args = arguments as TaleModel;
 
-          builder = (_) => RecordingPreviewScreen(
-                taleModel: args,
-              );
-          break;
-        }
+        builder = (_) => RecordingPreviewScreen(
+              taleModel: args,
+            );
+        break;
+
       //*[END] Recording screen
 
       default:

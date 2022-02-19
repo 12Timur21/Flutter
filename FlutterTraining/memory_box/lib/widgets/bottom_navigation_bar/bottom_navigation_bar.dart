@@ -36,7 +36,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
       MainPage.navigationKey.currentState?.pushNamed(PlaylistScreen.routeName);
     }
     if (index == 2) {
-      widget.openButtomSheet();
+      if (_iconState == RecorderButtonStates.withIcon) {
+        widget.openButtomSheet();
+      }
+      if (_iconState == RecorderButtonStates.closeSheet) {
+        Navigator.of(context).pop();
+      }
     }
     if (index == 3) {
       MainPage.navigationKey.currentState?.pushNamed(AllTalesScreen.routeName);

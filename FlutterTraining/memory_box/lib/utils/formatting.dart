@@ -12,7 +12,7 @@ enum DayTimeFormattingType {
 
 String convertDurationToString({
   Duration? duration,
-  required TimeFormattingType? formattingType,
+  TimeFormattingType? formattingType,
 }) {
   if (duration != null) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -32,20 +32,21 @@ String convertDurationToString({
 }
 
 String convertDateTimeToString({
-  DateTime? date,
+  required DateTime date,
   DayTimeFormattingType? dayTimeFormattingType,
 }) {
-  if (date != null) {
-    if (dayTimeFormattingType == DayTimeFormattingType.dayMonthYear) {
-      return "${date.day}.${date.month}.${date.year}";
-    }
-    if (dayTimeFormattingType == DayTimeFormattingType.dayMonth) {
-      return "${date.day}.${date.month}";
-    }
-    if (dayTimeFormattingType == DayTimeFormattingType.day) {
-      return "${date.day}";
-    }
-    return '';
+  String twoDigitDay = date.day.toString().padLeft(2, '0');
+  String twoDigitMonth = date.month.toString().padLeft(2, '0');
+  String twoDigitYear = date.month.toString().padLeft(2, '0');
+
+  if (dayTimeFormattingType == DayTimeFormattingType.dayMonthYear) {
+    return "$twoDigitDay.$twoDigitMonth.$twoDigitYear";
+  }
+  if (dayTimeFormattingType == DayTimeFormattingType.dayMonth) {
+    return "$twoDigitDay.$twoDigitMonth";
+  }
+  if (dayTimeFormattingType == DayTimeFormattingType.day) {
+    return twoDigitDay;
   }
   return '';
 }

@@ -100,6 +100,7 @@ class _PlaylistTileState extends State<PlaylistTile> {
                                     height: 7,
                                   ),
                                   Text(
+                                    //!Переделать
                                     // sumAudioDuration?.inMilliseconds.toString() ?? '',
                                     '${convertDurationToString(
                                       duration: widget.playlistModel.taleModels

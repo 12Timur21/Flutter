@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:memory_box/models/tale_model.dart';
 
@@ -6,6 +7,7 @@ class PlaylistModel extends Equatable {
   final String title;
   final String? description;
   final String coverUrl;
+  final DateTime creation_date;
   final List<TaleModel> taleModels;
 
   const PlaylistModel({
@@ -13,6 +15,7 @@ class PlaylistModel extends Equatable {
     required this.title,
     this.description,
     required this.coverUrl,
+    required this.creation_date,
     this.taleModels = const [],
   });
 
@@ -36,7 +39,24 @@ class PlaylistModel extends Equatable {
       title: json['title'],
       description: json['description'],
       coverUrl: json['coverUrl'],
+      creation_date: json['creation_date'].toDate(),
       taleModels: taleModels,
+    );
+  }
+
+  PlaylistModel copyWith({
+    final String? title,
+    final String? description,
+    final String? coverUrl,
+    final List<TaleModel>? taleModels,
+  }) {
+    return PlaylistModel(
+      ID: this.ID,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      coverUrl: coverUrl ?? this.coverUrl,
+      creation_date: this.creation_date,
+      taleModels: taleModels ?? this.taleModels,
     );
   }
 
@@ -46,6 +66,7 @@ class PlaylistModel extends Equatable {
         title,
         description,
         coverUrl,
+        creation_date,
         taleModels,
       ];
 }

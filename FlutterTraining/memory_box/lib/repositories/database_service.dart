@@ -270,7 +270,7 @@ class DatabaseService {
   //??[End] Tale
 
   //??[Start] PlayList
-  Future<void> createPlaylist({
+  Future<PlaylistModel> createPlaylist({
     required String playlistID,
     required String title,
     required String coverUrl,
@@ -294,7 +294,9 @@ class DatabaseService {
       'description': description,
       'taleReferences': taleReferences,
       'coverUrl': coverUrl,
-      'creation_date': DateTime.now(),
+      'creation_date': Timestamp.fromDate(
+        DateTime.now(),
+      ),
     };
 
     await _playlistsCollection
@@ -302,6 +304,8 @@ class DatabaseService {
         .collection('allPlaylists')
         .doc(playlistID)
         .set(collection);
+
+    return PlaylistModel.fromJson(collection);
   }
 
   Future<void> updatePlaylist({
@@ -309,7 +313,6 @@ class DatabaseService {
     String? title,
     String? description,
     List<String>? talesIDs,
-    // мс брать из
   }) async {
     DocumentSnapshot documentSnapshot = await _playlistsCollection
         .doc(AuthService.userID)
@@ -358,31 +361,57 @@ class DatabaseService {
 //   }
 
   Future<void> addTalesToFewPlaylist({
-    required List<String> taleIDs,
-    required List<String> playlistIDs,
+    required List<TaleModel> taleModels,
+    required List<PlaylistModel> playlistModels,
   }) async {
-    for (String playlistID in playlistIDs) {
+    List<DocumentReference> taleReferences = [];
+
+    for (TaleModel element in taleModels) {
+      taleReferences.add(
+        _talesCollection
+            .doc(AuthService.userID)
+            .collection('allTales')
+            .doc(element.ID),
+      );
+    }
+
+    for (PlaylistModel playlistModel in playlistModels) {
       await _playlistsCollection
           .doc(AuthService.userID)
           .collection('allPlaylists')
-          .doc(playlistID)
+          .doc(playlistModel.ID)
           .update({
-        'taleModelIDs': FieldValue.arrayUnion(taleIDs),
+        'taleReferences': FieldValue.arrayUnion(
+          taleReferences,
+        ),
       });
     }
   }
 
   Future<void> removeTalesFromFewPlayList({
-    required List<String> taleIDs,
-    required List<String> playListIDs,
+    required List<TaleModel> taleModels,
+    required List<PlaylistModel> playlistModels,
   }) async {
-    for (String playListID in playListIDs) {
+    List<DocumentReference> taleReferences = [];
+
+    for (TaleModel element in taleModels) {
+      taleReferences.add(
+        _talesCollection
+            .doc(AuthService.userID)
+            .collection('allTales')
+            .doc(element.ID),
+      );
+    }
+
+    for (PlaylistModel playlistModel in playlistModels) {
       await _playlistsCollection
           .doc(AuthService.userID)
           .collection('allPlaylists')
-          .doc(playListID)
+          .doc(playlistModel.ID)
           .update({
-        'taleModelIDs': FieldValue.arrayRemove(taleIDs),
+        'taleReferences': FieldValue.arrayRemove(
+          taleReferences,
+        ),
       });
     }
   }

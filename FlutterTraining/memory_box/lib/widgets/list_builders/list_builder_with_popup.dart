@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memory_box/blocks/tale_builders/list_builder/list_builder_bloc.dart';
+import 'package:memory_box/blocks/list_builder/list_builder_bloc.dart';
 
 class ListBuilderWithPopup extends StatefulWidget {
   const ListBuilderWithPopup({

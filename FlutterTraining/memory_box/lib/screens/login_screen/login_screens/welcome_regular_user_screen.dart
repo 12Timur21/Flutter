@@ -20,6 +20,7 @@ class WelcomeRegualrUserScreen extends StatelessWidget {
     );
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: BackgroundPattern(
         child: Align(
           alignment: Alignment.center,

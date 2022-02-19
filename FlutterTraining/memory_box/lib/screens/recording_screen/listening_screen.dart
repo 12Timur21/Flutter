@@ -44,14 +44,6 @@ class _ListeningScreenState extends State<ListeningScreen> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _audioBloc.add(
-      DisposePlayer(),
-    );
-    super.dispose();
-  }
-
   void _asyncInit() async {
     Directory appDirectory = await getApplicationDocumentsDirectory();
 
@@ -162,7 +154,7 @@ class _ListeningScreenState extends State<ListeningScreen> {
       _isScreenInitialized = false;
     });
 
-    await StorageService.instance.uploadTaleFIle(
+    await StorageService.instance.uploadTaleFile(
       file: file,
       taleModel: updatedTaleModel!,
     );

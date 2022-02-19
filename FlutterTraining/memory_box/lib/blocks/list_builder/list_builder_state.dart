@@ -1,15 +1,13 @@
 part of 'list_builder_bloc.dart';
 
-class ListBuilderState {
+class ListBuilderState extends Equatable {
   final bool isInit;
   final bool isPlay;
   final bool isPlayAllTalesMode;
-
   final List<TaleModel> allTales;
-
   final TaleModel? currentPlayTaleModel;
 
-  ListBuilderState({
+  const ListBuilderState({
     this.isInit = false,
     this.isPlay = false,
     this.isPlayAllTalesMode = false,
@@ -22,7 +20,6 @@ class ListBuilderState {
     bool? isPlay,
     bool? isPlayAllTalesMode,
     List<TaleModel>? allTales,
-    List<TaleModel>? selectedTales,
     TaleModel? currentPlayTaleModel,
   }) {
     return ListBuilderState(
@@ -33,10 +30,19 @@ class ListBuilderState {
       currentPlayTaleModel: currentPlayTaleModel ?? this.currentPlayTaleModel,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        isInit,
+        isPlay,
+        isPlayAllTalesMode,
+        allTales,
+        currentPlayTaleModel,
+      ];
 }
 
 class PlayTaleState extends ListBuilderState {
-  PlayTaleState({
+  const PlayTaleState({
     required bool isInit,
     required bool isPlay,
     required bool isPlayAllTalesMode,
@@ -52,7 +58,7 @@ class PlayTaleState extends ListBuilderState {
 }
 
 class StopTaleState extends ListBuilderState {
-  StopTaleState({
+  const StopTaleState({
     required bool isInit,
     required bool isPlay,
     required bool isPlayAllTalesMode,

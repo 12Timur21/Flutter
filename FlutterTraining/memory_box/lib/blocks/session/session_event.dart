@@ -19,13 +19,11 @@ class DeleteAccount extends SessionEvent {
 }
 
 class UpdateAccount extends SessionEvent {
-  String? uid;
   String? displayName;
   String? phoneNumber;
   SubscriptionType? subscriptionType;
 
   UpdateAccount({
-    this.uid,
     this.displayName,
     this.phoneNumber,
     this.subscriptionType,

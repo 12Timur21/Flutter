@@ -37,7 +37,7 @@ String convertDateTimeToString({
 }) {
   String twoDigitDay = date.day.toString().padLeft(2, '0');
   String twoDigitMonth = date.month.toString().padLeft(2, '0');
-  String twoDigitYear = date.month.toString().padLeft(2, '0');
+  String twoDigitYear = date.year.toString().padLeft(2, '0').substring(2);
 
   if (dayTimeFormattingType == DayTimeFormattingType.dayMonthYear) {
     return "$twoDigitDay.$twoDigitMonth.$twoDigitYear";

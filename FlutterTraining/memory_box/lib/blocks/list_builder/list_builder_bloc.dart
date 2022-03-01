@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:memory_box/models/tale_model.dart';
@@ -9,6 +11,7 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
   ListBuilderBloc() : super(const ListBuilderState()) {
     on<InitializeListBuilderWithFutureRequest>((event, emit) async {
       List<TaleModel> allTales = await event.talesInitRequest;
+
       emit(
         state.copyWith(
           isInit: true,
@@ -27,13 +30,38 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
     });
 
     on<DeleteTale>((event, emit) async {
-      await DatabaseService.instance.updateTale(
-        taleID: event.taleModel.ID,
-        isDeleted: true,
-      );
+      if (event.taleModel.deleteStatus.isDeleted) {
+        DatabaseService.instance.finalDeleteTaleRecord(event.taleModel.ID);
+      } else {
+        DatabaseService.instance.updateTale(
+          taleID: event.taleModel.ID,
+          isDeleted: true,
+        );
+      }
 
       List<TaleModel> taleModels = [...state.allTales];
       taleModels.remove(event.taleModel);
+      emit(
+        state.copyWith(allTales: taleModels),
+      );
+    });
+
+    on<DeleteFewTales>((event, emit) async {
+      List<TaleModel> taleModels = [...state.allTales];
+
+      for (final TaleModel taleModel in event.taleModels) {
+        if (taleModel.deleteStatus.isDeleted) {
+          DatabaseService.instance.finalDeleteTaleRecord(taleModel.ID);
+        } else {
+          DatabaseService.instance.updateTale(
+            taleID: taleModel.ID,
+            isDeleted: true,
+          );
+        }
+
+        taleModels.remove(taleModel);
+      }
+
       emit(
         state.copyWith(allTales: taleModels),
       );
@@ -88,7 +116,6 @@ class ListBuilderBloc extends Bloc<ListBuilderEvent, ListBuilderState> {
     });
 
     on<TooglePlayAllMode>((event, emit) {
-      print('123');
       emit(
         state.copyWith(
           isPlayAllTalesMode: !state.isPlayAllTalesMode,

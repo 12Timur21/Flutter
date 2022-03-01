@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class Search extends StatefulWidget {
+class Search extends StatelessWidget {
   const Search({
     required this.onChange,
     this.onFocusChange,
     required this.searchFieldContoller,
+    this.onIconPress,
     Key? key,
   }) : super(key: key);
 
   final Function(String) onChange;
   final Function(bool)? onFocusChange;
+  final VoidCallback? onIconPress;
   final TextEditingController? searchFieldContoller;
 
-  @override
-  _SearchState createState() => _SearchState();
-}
-
-class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,10 +37,10 @@ class _SearchState extends State<Search> {
                   left: 5,
                 ),
                 child: Focus(
-                  onFocusChange: widget.onFocusChange,
+                  onFocusChange: onFocusChange,
                   child: TextField(
-                    onChanged: widget.onChange,
-                    controller: widget.searchFieldContoller,
+                    onChanged: onChange,
+                    controller: searchFieldContoller,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Поиск',
@@ -62,7 +59,7 @@ class _SearchState extends State<Search> {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: onIconPress,
               icon: SvgPicture.asset(
                 'assets/icons/Search.svg',
                 width: 50,

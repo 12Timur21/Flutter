@@ -2,9 +2,7 @@ part of 'session_bloc.dart';
 
 enum SessionStatus {
   initial,
-
   authenticated,
-
   notAuthenticated,
   failure,
 }

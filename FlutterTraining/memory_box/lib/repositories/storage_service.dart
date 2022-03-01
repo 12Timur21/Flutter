@@ -21,6 +21,16 @@ class StorageService {
 
   final DatabaseService _database = DatabaseService.instance;
 
+  Reference createTaleReference(String taleID) {
+    final String destination = mapDestination(
+      fileType: FileType.tale,
+      uid: AuthService.userID,
+      fileName: taleID,
+    );
+
+    return _cloud.ref().child(destination);
+  }
+
   String mapDestination({
     required FileType fileType,
     String? uid,
@@ -285,7 +295,7 @@ class StorageService {
     return await _cloud.ref().child(destination).getDownloadURL();
   }
 
-  Future<void> deletePlayListCover({
+  Future<void> deletePlaylistCover({
     required String coverID,
   }) async {
     final destination = mapDestination(

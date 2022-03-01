@@ -9,7 +9,7 @@ import 'package:memory_box/screens/home_screen/home_screen.dart';
 import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 import 'package:memory_box/screens/profile_screen/profile_screen.dart';
-import 'package:memory_box/widgets/recorder_button_icons/recorder_buttons_barrel.dart';
+import 'package:memory_box/widgets/bottom_navigation_bar/widgets/recorder_buttons_barrel.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({
@@ -30,10 +30,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
     if (index == _selectedIndex) return;
 
     if (index == 0) {
-      MainPage.navigationKey.currentState?.pushNamed(HomeScreen.routeName);
+      MainPage.navigationKey.currentState
+          ?.pushReplacementNamed(HomeScreen.routeName);
     }
     if (index == 1) {
-      MainPage.navigationKey.currentState?.pushNamed(PlaylistScreen.routeName);
+      MainPage.navigationKey.currentState
+          ?.pushReplacementNamed(PlaylistScreen.routeName);
     }
     if (index == 2) {
       if (_iconState == RecorderButtonStates.withIcon) {
@@ -44,10 +46,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
       }
     }
     if (index == 3) {
-      MainPage.navigationKey.currentState?.pushNamed(AllTalesScreen.routeName);
+      MainPage.navigationKey.currentState
+          ?.pushReplacementNamed(AllTalesScreen.routeName);
     }
     if (index == 4) {
-      MainPage.navigationKey.currentState?.pushNamed(ProfileScreen.routeName);
+      MainPage.navigationKey.currentState
+          ?.pushReplacementNamed(ProfileScreen.routeName);
     }
 
     setState(() {
@@ -55,14 +59,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
     });
   }
 
-  Widget _getIcon(RecorderButtonStates recorderButtonStates) {
-    if (recorderButtonStates == RecorderButtonStates.withIcon) {
+  Widget _getIcon(RecorderButtonStates recorderButtonState) {
+    if (recorderButtonState == RecorderButtonStates.withIcon) {
       return const RecorderButtonWithIcon();
     }
-    if (recorderButtonStates == RecorderButtonStates.withLine) {
+    if (recorderButtonState == RecorderButtonStates.withLine) {
       return const RecorderButtonWithLine();
     }
-    if (recorderButtonStates == RecorderButtonStates.defaultIcon) {
+    if (recorderButtonState == RecorderButtonStates.defaultIcon) {
       return const DefaultRecorderButton();
     }
     return const RecorderButtonClose();
@@ -76,19 +80,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
       bool isSelected = false,
     }) {
       return BottomNavigationBarItem(
-        icon: SvgPicture.asset(
-          iconName,
-          color: isSelected ? AppColors.blueMagenta : null,
+        icon: Column(
+          children: [
+            SvgPicture.asset(
+              iconName,
+              color: isSelected ? AppColors.blueMagenta : null,
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'TTNorms',
+                fontWeight: FontWeight.normal,
+                fontSize: 11,
+                color: isSelected ? AppColors.blueMagenta : null,
+              ),
+            )
+          ],
         ),
-        title: Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'TTNorms',
-            fontWeight: FontWeight.normal,
-            fontSize: 11,
-            color: isSelected ? AppColors.blueMagenta : null,
-          ),
-        ),
+        label: '',
       );
     }
 
@@ -113,6 +122,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
         child: Container(
           decoration: const BoxDecoration(
+            color: Colors.transparent,
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(30),
               topLeft: Radius.circular(30),
@@ -138,6 +148,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
               type: BottomNavigationBarType.fixed,
               onTap: _onBottomNavigatorTapped,
               selectedItemColor: AppColors.darkPurple,
+              selectedLabelStyle: const TextStyle(
+                color: AppColors.tacao,
+                fontFamily: 'TTNorms',
+                fontWeight: FontWeight.normal,
+                fontSize: 10,
+              ),
               items: <BottomNavigationBarItem>[
                 _bottomNavigationBarItem(
                   iconName: AppIcons.home,
@@ -151,18 +167,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 ),
                 BottomNavigationBarItem(
                   icon: _getIcon(_iconState),
-                  title: Text(
-                    'Запись',
-                    style: const TextStyle(
-                      color: AppColors.tacao,
-                    ).merge(
-                      const TextStyle(
-                        fontFamily: 'TTNorms',
-                        fontWeight: FontWeight.normal,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
+                  label: '',
                 ),
                 _bottomNavigationBarItem(
                   iconName: AppIcons.document,

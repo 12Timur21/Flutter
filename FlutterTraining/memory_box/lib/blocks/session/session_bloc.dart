@@ -65,30 +65,13 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     }
 
     if (event is UpdateAccount) {
-      UserModel? currentUser = await _authService.currentUser();
-      String? uid = event.uid;
-
-      // PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credentialFromToken();
-
-      if (uid != null) {
-        await _databaseService.updateUserCollection(
-          // uid: uid,
-          phoneNumber: event.phoneNumber != null
-              ? toNumericString(event.phoneNumber)
-              : null,
-          displayName: event.displayName,
-        );
-
-        // await _authService.updatePhoneNumber()
-      }
-
       yield SessionState(
-        status: SessionStatus.authenticated,
-        user: currentUser?.copyWith(
-          uid: uid,
-          displayName: event.displayName,
-          phoneNumber: event.phoneNumber,
-          subscriptionType: event.subscriptionType,
+        status: state.status,
+        user: state.user?.copyWith(
+          displayName: event.displayName ?? state.user?.displayName,
+          phoneNumber: event.phoneNumber ?? state.user?.phoneNumber,
+          subscriptionType:
+              event.subscriptionType ?? state.user?.subscriptionType,
         ),
       );
     }

@@ -13,12 +13,14 @@ class TaleListTileWithPopupMenu extends StatefulWidget {
     required this.onAddToPlaylist,
     required this.onDelete,
     required this.onShare,
+    this.playButtonColor = AppColors.lightBlue,
     this.isPlayMode = false,
     Key? key,
   }) : super(key: key);
 
   final TaleModel taleModel;
   final bool isPlayMode;
+  final Color playButtonColor;
 
   final VoidCallback tooglePlayMode;
 
@@ -80,8 +82,8 @@ class _TaleListTileWithPopupMenuState extends State<TaleListTileWithPopupMenu> {
           onTap: widget.tooglePlayMode,
           child: SvgPicture.asset(
             widget.isPlayMode ? AppIcons.stopCircle : AppIcons.playCircle,
-            color: AppColors.lightBlue,
-            width: 50,
+            color: widget.playButtonColor,
+            // width: 50,
           ),
         ),
         title: TextFormField(

@@ -8,7 +8,7 @@ class AppColors {
   static const Color seaNymph = Color(0xFF71A59F);
   static const Color silverPhoenix = Color(0xFFEFEFF7);
   static const Color gray = Color(0xFF454545);
-  static const Color darkPurple = Color(0xFF3a3a55);
+  static const Color darkPurple = Color(0xFF3A3A55);
   static const Color blueMagenta = Color(0xFF8c84e2);
   static const Color tacao = Color(0xFFf1b488);
   static const Color danube = Color(0xFF678bd2);

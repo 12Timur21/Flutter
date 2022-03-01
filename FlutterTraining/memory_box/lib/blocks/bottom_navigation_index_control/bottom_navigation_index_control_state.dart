@@ -14,6 +14,6 @@ class BottomNavigationIndexControlState {
 
   BottomNavigationIndexControlState(
     this.index, {
-    this.recorderButtonState = RecorderButtonStates.defaultIcon,
+    this.recorderButtonState = RecorderButtonStates.withIcon,
   });
 }

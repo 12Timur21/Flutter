@@ -25,4 +25,6 @@ class AppIcons {
   static const String profile = '$_path/Profile.svg';
   static const String voice = '$_path/Voice.svg';
   static const String arrowDown = '$_path/ArrowDown.svg';
+  static const String infinite = '$_path/Infinite.svg';
+  static const String cloudUpload = '$_path/CloudUpload.svg';
 }

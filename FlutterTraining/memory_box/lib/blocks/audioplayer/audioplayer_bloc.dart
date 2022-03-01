@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:memory_box/models/tale_model.dart';
@@ -25,7 +26,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
         //Каждые n секунд обновляем позицию Duration и position сказки
         _soundNotifyerController =
             _soundPlayer.soundDurationStream?.listen((e) {
-          print('${e.position.inMilliseconds} - ${e.duration.inMilliseconds}}');
+          log('${e.position.inMilliseconds} - ${e.duration.inMilliseconds}}');
           add(
             UpdateAudioPlayerPosition(
               currentPlayPosition: Duration(

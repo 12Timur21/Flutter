@@ -21,6 +21,11 @@ class DeleteTale extends ListBuilderEvent {
   final TaleModel taleModel;
 }
 
+class DeleteFewTales extends ListBuilderEvent {
+  DeleteFewTales(this.taleModels);
+  final List<TaleModel> taleModels;
+}
+
 class UndoRenameTale extends ListBuilderEvent {}
 
 class RenameTale extends ListBuilderEvent {

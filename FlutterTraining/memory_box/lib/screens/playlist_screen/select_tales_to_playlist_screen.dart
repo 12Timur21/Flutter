@@ -78,6 +78,18 @@ class _SelectTalesToPlaylistScreenState
     );
   }
 
+  void _toogleTaleSelectMode(TaleModel taleModel) {
+    final bool isHasAlreadySelected = _selectedTales.contains(taleModel);
+
+    setState(() {
+      if (isHasAlreadySelected) {
+        _selectedTales.remove(taleModel);
+      } else {
+        _selectedTales.add(taleModel);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -173,6 +185,9 @@ class _SelectTalesToPlaylistScreenState
                     ),
                     _ListBuilder(
                       selectedTales: _selectedTales,
+                      onToogleSelect: (TaleModel taleModel) {
+                        _toogleTaleSelectMode(taleModel);
+                      },
                       onRefresh: () => _onRefresh(
                         context: context,
                       ),
@@ -188,31 +203,31 @@ class _SelectTalesToPlaylistScreenState
   }
 }
 
-class _ListBuilder extends StatefulWidget {
-  const _ListBuilder({
+class _ListBuilder extends StatelessWidget {
+  _ListBuilder({
     required this.selectedTales,
     required this.onRefresh,
+    required this.onToogleSelect,
+    // required this.scrollController,
     Key? key,
   }) : super(key: key);
 
   final List<TaleModel> selectedTales;
   final Future<void> Function() onRefresh;
+  final Function(TaleModel) onToogleSelect;
 
-  @override
-  __ListBuilderState createState() => __ListBuilderState();
-}
+  final ScrollController _scrollController = ScrollController();
 
-class __ListBuilderState extends State<_ListBuilder> {
-  void _toogleTaleSelectMode(TaleModel taleModel) {
-    final bool isHasAlreadySelected = widget.selectedTales.contains(taleModel);
+  void _scrollDown({
+    required int index,
+  }) {
+    double taleHeight = 72;
 
-    setState(() {
-      if (isHasAlreadySelected) {
-        widget.selectedTales.remove(taleModel);
-      } else {
-        widget.selectedTales.add(taleModel);
-      }
-    });
+    _scrollController.animateTo(
+      taleHeight * index,
+      duration: const Duration(seconds: 1),
+      curve: Curves.easeIn,
+    );
   }
 
   @override
@@ -243,10 +258,11 @@ class __ListBuilderState extends State<_ListBuilder> {
           child: Stack(
             children: [
               RefreshIndicator(
-                onRefresh: widget.onRefresh,
+                onRefresh: onRefresh,
                 child: listBuilderState.isInit
                     ? ListView.builder(
                         itemCount: listBuilderState.allTales.length + 1,
+                        controller: _scrollController,
                         itemBuilder: (context, index) {
                           final int talesLength =
                               listBuilderState.allTales.length;
@@ -268,23 +284,25 @@ class __ListBuilderState extends State<_ListBuilder> {
                           }
 
                           return TaleListTileWithCheckBox(
-                            key: UniqueKey(),
-                            isPlay: isPlay,
-                            isSelected: widget.selectedTales.contains(
-                              taleModel,
-                            ),
-                            taleModel: taleModel,
-                            tooglePlayMode: () {
-                              listBuilderBloc.add(
-                                TooglePlayMode(
-                                  taleModel: taleModel,
-                                ),
-                              );
-                            },
-                            toogleSelectMode: () {
-                              _toogleTaleSelectMode(taleModel);
-                            },
-                          );
+                              key: UniqueKey(),
+                              isPlay: isPlay,
+                              isSelected: selectedTales.contains(
+                                taleModel,
+                              ),
+                              taleModel: taleModel,
+                              tooglePlayMode: () {
+                                _scrollDown(
+                                  index: index,
+                                );
+                                listBuilderBloc.add(
+                                  TooglePlayMode(
+                                    taleModel: taleModel,
+                                  ),
+                                );
+                              },
+                              toogleSelectMode: () {
+                                onToogleSelect(taleModel);
+                              });
                         },
                       )
                     : const Center(

@@ -37,7 +37,7 @@ class AuthService {
   }) async {
     await _auth.verifyPhoneNumber(
       phoneNumber: '+$phoneNumber',
-      timeout: const Duration(seconds: 60),
+      timeout: const Duration(seconds: 100),
       verificationCompleted: (PhoneAuthCredential credential) {
         verificationCompleted(credential);
       },
@@ -128,7 +128,6 @@ class AuthService {
             uid: user.uid,
             phoneNumber: user.phoneNumber,
             displayName: user.displayName,
-            subscriptionType: SubscriptionType.noSubscription,
           )
         : null;
   }

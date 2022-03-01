@@ -9,14 +9,17 @@ class BottomNavigationIndexControlCubit
 
   void changeIndex(int index) {
     emit(
-      BottomNavigationIndexControlState(index),
+      BottomNavigationIndexControlState(
+        index,
+        recorderButtonState: state.recorderButtonState,
+      ),
     );
   }
 
   void changeIcon(RecorderButtonStates recorderButtonState) {
     emit(
       BottomNavigationIndexControlState(
-        3,
+        state.index,
         recorderButtonState: recorderButtonState,
       ),
     );

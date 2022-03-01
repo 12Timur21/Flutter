@@ -2,16 +2,11 @@ part of 'playlist_builder_bloc.dart';
 
 class PlaylistBuilderState extends Equatable {
   final bool isInit;
-  final bool isSelectMode;
-
   final List<PlaylistModel> allPlaylists;
-  final List<PlaylistModel> selectedPlaylists;
 
   const PlaylistBuilderState({
     this.isInit = false,
-    this.isSelectMode = false,
     this.allPlaylists = const [],
-    this.selectedPlaylists = const [],
   });
 
   PlaylistBuilderState copyWith({
@@ -22,17 +17,13 @@ class PlaylistBuilderState extends Equatable {
   }) {
     return PlaylistBuilderState(
       isInit: isInit ?? this.isInit,
-      isSelectMode: isSelectMode ?? this.isSelectMode,
       allPlaylists: allPlaylists ?? this.allPlaylists,
-      selectedPlaylists: selectedPlaylists ?? this.selectedPlaylists,
     );
   }
 
   @override
   List<Object?> get props => [
         isInit,
-        isSelectMode,
         allPlaylists,
-        selectedPlaylists,
       ];
 }

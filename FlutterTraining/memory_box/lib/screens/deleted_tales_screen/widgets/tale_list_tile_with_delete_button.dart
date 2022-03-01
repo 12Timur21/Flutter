@@ -1,39 +1,29 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/models/tale_model.dart';
+import 'package:memory_box/repositories/database_service.dart';
+import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/utils/incline.dart';
 
-class TaleListTileWithCheckBox extends StatefulWidget {
-  const TaleListTileWithCheckBox({
+class TaleListTileWithDeleteButton extends StatelessWidget {
+  const TaleListTileWithDeleteButton({
     required this.taleModel,
-    this.isPlay = false,
-    this.isSelected = false,
-    Key? key,
-    required this.toogleSelectMode,
+    required this.isPlay,
     required this.tooglePlayMode,
+    required this.onDelete,
+    Key? key,
   }) : super(key: key);
 
   final TaleModel taleModel;
-  final bool isSelected;
   final bool isPlay;
 
-  final VoidCallback toogleSelectMode;
   final VoidCallback tooglePlayMode;
+  final VoidCallback onDelete;
 
-  @override
-  _TaleListTileWithCheckBoxState createState() =>
-      _TaleListTileWithCheckBoxState();
-}
-
-class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 72,
       margin: const EdgeInsets.only(bottom: 10),
-      alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(41),
         color: const Color.fromRGBO(246, 246, 246, 1),
@@ -47,18 +37,17 @@ class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
           horizontal: 10,
         ),
         leading: GestureDetector(
-          onTap: widget.tooglePlayMode,
+          onTap: tooglePlayMode,
           child: SvgPicture.asset(
-            widget.isPlay
-                ? 'assets/icons/StopCircle.svg'
-                : 'assets/icons/PlayCircle.svg',
-            color: const Color.fromRGBO(113, 165, 159, 1),
+            isPlay ? AppIcons.stopCircle : AppIcons.playCircle,
+            color: const Color.fromRGBO(103, 139, 210, 1),
+            width: 50,
           ),
         ),
-        title: Text(widget.taleModel.title),
+        title: Text(taleModel.title),
         horizontalTitleGap: 20,
         subtitle: Text(
-          inclineDuration(widget.taleModel.duration),
+          inclineDuration(taleModel.duration),
           style: const TextStyle(
             fontSize: 14,
             fontFamily: 'TTNorms',
@@ -68,14 +57,10 @@ class _TaleListTileWithCheckBoxState extends State<TaleListTileWithCheckBox> {
           ),
         ),
         trailing: IconButton(
-          onPressed: widget.toogleSelectMode,
-          icon: widget.isSelected
-              ? SvgPicture.asset(
-                  'assets/icons/SubmitCircle.svg',
-                )
-              : SvgPicture.asset(
-                  'assets/icons/Circle.svg',
-                ),
+          onPressed: onDelete,
+          icon: SvgPicture.asset(
+            'assets/icons/Trash.svg',
+          ),
         ),
       ),
     );

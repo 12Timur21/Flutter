@@ -5,11 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
 import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/screens/splash_screen.dart';
+import 'package:memory_box/screens/subscription_screen/subscription_screen.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
+import 'package:memory_box/widgets/circle_textField.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memory_box/widgets/undoButton.dart';
@@ -26,6 +29,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileState extends State<ProfileScreen> {
   final TextEditingController _phoneInputContoller = TextEditingController();
   final TextEditingController _nameInputController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isEditMode = false;
 
@@ -86,10 +90,9 @@ class _ProfileState extends State<ProfileScreen> {
         //   fileType: FileType.avatar,
         // );
       }
-
+      //!!!!!!
       _sessionBloc.add(
         UpdateAccount(
-          uid: uid,
           displayName: _nameInputController.text,
           phoneNumber: toNumericString(_phoneInputContoller.text),
         ),
@@ -215,190 +218,203 @@ class _ProfileState extends State<ProfileScreen> {
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Container(
-                          height: 228,
-                          width: 228,
-                          color: Colors.grey,
-                          child: Stack(
-                            children: [
-                              _selectedImage == null
-                                  ? Image.asset(
-                                      'assets/images/nophoto.png',
-                                      color: Colors.white,
-                                    )
-                                  : Image.file(
-                                      File(_selectedImage!.path),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Container(
+                            height: 228,
+                            width: 228,
+                            color: Colors.grey,
+                            child: Stack(
+                              children: [
+                                _selectedImage == null
+                                    ? Image.asset(
+                                        'assets/images/nophoto.png',
+                                        color: Colors.white,
+                                      )
+                                    : Image.file(
+                                        File(_selectedImage!.path),
+                                        height: 228,
+                                        fit: BoxFit.fill,
+                                      ),
+                                if (_isEditMode)
+                                  GestureDetector(
+                                    onTap: () {
+                                      _pickImage();
+                                    },
+                                    child: Container(
+                                      color: const Color.fromRGBO(0, 0, 0, 0.5),
                                       height: 228,
-                                      fit: BoxFit.fill,
-                                    ),
-                              if (_isEditMode)
-                                GestureDetector(
-                                  onTap: () {
-                                    _pickImage();
-                                  },
-                                  child: Container(
-                                    color: const Color.fromRGBO(0, 0, 0, 0.5),
-                                    height: 228,
-                                    width: 228,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icons/ChosePhoto.svg',
+                                      width: 228,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icons/ChosePhoto.svg',
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                            ],
+                                  )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      SizedBox(
-                        width: 180,
-                        child: TextField(
-                          controller: _nameInputController,
-                          textAlign: TextAlign.center,
-                          enabled: _isEditMode ? true : false,
-                          style: const TextStyle(
-                            fontFamily: 'TTNorms',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 24,
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        SizedBox(
+                          width: 180,
+                          child: TextField(
+                            controller: _nameInputController,
+                            textAlign: TextAlign.center,
+                            enabled: _isEditMode ? true : false,
+                            style: const TextStyle(
+                              fontFamily: 'TTNorms',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 24,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-
-                      // String? _errorText;
-                      // return StatefulBuilder(
-                      //   builder: (BuildContext context, setState) {
-                      //     return CircleTextField(
-                      //       controller: _phoneInputContoller,
-                      //       inputFormatters: [PhoneInputFormatter()],
-                      //       errorText: _errorText,
-                      //       validator: (value) {
-                      //         int length = toNumericString(value).length;
-                      //         bool isError = false;
-                      //         if (length < 8) {
-                      //           _errorText = 'Укажите полный номер телефона';
-                      //           isError = true;
-                      //         }
-                      //         if (value == null || value.isEmpty) {
-                      //           _errorText = 'Поле не может быть пустым';
-                      //           isError = true;
-                      //         }
-                      //         if (!isError) {
-                      //           _errorText = null;
-                      //         }
-                      //         setState(() {});
-                      //         return _errorText;
-                      //       },
-                      //     );
-                      //   },
-                      // );
-                      // },
-                      // ),
-                      const SizedBox(
-                        height: 0,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _toogleMode();
-                        },
-                        child: Text(
-                          _isEditMode ? 'Сохранить' : 'Редактировать',
-                          style: const TextStyle(
-                            fontFamily: 'TTNorms',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: Colors.black,
-                          ),
+                        const SizedBox(
+                          height: 8,
                         ),
-                      ),
-                      if (!_isEditMode)
+                        Builder(
+                          builder: (context) {
+                            String? _errorText;
+                            return StatefulBuilder(
+                              builder: (BuildContext context, setState) {
+                                return CircleTextField(
+                                  controller: _phoneInputContoller,
+                                  inputFormatters: [PhoneInputFormatter()],
+                                  errorText: _errorText,
+                                  validator: (value) {
+                                    int length = toNumericString(value).length;
+                                    bool isError = false;
+                                    if (length < 8) {
+                                      _errorText =
+                                          'Укажите полный номер телефона';
+                                      isError = true;
+                                    }
+                                    if (value == null || value.isEmpty) {
+                                      _errorText = 'Поле не может быть пустым';
+                                      isError = true;
+                                    }
+                                    if (!isError) {
+                                      _errorText = null;
+                                    }
+                                    // return _errorText;
+                                    setState(() {});
+                                    return _errorText;
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(
+                          height: 0,
+                        ),
                         TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            "Подписка",
-                            style: TextStyle(
+                          onPressed: () {
+                            _toogleMode();
+                          },
+                          child: Text(
+                            _isEditMode ? 'Сохранить' : 'Редактировать',
+                            style: const TextStyle(
                               fontFamily: 'TTNorms',
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
-                              shadows: [
-                                Shadow(
-                                    color: Colors.black, offset: Offset(0, -5))
-                              ],
-                              color: Colors.transparent,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.black,
-                              decorationThickness: 1.1,
-                              decorationStyle: TextDecorationStyle.solid,
-                            ),
-                          ),
-                        ),
-                      if (!_isEditMode)
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
                               color: Colors.black,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          alignment: Alignment.topCenter,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: const LinearProgressIndicator(
-                              value: 0.3,
-                              minHeight: 24,
-                              color: Color.fromRGBO(241, 180, 136, 1),
-                              backgroundColor: Colors.white,
                             ),
                           ),
                         ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      if (!_isEditMode) const Text('150/500 мб'),
-                      // const Spacer(),
-                      if (!_isEditMode)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                logOut();
-                              },
-                              child: const Text('Выйти из приложения'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                deleteAccount();
-                              },
-                              child: const Text(
-                                'Удалить аккаунт',
-                                style: TextStyle(
-                                  color: Color.fromRGBO(226, 119, 119, 1),
-                                ),
+                        if (!_isEditMode)
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                SubscriptionScreen.routeName,
+                              );
+                              context
+                                  .read<BottomNavigationIndexControlCubit>()
+                                  .changeIndex(-1);
+                            },
+                            child: const Text(
+                              "Подписка",
+                              style: TextStyle(
+                                fontFamily: 'TTNorms',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                shadows: [
+                                  Shadow(
+                                      color: Colors.black,
+                                      offset: Offset(0, -5))
+                                ],
+                                color: Colors.transparent,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.black,
+                                decorationThickness: 1.1,
+                                decorationStyle: TextDecorationStyle.solid,
                               ),
                             ),
-                          ],
-                        )
-                    ],
+                          ),
+                        if (!_isEditMode)
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            alignment: Alignment.topCenter,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: const LinearProgressIndicator(
+                                value: 0.3,
+                                minHeight: 24,
+                                color: Color.fromRGBO(241, 180, 136, 1),
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        if (!_isEditMode) const Text('150/500 мб'),
+                        if (!_isEditMode)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  logOut();
+                                },
+                                child: const Text('Выйти из приложения'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  deleteAccount();
+                                },
+                                child: const Text(
+                                  'Удалить аккаунт',
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(226, 119, 119, 1),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                      ],
+                    ),
                   ),
                 ),
               );

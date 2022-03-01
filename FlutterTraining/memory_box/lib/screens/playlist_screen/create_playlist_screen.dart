@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -38,6 +39,8 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
   bool _isImageValid = true;
   File? _playlistCover;
 
+  bool isLoading = false;
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -59,11 +62,15 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
   }
 
   Future<void> _saveCollection({
-    required BuildContext context,
+    required List<TaleModel> allTales,
   }) async {
-    _isImageValid = _validateImageField();
+    final bool _isImageValid = _validateImageField();
+    log(_isImageValid.toString());
 
     if (_formController.currentState!.validate() && _isImageValid) {
+      setState(() {
+        isLoading = true;
+      });
       String playlistID = const Uuid().v4();
 
       String coverUrl = await StorageService.instance.uploadPlayListCover(
@@ -76,7 +83,7 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
         playlistID: playlistID,
         title: _titleController.text,
         description: _descriptionController.text,
-        talesModels: context.read<ListBuilderBloc>().state.allTales,
+        talesModels: allTales,
         coverUrl: coverUrl,
       );
 
@@ -93,6 +100,11 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
   }) async {
     final listBuilderBloc = context.read<ListBuilderBloc>();
 
+    if (listBuilderBloc.state.currentPlayTaleModel != null &&
+        listBuilderBloc.state.isPlay) {
+      listBuilderBloc.add(TooglePlayMode());
+    }
+
     List<TaleModel>? listTaleModels = await Navigator.of(context).pushNamed(
       SelectTalesToPlaylistScreen.routeName,
       arguments: listBuilderBloc.state.allTales,
@@ -101,10 +113,6 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
     listBuilderBloc.add(
       InitializeListBuilderWithTaleModels(listTaleModels),
     );
-
-    if (listBuilderBloc.state.currentPlayTaleModel != null) {
-      listBuilderBloc.add(TooglePlayMode());
-    }
   }
 
   Future<void> _pickImage() async {
@@ -134,265 +142,292 @@ class _CreatePlaylistScreenState extends State<CreatePlaylistScreen> {
             ),
         ),
       ],
-      child: Builder(
-        builder: (context) {
-          final listBuilderBloc = context.watch<ListBuilderBloc>();
-
-          return BackgroundPattern(
-            patternColor: AppColors.seaNymph,
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(
-                primary: true,
-                toolbarHeight: 70,
+      child: BackgroundPattern(
+        patternColor: AppColors.seaNymph,
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Scaffold(
+                resizeToAvoidBottomInset: false,
                 backgroundColor: Colors.transparent,
-                centerTitle: true,
-                leading: UndoButton(
-                  undoChanges: _pop,
-                ),
-                title: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: const TextSpan(
-                      text: 'Создание',
-                      style: TextStyle(
-                        fontFamily: 'TTNorms',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 36,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
+                appBar: AppBar(
+                  primary: true,
+                  toolbarHeight: 70,
+                  backgroundColor: Colors.transparent,
+                  centerTitle: true,
+                  leading: UndoButton(
+                    undoChanges: _pop,
                   ),
-                ),
-                actions: [
-                  Container(
-                    margin: const EdgeInsets.only(
-                      top: 20,
-                      right: 15,
-                    ),
-                    child: TextButton(
-                      onPressed: () {
-                        _saveCollection(
-                          context: context,
-                        );
-                      },
-                      child: const Text(
-                        'Готово',
+                  title: Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: const TextSpan(
+                        text: 'Создание',
                         style: TextStyle(
                           fontFamily: 'TTNorms',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 36,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
-                  )
-                ],
-                elevation: 0,
-              ),
-              body: Container(
-                margin: const EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                ),
-                alignment: Alignment.topCenter,
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Form(
-                    key: _formController,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          controller: _titleController,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (text) {
-                            if (text == null || text.isEmpty) {
-                              return 'Пожалуйста, введите название подборки';
-                            }
-
-                            if (text.length > 20) {
-                              return 'Слишком длинное название';
-                            }
-
-                            return null;
-                          },
-                          style: const TextStyle(
-                            fontSize: 22,
-                            color: Colors.white,
+                  ),
+                  actions: [
+                    BlocBuilder<ListBuilderBloc, ListBuilderState>(
+                      builder: (context, state) {
+                        return Container(
+                          margin: const EdgeInsets.only(
+                            top: 20,
+                            right: 15,
                           ),
-                          decoration: const InputDecoration(
-                            hintText: 'Название...',
-                            hintStyle: TextStyle(
-                              fontFamily: 'TTNorms',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                              letterSpacing: 0.5,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              color: AppColors.wildSand.withOpacity(0.9),
-                              borderRadius: BorderRadius.circular(15),
-                              border: _isImageValid
-                                  ? null
-                                  : Border.all(
-                                      width: 2,
-                                      color: Colors.red,
-                                    ),
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: const Offset(0, 4),
-                                  blurRadius: 20,
-                                  color: Colors.black.withOpacity(0.25),
-                                ),
-                              ],
-                            ),
-                            child: Stack(
-                              children: [
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: _playlistCover != null
-                                        ? Image.file(
-                                            _playlistCover!,
-                                            fit: BoxFit.fitWidth,
-                                          )
-                                        : null,
-                                  ),
-                                ),
-                                Center(
-                                  child: SvgPicture.asset(
-                                    AppIcons.chosePhoto,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        TextFormField(
-                          style: const TextStyle(fontSize: 22),
-                          decoration: const InputDecoration(
-                            hintText: 'Введите описание...',
-                            focusColor: Colors.red,
-                          ),
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          controller: _descriptionController,
-                          validator: (text) {
-                            if (text != null && text.length > 400) {
-                              return 'Слишком длинное название';
-                            }
-                            return null;
-                          },
-                          maxLines: 3,
-                          minLines: 1,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            listBuilderBloc.state.allTales.isNotEmpty
-                                ? TextButton(
-                                    onPressed: () {
-                                      _addTales(
-                                        context: context,
-                                      );
-                                    },
-                                    child: const Text(
-                                      'Изменить список',
-                                      style: TextStyle(
-                                        fontFamily: 'TTNorms',
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 14,
-                                        color: Colors.transparent,
-                                        decoration: TextDecoration.underline,
-                                        decorationColor: Colors.black,
-                                        shadows: [
-                                          Shadow(
-                                            color: Colors.black,
-                                            offset: Offset(0, -5),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                            TextButton(
-                              onPressed: () => FocusScope.of(context).unfocus(),
-                              child: const Text(
-                                'Готово',
-                                style: TextStyle(
-                                  fontFamily: 'TTNorms',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                ),
+                          child: TextButton(
+                            onPressed: () {
+                              _saveCollection(
+                                allTales: context
+                                    .read<ListBuilderBloc>()
+                                    .state
+                                    .allTales,
+                              );
+                            },
+                            child: const Text(
+                              'Готово',
+                              style: TextStyle(
+                                fontFamily: 'TTNorms',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                color: Colors.white,
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          height: 300,
-                          child: listBuilderBloc.state.allTales.isNotEmpty
-                              ? _ListBuilder(
-                                  scrollController: _scrollController,
-                                )
-                              : Center(
-                                  child: TextButton(
-                                    onPressed: () {
-                                      _addTales(
-                                        context: context,
-                                      );
-                                    },
-                                    child: const Text(
-                                      'Добавить аудиофайл',
-                                      style: TextStyle(
-                                        fontFamily: 'TTNorms',
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 14,
-                                        color: Colors.transparent,
-                                        decoration: TextDecoration.underline,
-                                        decorationColor: Colors.black,
-                                        shadows: [
-                                          Shadow(
-                                            color: Colors.black,
-                                            offset: Offset(0, -5),
-                                          ),
-                                        ],
+                          ),
+                        );
+                      },
+                    )
+                  ],
+                  elevation: 0,
+                ),
+                body: Container(
+                  margin: const EdgeInsets.only(
+                    left: 15,
+                    right: 15,
+                  ),
+                  alignment: Alignment.topCenter,
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Form(
+                      key: _formController,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: _titleController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (text) {
+                              if (text == null || text.isEmpty) {
+                                return 'Пожалуйста, введите название подборки';
+                              }
+
+                              if (text.length > 20) {
+                                return 'Слишком длинное название';
+                              }
+
+                              return null;
+                            },
+                            style: const TextStyle(
+                              fontSize: 22,
+                              color: Colors.white,
+                            ),
+                            decoration: const InputDecoration(
+                              hintText: 'Название...',
+                              hintStyle: TextStyle(
+                                fontFamily: 'TTNorms',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                                letterSpacing: 0.5,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: AppColors.wildSand.withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(15),
+                                border: _isImageValid
+                                    ? null
+                                    : Border.all(
+                                        width: 2,
+                                        color: Colors.red,
                                       ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    offset: const Offset(0, 4),
+                                    blurRadius: 20,
+                                    color: Colors.black.withOpacity(0.25),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                children: [
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: _playlistCover != null
+                                          ? Image.file(
+                                              _playlistCover!,
+                                              fit: BoxFit.fitWidth,
+                                            )
+                                          : null,
                                     ),
                                   ),
-                                ),
-                        ),
-                      ],
+                                  Center(
+                                    child: SvgPicture.asset(
+                                      AppIcons.chosePhoto,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          TextFormField(
+                            style: const TextStyle(fontSize: 22),
+                            decoration: const InputDecoration(
+                              hintText: 'Введите описание...',
+                              focusColor: Colors.red,
+                            ),
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            controller: _descriptionController,
+                            validator: (text) {
+                              if (text != null && text.length > 400) {
+                                return 'Слишком длинное название';
+                              }
+                              return null;
+                            },
+                            maxLines: 3,
+                            minLines: 1,
+                          ),
+                          BlocBuilder<ListBuilderBloc, ListBuilderState>(
+                            builder: (context, state) {
+                              return Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      context
+                                              .read<ListBuilderBloc>()
+                                              .state
+                                              .allTales
+                                              .isNotEmpty
+                                          ? TextButton(
+                                              onPressed: () {
+                                                _addTales(
+                                                  context: context,
+                                                );
+                                              },
+                                              child: const Text(
+                                                'Изменить список',
+                                                style: TextStyle(
+                                                  fontFamily: 'TTNorms',
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  color: Colors.transparent,
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  decorationColor: Colors.black,
+                                                  shadows: [
+                                                    Shadow(
+                                                      color: Colors.black,
+                                                      offset: Offset(0, -5),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          : Container(),
+                                      TextButton(
+                                        onPressed: () =>
+                                            FocusScope.of(context).unfocus(),
+                                        child: const Text(
+                                          'Готово',
+                                          style: TextStyle(
+                                            fontFamily: 'TTNorms',
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  SizedBox(
+                                    height: 300,
+                                    child: context
+                                            .read<ListBuilderBloc>()
+                                            .state
+                                            .allTales
+                                            .isNotEmpty
+                                        ? _ListBuilder(
+                                            scrollController: _scrollController,
+                                          )
+                                        : Center(
+                                            child: TextButton(
+                                              onPressed: () {
+                                                _addTales(
+                                                  context: context,
+                                                );
+                                              },
+                                              child: const Text(
+                                                'Добавить аудиофайл',
+                                                style: TextStyle(
+                                                  fontFamily: 'TTNorms',
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  color: Colors.transparent,
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  decorationColor: Colors.black,
+                                                  shadows: [
+                                                    Shadow(
+                                                      color: Colors.black,
+                                                      offset: Offset(0, -5),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
       ),
     );
   }
 }
 
-class _ListBuilder extends StatefulWidget {
+class _ListBuilder extends StatelessWidget {
   const _ListBuilder({
     required this.scrollController,
     Key? key,
@@ -400,14 +435,9 @@ class _ListBuilder extends StatefulWidget {
 
   final ScrollController scrollController;
 
-  @override
-  __ListBuilderState createState() => __ListBuilderState();
-}
-
-class __ListBuilderState extends State<_ListBuilder> {
   void _scrollDown() {
-    widget.scrollController.animateTo(
-      widget.scrollController.position.maxScrollExtent,
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
       duration: const Duration(milliseconds: 500),
       curve: Curves.ease,
     );
@@ -415,8 +445,8 @@ class __ListBuilderState extends State<_ListBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final listBuilderBloc = BlocProvider.of<ListBuilderBloc>(context);
-    final audioPlayerBloc = BlocProvider.of<AudioplayerBloc>(context);
+    final listBuilderBloc = context.read<ListBuilderBloc>();
+    final audioPlayerBloc = context.read<AudioplayerBloc>();
 
     return BlocConsumer<ListBuilderBloc, ListBuilderState>(
       listener: (context, state) {
@@ -439,7 +469,6 @@ class __ListBuilderState extends State<_ListBuilder> {
       builder: (context, listBuilderState) {
         return Stack(
           children: [
-            //LIST
             ListView.builder(
               itemCount: listBuilderState.allTales.length + 1,
               itemBuilder: (context, index) {
@@ -463,8 +492,15 @@ class __ListBuilderState extends State<_ListBuilder> {
                     onAddToPlaylist: () {},
                     onDelete: () {
                       listBuilderBloc.add(
-                        DeleteTale(taleModel),
+                        DeleteTale(
+                          taleModel,
+                        ),
                       );
+                      context.read<ListBuilderBloc>().add(
+                            DeleteTale(
+                              taleModel,
+                            ),
+                          );
                     },
                     onRename: (String newTitle) {
                       listBuilderBloc.add(
@@ -492,7 +528,6 @@ class __ListBuilderState extends State<_ListBuilder> {
                     });
               },
             ),
-
             const _AudioPlayer(),
           ],
         );

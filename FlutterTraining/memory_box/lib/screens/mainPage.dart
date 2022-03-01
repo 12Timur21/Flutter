@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
 import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
 import 'package:memory_box/routes/app_router.dart';
-import 'package:memory_box/screens/profile_screen/profile_screen.dart';
+import 'package:memory_box/screens/deleted_tales_screen/deleted_tales_screen.dart';
+import 'package:memory_box/screens/home_screen/home_screen.dart';
 import 'package:memory_box/screens/recording_screen/recording_barrel.dart';
 
 import 'package:memory_box/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
@@ -65,7 +66,7 @@ class _MainPageState extends State<MainPage> {
       drawer: const CustomDrawer(),
       body: Navigator(
         key: MainPage.navigationKey,
-        initialRoute: ProfileScreen.routeName,
+        initialRoute: HomeScreen.routeName,
         onGenerateRoute: AppRouter.generateRoute,
       ),
       bottomNavigationBar: BottomNavBar(

@@ -34,20 +34,26 @@ class _PlaylistTileState extends State<PlaylistTile> {
               borderRadius: BorderRadius.circular(16),
               child: Stack(
                 children: [
-                  CachedNetworkImage(
-                    imageUrl: widget.playlistModel.coverUrl,
+                  Image.network(
+                    widget.playlistModel.coverUrl,
                     height: 240,
                     fit: BoxFit.fill,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    errorWidget: (context, url, error) => const Center(
-                      child: Icon(
-                        Icons.error,
-                        color: Colors.red,
-                      ),
-                    ),
                   ),
+                  // CachedNetworkImage(
+                  //   imageUrl: widget.playlistModel.coverUrl,
+                  //   key: UniqueKey(),
+                  //   height: 240,
+                  //   fit: BoxFit.fill,
+                  //   placeholder: (context, url) => const Center(
+                  //     child: CircularProgressIndicator(),
+                  //   ),
+                  //   errorWidget: (context, url, error) => const Center(
+                  //     child: Icon(
+                  //       Icons.error,
+                  //       color: Colors.red,
+                  //     ),
+                  //   ),
+                  // ),
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(

@@ -12,35 +12,23 @@ class PlaylistBuilderBloc
     on<InitializePlaylistBuilderWithFutureRequest>((event, emit) async {
       emit(
         PlaylistBuilderState(
-            isInit: true,
-            allPlaylists: await event.initializationPlaylistRequest),
+          isInit: true,
+          allPlaylists: await event.initializationPlaylistRequest,
+        ),
       );
     });
     on<UpdateCurrentPlaylist>((event, emit) {
       List<PlaylistModel> allPlaylistModels = [...state.allPlaylists];
-      List<PlaylistModel> selectedPlaylistModels = [...state.selectedPlaylists];
-      print('ewqeqwe');
 
       int taleIndexInAllList = allPlaylistModels.indexWhere(
         (element) => element.ID == event.playlistModel.ID,
       );
 
-      int taleIndexInSelectList = selectedPlaylistModels.indexWhere(
-        (element) => element.ID == event.playlistModel.ID,
-      );
-
       allPlaylistModels[taleIndexInAllList] = event.playlistModel;
-      print(1);
-      print(allPlaylistModels[taleIndexInAllList]);
-      print(2);
-      if (taleIndexInSelectList != -1) {
-        selectedPlaylistModels[taleIndexInSelectList] = event.playlistModel;
-      }
 
       emit(
         state.copyWith(
           allPlaylists: allPlaylistModels,
-          selectedPlaylists: selectedPlaylistModels,
         ),
       );
     });
@@ -53,39 +41,40 @@ class PlaylistBuilderBloc
     });
     on<DeleteFewPlaylists>((event, emit) {
       List<PlaylistModel> allPlaylistModels = [...state.allPlaylists];
-      List<PlaylistModel> selectedPlaylistModels = [...state.selectedPlaylists];
 
-      allPlaylistModels.remove(event.playlistModels);
-      selectedPlaylistModels.remove(event.playlistModels);
+      for (PlaylistModel playlistModel in event.playlistModels) {
+        allPlaylistModels.removeWhere(
+          (element) => element.ID == playlistModel.ID,
+        );
+      }
 
       emit(
         state.copyWith(
           allPlaylists: allPlaylistModels,
-          selectedPlaylists: selectedPlaylistModels,
         ),
       );
     });
     on<AddTaleToFewPlaylists>((event, emit) {});
 
-    on<ToogleSelectPlaylisy>((event, emit) {
-      List<PlaylistModel> selectedPlaylistModels = [...state.selectedPlaylists];
-      if (selectedPlaylistModels.contains(event.playlistModel)) {
-        selectedPlaylistModels.remove(event.playlistModel);
-      } else {
-        selectedPlaylistModels.add(event.playlistModel);
-      }
-      emit(
-        state.copyWith(
-          selectedPlaylists: selectedPlaylistModels,
-        ),
-      );
-    });
-    on<ToogleSelectMode>((event, emit) {
-      emit(
-        state.copyWith(
-          isSelectMode: !state.isSelectMode,
-        ),
-      );
-    });
+    // on<ToogleSelectPlaylist>((event, emit) {
+    //   List<PlaylistModel> selectedPlaylistModels = [...state.selectedPlaylists];
+    //   if (selectedPlaylistModels.contains(event.playlistModel)) {
+    //     selectedPlaylistModels.remove(event.playlistModel);
+    //   } else {
+    //     selectedPlaylistModels.add(event.playlistModel);
+    //   }
+    //   emit(
+    //     state.copyWith(
+    //       selectedPlaylists: selectedPlaylistModels,
+    //     ),
+    //   );
+    // });
+    // on<ToogleSelectMode>((event, emit) {
+    //   emit(
+    //     state.copyWith(
+    //       isSelectMode: !state.isSelectMode,
+    //     ),
+    //   );
+    // });
   }
 }

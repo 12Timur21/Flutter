@@ -1,19 +1,19 @@
 enum SubscriptionType {
   noSubscription,
-  monthSubscription,
-  yearSubscription,
+  month,
+  year,
 }
 
 class UserModel {
   String? uid;
   String? displayName;
   String? phoneNumber;
-  SubscriptionType subscriptionType;
+  SubscriptionType? subscriptionType;
   UserModel({
     this.uid,
     this.displayName,
     this.phoneNumber,
-    required this.subscriptionType,
+    this.subscriptionType,
   });
 
   factory UserModel.initial() {
@@ -21,26 +21,23 @@ class UserModel {
       uid: null,
       displayName: null,
       phoneNumber: null,
-      subscriptionType: SubscriptionType.noSubscription,
+      subscriptionType: null,
     );
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    SubscriptionType? subscriptionType;
+    SubscriptionType subscriptionType = SubscriptionType.values.firstWhere(
+      (f) => f.toString() == json['subscriptionType'],
+      orElse: () => SubscriptionType.noSubscription,
+    );
 
-    for (final value in SubscriptionType.values) {
-      String enumValue = value.toString().split('.').last;
-
-      if (enumValue == json['subscriptionType']) {
-        subscriptionType = value;
-      }
-    }
+    print(subscriptionType);
 
     return UserModel(
       uid: json['uid'],
       displayName: json['displayName'],
       phoneNumber: json['phoneNumber'],
-      subscriptionType: subscriptionType ?? SubscriptionType.noSubscription,
+      subscriptionType: subscriptionType,
     );
   }
 
@@ -48,7 +45,7 @@ class UserModel {
         'uid': uid,
         'displayName': displayName,
         'phoneNumber': phoneNumber,
-        'subscriptionType': subscriptionType.toString().split('.').last,
+        'subscriptionType': subscriptionType.toString(),
       };
 
   UserModel copyWith({
@@ -56,7 +53,6 @@ class UserModel {
     String? displayName,
     String? phoneNumber,
     SubscriptionType? subscriptionType,
-    Map<String, String>? soundList,
   }) {
     return UserModel(
       uid: uid ?? this.uid,

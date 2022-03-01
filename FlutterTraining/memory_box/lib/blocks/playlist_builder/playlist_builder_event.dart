@@ -26,8 +26,8 @@ class AddNewPlaylist extends PlaylistBuilderEvent {
   List<Object> get props => [playlistModel];
 }
 
-class ToogleSelectPlaylisy extends PlaylistBuilderEvent {
-  const ToogleSelectPlaylisy({
+class ToogleSelectPlaylist extends PlaylistBuilderEvent {
+  const ToogleSelectPlaylist({
     required this.playlistModel,
   });
   final PlaylistModel playlistModel;

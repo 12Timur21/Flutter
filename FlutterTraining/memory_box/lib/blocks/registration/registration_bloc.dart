@@ -5,13 +5,9 @@ part 'registration_event.dart';
 part 'registration_state.dart';
 
 class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
-  // final AuthenticationBloc _authenticationBloc;
   final AuthService _authService = AuthService.instance;
 
-  RegistrationBloc(
-      // this._authenticationBloc,
-      )
-      : super(LoginInitial());
+  RegistrationBloc() : super(LoginInitial());
 
   @override
   Stream<RegistrationState> mapEventToState(RegistrationEvent event) async* {

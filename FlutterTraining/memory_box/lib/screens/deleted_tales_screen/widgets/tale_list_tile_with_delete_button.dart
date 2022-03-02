@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/models/tale_model.dart';
-import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/utils/incline.dart';
 

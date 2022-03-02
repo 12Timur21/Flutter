@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/models/tale_model.dart';
@@ -33,6 +31,7 @@ class DatabaseService {
   Future<void> updateUserCollection({
     String? phoneNumber,
     String? displayName,
+    String? avatarUrl,
     SubscriptionType? subscriptionType,
   }) async {
     Map<String, dynamic> updatedPair = {};
@@ -48,6 +47,10 @@ class DatabaseService {
       updatedPair['subscriptionType'] = subscriptionType.toString();
     }
 
+    if (avatarUrl != null) {
+      updatedPair['avatarUrl'] = avatarUrl;
+    }
+
     await _userCollection.doc(AuthService.userID).update(updatedPair);
   }
 
@@ -60,7 +63,7 @@ class DatabaseService {
   Future<UserModel?> userModelFromDatabase() async {
     String? uid = AuthService.userID;
     if (uid != null) {
-      DocumentSnapshot<Object?> result = await _userCollection.doc(uid).get();
+      final result = await _userCollection.doc(uid).get();
       return UserModel.fromJson(result.data() as Map<String, dynamic>);
     }
     return null;
@@ -133,13 +136,13 @@ class DatabaseService {
     QuerySnapshot<Map<String, dynamic>> taleCollection =
         await documentSnapshot.get();
 
-    taleCollection.docs.forEach((e) {
+    for (final query in taleCollection.docs) {
       listTaleModels.add(
         TaleModel.fromJson(
-          e.data(),
+          query.data(),
         ),
       );
-    });
+    }
     return listTaleModels;
   }
 

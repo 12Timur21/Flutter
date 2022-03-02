@@ -52,7 +52,7 @@ class _RegistrationState extends State<RegistrationScreen> {
         //*[Start] AnonSession
         if (state is AnonRegistrationSucces) {
           BlocProvider.of<SessionBloc>(context).add(
-            LogIn(),
+            LogIn(SessionStatus.anonAuthenticated),
           );
         }
         if (state is AnonRegistrationFailrule) {
@@ -140,37 +140,20 @@ class _RegistrationState extends State<RegistrationScreen> {
                       ),
                       Form(
                         key: _formKey,
-                        child: Builder(
-                          builder: (context) {
-                            String? _errorText;
-                            return StatefulBuilder(
-                              builder: (BuildContext context, setState) {
-                                return CircleTextField(
-                                  controller: _phoneController,
-                                  inputFormatters: [PhoneInputFormatter()],
-                                  errorText: _errorText,
-                                  validator: (value) {
-                                    int length = toNumericString(value).length;
-                                    bool isError = false;
-                                    if (length < 8) {
-                                      _errorText =
-                                          'Укажите полный номер телефона';
-                                      isError = true;
-                                    }
-                                    if (value == null || value.isEmpty) {
-                                      _errorText = 'Поле не может быть пустым';
-                                      isError = true;
-                                    }
-                                    if (!isError) {
-                                      _errorText = null;
-                                    }
-                                    // return _errorText;
-                                    setState(() {});
-                                    return _errorText;
-                                  },
-                                );
-                              },
-                            );
+                        child: CircleTextField(
+                          controller: _phoneController,
+                          inputFormatters: [PhoneInputFormatter()],
+                          validator: (value) {
+                            int length = toNumericString(value).length;
+
+                            if (length < 8) {
+                              return 'Укажите полный номер телефона';
+                            }
+                            if (value == null || value.isEmpty) {
+                              return 'Поле не может быть пустым';
+                            }
+
+                            return null;
                           },
                         ),
                       ),

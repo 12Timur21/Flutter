@@ -6,7 +6,11 @@ abstract class SessionEvent {
 
 class InitSession extends SessionEvent {}
 
-class LogIn extends SessionEvent {}
+class LogIn extends SessionEvent {
+  SessionStatus sessionStatus;
+
+  LogIn(this.sessionStatus);
+}
 
 class LogOut extends SessionEvent {}
 
@@ -22,10 +26,14 @@ class UpdateAccount extends SessionEvent {
   String? displayName;
   String? phoneNumber;
   SubscriptionType? subscriptionType;
+  SessionStatus? sessionStatus;
+  String? avatarUrl;
 
   UpdateAccount({
+    this.sessionStatus,
     this.displayName,
     this.phoneNumber,
     this.subscriptionType,
+    this.avatarUrl,
   });
 }

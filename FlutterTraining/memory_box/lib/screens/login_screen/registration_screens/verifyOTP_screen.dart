@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:memory_box/blocks/registration/registration_bloc.dart';
+import 'package:memory_box/blocks/session/session_bloc.dart';
 import 'package:memory_box/screens/login_screen/registration_screens/gratiude_registration_screen.dart';
 import 'package:memory_box/screens/login_screen/registration_screens/registration_screen.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
@@ -61,6 +62,9 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
     return BlocListener<RegistrationBloc, RegistrationState>(
       listener: (context, state) {
         if (state is VerifyOTPSucces) {
+          BlocProvider.of<SessionBloc>(context).add(
+            LogIn(SessionStatus.authenticated),
+          );
           Navigator.pushNamed(
             context,
             GratitudeRegistrationScreen.routeName,
@@ -107,9 +111,6 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
-        // if (state is VerifyTimeEnd) {
-        //   print('lol kek');
-        // }
       },
       child: Scaffold(
         body: BackgroundPattern(
@@ -164,37 +165,21 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                     ),
                     Form(
                       key: _formKey,
-                      child: Builder(
-                        builder: (context) {
-                          String? _errorText;
-                          return StatefulBuilder(
-                            builder: (BuildContext context, setState) {
-                              return CircleTextField(
-                                controller: _otpController,
-                                inputFormatters: [],
-                                errorText: _errorText,
-                                maxLength: 6,
-                                validator: (value) {
-                                  int length = toNumericString(value).length;
-                                  bool isError = false;
-                                  if (length < 6) {
-                                    _errorText =
-                                        'Укажите полный верификационный код';
-                                    isError = true;
-                                  }
-                                  if (value == null || value.isEmpty) {
-                                    _errorText = 'Поле не может быть пустым';
-                                    isError = true;
-                                  }
-                                  if (!isError) {
-                                    _errorText = null;
-                                  }
-                                  setState(() {});
-                                  return _errorText;
-                                },
-                              );
-                            },
-                          );
+                      child: CircleTextField(
+                        controller: _otpController,
+                        inputFormatters: [],
+                        maxLength: 6,
+                        validator: (value) {
+                          int length = toNumericString(value).length;
+
+                          if (length < 6) {
+                            return 'Укажите полный верификационный код';
+                          }
+                          if (value == null || value.isEmpty) {
+                            return 'Поле не может быть пустым';
+                          }
+
+                          return null;
                         },
                       ),
                     ),

@@ -312,7 +312,7 @@ class _RecordingPreviewScreenState extends State<RecordingPreviewScreen> {
                   : null,
               child: Image.asset(
                 'assets/images/cover.png',
-                width: 270,
+                width: 230,
               ),
             ),
             const SizedBox(

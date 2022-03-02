@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-enum TypeValidation {
-  phoneValidation,
-  smsValidation,
-}
-
 class CircleTextField extends StatefulWidget {
   const CircleTextField({
     required this.controller,
     this.inputFormatters,
     this.editable = true,
     this.validator,
-    this.errorText,
     this.maxLength,
     Key? key,
   }) : super(key: key);
@@ -21,7 +15,7 @@ class CircleTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final bool editable;
   final String? Function(String?)? validator;
-  final String? errorText;
+
   final int? maxLength;
 
   @override
@@ -29,40 +23,34 @@ class CircleTextField extends StatefulWidget {
 }
 
 class _CircleTextFieldState extends State<CircleTextField> {
-  String? _errorText;
-  @override
-  void initState() {
-    _errorText = widget.errorText;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(
-              Radius.circular(41),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.17),
-                blurRadius: 11,
-                offset: Offset(0, 4),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Stack(
+        children: [
+          Container(
+            height: 64,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(41),
               ),
-            ],
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.17),
+                  blurRadius: 11,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
           ),
-          child: TextFormField(
+          TextFormField(
             controller: widget.controller,
             enabled: widget.editable,
             textAlign: TextAlign.center,
             keyboardType: TextInputType.phone,
             inputFormatters: widget.inputFormatters,
             maxLength: widget.maxLength,
-            onChanged: (_) => setState(() {
-              _errorText = null;
-            }),
             validator: widget.validator,
             style: const TextStyle(
               fontFamily: 'TTNorms',
@@ -70,19 +58,18 @@ class _CircleTextFieldState extends State<CircleTextField> {
               fontSize: 20,
             ),
             decoration: InputDecoration(
-              counterText: '',
-              errorText: null,
-              errorStyle: const TextStyle(
-                height: 0,
-                fontSize: 0,
-              ),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 0,
+                horizontal: 55,
                 vertical: 23,
               ),
               filled: true,
               fillColor: Colors.white,
-              border: InputBorder.none,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(41.0),
+                borderSide: const BorderSide(
+                  color: Colors.transparent,
+                ),
+              ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(41.0),
                 borderSide: const BorderSide(
@@ -91,14 +78,14 @@ class _CircleTextFieldState extends State<CircleTextField> {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(41),
-                borderSide: BorderSide(
-                  color: _errorText != null ? Colors.red : Colors.transparent,
+                borderSide: const BorderSide(
+                  color: Colors.red,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(41),
-                borderSide: BorderSide(
-                  color: _errorText != null ? Colors.red : Colors.transparent,
+                borderSide: const BorderSide(
+                  color: Colors.red,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -109,21 +96,8 @@ class _CircleTextFieldState extends State<CircleTextField> {
               ),
             ),
           ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            _errorText ?? '',
-            style: const TextStyle(
-              color: Colors.red,
-              fontSize: 16,
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

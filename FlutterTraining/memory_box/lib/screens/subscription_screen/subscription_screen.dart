@@ -120,142 +120,148 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             horizontal: 8,
             vertical: 8,
           ),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 25,
-              ),
-              const Text(
-                'Выбери подписку',
-                style: TextStyle(
-                  fontFamily: 'TTNorms',
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.5,
-                  fontSize: 24,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 25,
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              BlocBuilder<SessionBloc, SessionState>(
-                builder: (context, state) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: _SubscriptionPlanTale(
-                            duringString: 'в месяц',
-                            price: 300,
-                            isSelected:
-                                _subsciptionType == SubscriptionType.month,
-                            onSelect: () {
-                              _selectNewPlan(SubscriptionType.month);
-                            }),
-                      ),
-                      Expanded(
-                        child: _SubscriptionPlanTale(
-                          duringString: 'в год',
-                          price: 1800,
-                          isSelected: _subsciptionType == SubscriptionType.year,
-                          onSelect: () {
-                            _selectNewPlan(SubscriptionType.year);
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 40,
+                const Text(
+                  'Выбери подписку',
+                  style: TextStyle(
+                    fontFamily: 'TTNorms',
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.5,
+                    fontSize: 24,
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      child: const Text(
-                        'Что даёт подписка:',
-                        style: TextStyle(
-                          fontFamily: 'TTNorms',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                    Column(
+                const SizedBox(
+                  height: 15,
+                ),
+                BlocBuilder<SessionBloc, SessionState>(
+                  builder: (context, state) {
+                    return Row(
                       children: [
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              AppIcons.infinite,
-                              width: 25,
-                            ),
-                            const SizedBox(width: 10),
-                            const Text('Неограниченая память'),
-                          ],
+                        Expanded(
+                          child: _SubscriptionPlanTale(
+                              duringString: 'в месяц',
+                              price: 300,
+                              isSelected:
+                                  _subsciptionType == SubscriptionType.month,
+                              onSelect: () {
+                                _selectNewPlan(SubscriptionType.month);
+                              }),
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              AppIcons.cloudUpload,
-                              width: 25,
-                            ),
-                            const SizedBox(width: 10),
-                            const Text('Все файлы хранятся в облаке'),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            SvgPicture.asset(
-                              AppIcons.paperDownload,
-                              width: 25,
-                            ),
-                            const SizedBox(width: 10),
-                            const Text('Возможность скачивать без ограничений'),
-                          ],
+                        Expanded(
+                          child: _SubscriptionPlanTale(
+                            duringString: 'в год',
+                            price: 1800,
+                            isSelected:
+                                _subsciptionType == SubscriptionType.year,
+                            onSelect: () {
+                              _selectNewPlan(SubscriptionType.year);
+                            },
+                          ),
                         ),
                       ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-              const Spacer(),
-              TextButton(
-                child: const Text(
-                  'Подписаться на месяц',
-                  style: TextStyle(
-                    color: Colors.white,
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 40,
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: const Text(
+                          'Что даёт подписка:',
+                          style: TextStyle(
+                            fontFamily: 'TTNorms',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                AppIcons.infinite,
+                                width: 25,
+                              ),
+                              const SizedBox(width: 10),
+                              const Text('Неограниченая память'),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                AppIcons.cloudUpload,
+                                width: 25,
+                              ),
+                              const SizedBox(width: 10),
+                              const Text('Все файлы хранятся в облаке'),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                AppIcons.paperDownload,
+                                width: 25,
+                              ),
+                              const SizedBox(width: 10),
+                              const Text(
+                                  'Возможность скачивать без ограничений'),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(51),
-                    ),
-                  ),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    AppColors.tacao,
-                  ),
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(
-                      vertical: 20,
-                      horizontal: 100,
-                    ),
-                  ),
+                const SizedBox(
+                  height: 30,
                 ),
-                onPressed: _changePlan,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-            ],
+                TextButton(
+                  child: const Text(
+                    'Подписаться на месяц',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(51),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      AppColors.tacao,
+                    ),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                        vertical: 20,
+                        horizontal: 100,
+                      ),
+                    ),
+                  ),
+                  onPressed: _changePlan,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
           ),
         ),
       ),

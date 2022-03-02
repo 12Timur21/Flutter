@@ -18,7 +18,8 @@ class SplashScreen extends StatelessWidget {
 
     return BlocListener<SessionBloc, SessionState>(
       listener: (context, state) {
-        if (state.status == SessionStatus.authenticated) {
+        if (state.status == SessionStatus.authenticated ||
+            state.status == SessionStatus.anonAuthenticated) {
           Navigator.pushNamed(
             context,
             WelcomeRegualrUserScreen.routeName,

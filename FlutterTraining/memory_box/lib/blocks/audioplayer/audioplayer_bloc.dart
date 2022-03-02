@@ -60,7 +60,7 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
           whenFinished: () async {
             whenFinished.complete();
           });
-      print('4 init here');
+
       emit(
         state.copyWith(
           isPlay: event.isAutoPlay,
@@ -73,7 +73,6 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
       );
 
       await whenFinished.future.then((_) {
-        print('5 end play');
         emit(
           state.copyWith(
             isTaleEnd: true,
@@ -84,13 +83,11 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
       });
     });
     on<Play>((event, emit) async {
-      print('3');
       //Если модель уже была инициализирована, то плеер продолжит с прошлого места
       if (state.isTaleInit && state.taleModel?.ID == event.taleModel.ID) {
         if (_soundPlayer.isSoundPlay) {
           return;
         }
-        print('3 resune');
         await _soundPlayer.resumePlayer();
         emit(
           state.copyWith(
@@ -98,7 +95,6 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
           ),
         );
       } else {
-        print('4 init');
         add(
           InitTale(
             taleModel: event.taleModel,
@@ -108,7 +104,6 @@ class AudioplayerBloc extends Bloc<AudioplayerEvent, AudioplayerState> {
       }
     });
     on<Pause>((event, emit) async {
-      print('3.2');
       await _soundPlayer.pausePlayer();
 
       emit(

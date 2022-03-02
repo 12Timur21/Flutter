@@ -1,5 +1,6 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
-import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:memory_box/models/user_model.dart';
 import 'package:memory_box/repositories/auth_service.dart';
 import 'package:memory_box/repositories/database_service.dart';
@@ -22,10 +23,13 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
   ) async* {
     if (event is InitSession) {
       UserModel? currentUser = await _authService.currentUser();
+      String? phoneNumber = currentUser?.phoneNumber;
 
       if (currentUser != null) {
         yield SessionState(
-          status: SessionStatus.authenticated,
+          status: phoneNumber == null || phoneNumber.isEmpty
+              ? SessionStatus.anonAuthenticated
+              : SessionStatus.authenticated,
           user: currentUser,
         );
       } else {
@@ -40,7 +44,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
       UserModel? currentUser = await _authService.currentUser();
 
       yield SessionState(
-        status: SessionStatus.authenticated,
+        status: event.sessionStatus,
         user: currentUser,
       );
     }
@@ -66,12 +70,13 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
 
     if (event is UpdateAccount) {
       yield SessionState(
-        status: state.status,
+        status: event.sessionStatus ?? state.status,
         user: state.user?.copyWith(
           displayName: event.displayName ?? state.user?.displayName,
           phoneNumber: event.phoneNumber ?? state.user?.phoneNumber,
           subscriptionType:
               event.subscriptionType ?? state.user?.subscriptionType,
+          avatarUrl: event.avatarUrl ?? state.user?.avatarUrl,
         ),
       );
     }

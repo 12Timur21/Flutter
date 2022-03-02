@@ -79,7 +79,6 @@ class _AllTalesScreenState extends State<AllTalesScreen> {
                 ),
               ),
             ),
-            actionsOnPress: () {},
           ),
           body: BlocConsumer<ListBuilderBloc, ListBuilderState>(
             listener: (context, state) {

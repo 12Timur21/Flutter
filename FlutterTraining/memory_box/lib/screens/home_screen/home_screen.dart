@@ -10,7 +10,6 @@ import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/resources/app_icons.dart';
 import 'package:memory_box/screens/all_tales_screen/all_tales_screen.dart';
-import 'package:memory_box/screens/mainPage.dart';
 import 'package:memory_box/screens/playlist_screen/detailed_playlist_screen.dart';
 import 'package:memory_box/screens/playlist_screen/playlist_screen.dart';
 import 'package:memory_box/utils/formatting.dart';
@@ -88,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return BackgroundPattern(
           child: Scaffold(
             backgroundColor: Colors.transparent,
+            extendBody: true,
             appBar: AppBar(
               primary: true,
               backgroundColor: Colors.transparent,
@@ -104,247 +104,31 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            body: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
+            body: LayoutBuilder(builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: constraints.maxWidth,
+                    minHeight: constraints.maxHeight,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Подборки',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'TTNorms',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            AllTalesScreen.routeName,
-                          );
-
-                          context
-                              .read<BottomNavigationIndexControlCubit>()
-                              .changeIndex(3);
-                        },
-                        child: const Text(
-                          'Открыть все',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'TTNorms',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 10,
-                  ),
-                  child: SizedBox(
-                    height: 240,
-                    child: Row(
+                  child: IntrinsicHeight(
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushReplacementNamed(
-                                context,
-                                PlaylistScreen.routeName,
-                              );
-                              context
-                                  .read<BottomNavigationIndexControlCubit>()
-                                  .changeIndex(1);
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                right: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.seaNymph.withOpacity(0.9),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(15),
-                                ),
-                              ),
-                              child: _playlistModels.length >= 1
-                                  ? _PlaylistCover(
-                                      onTap: () => _openPlaylist(
-                                        playlistModel: _playlistModels[0],
-                                        context: context,
-                                        index: 0,
-                                      ),
-                                      playlistModel: _playlistModels[0],
-                                    )
-                                  : Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 30,
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Text(
-                                            'Здесь будет твой набор сказок',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontFamily: 'TTNorms',
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          Text(
-                                            'Добавить',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'TTNorms',
-                                              fontWeight: FontWeight.normal,
-                                              shadows: [
-                                                Shadow(
-                                                  color: Colors.white,
-                                                  offset: Offset(0, -5),
-                                                )
-                                              ],
-                                              color: Colors.transparent,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                            ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
                           ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: _playlistModels.length >= 2
-                                    ? _PlaylistCover(
-                                        playlistModel: _playlistModels[1],
-                                        onTap: () => _openPlaylist(
-                                          playlistModel: _playlistModels[1],
-                                          context: context,
-                                          index: 1,
-                                        ),
-                                      )
-                                    : Container(
-                                        margin: const EdgeInsets.only(
-                                          bottom: 10,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              AppColors.tacao.withOpacity(0.9),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(15),
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            'Тут',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Expanded(
-                                child: _playlistModels.length >= 3
-                                    ? _PlaylistCover(
-                                        playlistModel: _playlistModels[2],
-                                        onTap: () => _openPlaylist(
-                                          playlistModel: _playlistModels[2],
-                                          context: context,
-                                          index: 2,
-                                        ),
-                                      )
-                                    : Container(
-                                        margin: const EdgeInsets.only(
-                                          top: 10,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              AppColors.danube.withOpacity(0.9),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(15),
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            'Тут',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.38,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 3,
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                      ),
-                      decoration: const BoxDecoration(
-                        color: AppColors.wildSand,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25),
-                          topRight: Radius.circular(25),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 4),
-                            blurRadius: 24,
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text(
-                                'Аудиозаписи',
+                                'Подборки',
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Colors.white,
                                   fontFamily: 'TTNorms',
                                   fontSize: 24,
-                                  letterSpacing: 0.4,
                                   fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.5,
                                 ),
                               ),
                               TextButton(
@@ -353,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context,
                                     AllTalesScreen.routeName,
                                   );
+
                                   context
                                       .read<BottomNavigationIndexControlCubit>()
                                       .changeIndex(3);
@@ -360,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: const Text(
                                   'Открыть все',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     fontFamily: 'TTNorms',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -369,21 +154,271 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          Expanded(
-                            child: Stack(
-                              children: const [
-                                _ListBuilder(),
-                                _AudioPlayer(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 10,
+                          ),
+                          child: SizedBox(
+                            height: 240,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushReplacementNamed(
+                                        context,
+                                        PlaylistScreen.routeName,
+                                      );
+                                      context
+                                          .read<
+                                              BottomNavigationIndexControlCubit>()
+                                          .changeIndex(1);
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                        right: 10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            AppColors.seaNymph.withOpacity(0.9),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(15),
+                                        ),
+                                      ),
+                                      child: _playlistModels.length >= 1
+                                          ? _PlaylistCover(
+                                              onTap: () => _openPlaylist(
+                                                playlistModel:
+                                                    _playlistModels[0],
+                                                context: context,
+                                                index: 0,
+                                              ),
+                                              playlistModel: _playlistModels[0],
+                                            )
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 30,
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: const [
+                                                  Text(
+                                                    'Здесь будет твой набор сказок',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                      fontFamily: 'TTNorms',
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Text(
+                                                    'Добавить',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: 'TTNorms',
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      shadows: [
+                                                        Shadow(
+                                                          color: Colors.white,
+                                                          offset: Offset(0, -5),
+                                                        )
+                                                      ],
+                                                      color: Colors.transparent,
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                      decorationColor:
+                                                          Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: _playlistModels.length >= 2
+                                            ? _PlaylistCover(
+                                                playlistModel:
+                                                    _playlistModels[1],
+                                                onTap: () => _openPlaylist(
+                                                  playlistModel:
+                                                      _playlistModels[1],
+                                                  context: context,
+                                                  index: 1,
+                                                ),
+                                              )
+                                            : Container(
+                                                margin: const EdgeInsets.only(
+                                                  bottom: 10,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.tacao
+                                                      .withOpacity(0.9),
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    Radius.circular(15),
+                                                  ),
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    'Тут',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Expanded(
+                                        child: _playlistModels.length >= 3
+                                            ? _PlaylistCover(
+                                                playlistModel:
+                                                    _playlistModels[2],
+                                                onTap: () => _openPlaylist(
+                                                  playlistModel:
+                                                      _playlistModels[2],
+                                                  context: context,
+                                                  index: 2,
+                                                ),
+                                              )
+                                            : Container(
+                                                margin: const EdgeInsets.only(
+                                                  top: 10,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.danube
+                                                      .withOpacity(0.9),
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    Radius.circular(15),
+                                                  ),
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    'Тут',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 22),
+                          child: BottomSheet(
+                            onClosing: () {},
+                            enableDrag: false,
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  MediaQuery.of(context).size.height * 0.38,
+                              maxHeight:
+                                  MediaQuery.of(context).size.height * 0.38,
+                            ),
+                            builder: (context) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.wildSand,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(25),
+                                    topRight: Radius.circular(25),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      offset: Offset(0, 4),
+                                      blurRadius: 24,
+                                    )
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Аудиозаписи',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: 'TTNorms',
+                                            fontSize: 24,
+                                            letterSpacing: 0.4,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pushReplacementNamed(
+                                              context,
+                                              AllTalesScreen.routeName,
+                                            );
+                                            context
+                                                .read<
+                                                    BottomNavigationIndexControlCubit>()
+                                                .changeIndex(3);
+                                          },
+                                          child: const Text(
+                                            'Открыть все',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'TTNorms',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Expanded(
+                                      child: Stack(
+                                        children: const [
+                                          _ListBuilder(),
+                                          _AudioPlayer(),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
+              );
+            }),
           ),
         );
       }),

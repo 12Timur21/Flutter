@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:memory_box/blocks/audioplayer/audioplayer_bloc.dart';
 import 'package:memory_box/blocks/bottom_navigation_index_control/bottom_navigation_index_control_cubit.dart';
+import 'package:memory_box/blocks/session/session_bloc.dart';
 
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/storage_service.dart';
@@ -15,7 +16,6 @@ import 'package:memory_box/screens/recording_screen/widgets/tale_controls_button
 import 'package:memory_box/widgets/audioSlider.dart';
 import 'package:memory_box/widgets/deleteAlert.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 
@@ -144,7 +144,18 @@ class _ListeningScreenState extends State<ListeningScreen> {
   }
 
   void _saveSound() async {
-    //!Пересмотреть
+    if (context.read<SessionBloc>().state.status !=
+        SessionStatus.authenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Сохранение в облако доступно только авторизованным пользователям, но у вас есть возможность локального сохранения",
+          ),
+        ),
+      );
+      return;
+    }
+
     final File file = File(_pathToSaveAudio!);
     TaleModel? updatedTaleModel = _audioBloc.state.taleModel?.copyWith(
       title: _taleTitle,

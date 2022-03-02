@@ -1,5 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,21 +9,10 @@ import 'package:memory_box/screens/splash_screen.dart';
 import 'package:memory_box/settings/initial_settings.dart';
 import 'blocks/registration/registration_bloc.dart';
 
-// void initDeepLink() {
-//   FirebaseDynamicLinks.instance.onLink.listen((event) {
-//     final Uri? deepLink = event.link;
-
-//     if (deepLink != null) {
-//       print(deepLink);
-//     }
-//   });
-// }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  // initDeepLink();
 
   runApp(
     MultiBlocProvider(
@@ -60,6 +48,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scrollBehavior: MyCustomScrollBehavior(),
       title: 'Memory Box',
+      debugShowCheckedModeBanner: false,
       initialRoute: SplashScreen.routeName,
       onGenerateRoute: AppRouter.generateRoute,
       home: const SplashScreen(),

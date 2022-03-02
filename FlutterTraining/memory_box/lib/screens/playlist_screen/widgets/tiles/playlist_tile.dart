@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/resources/app_coloros.dart';

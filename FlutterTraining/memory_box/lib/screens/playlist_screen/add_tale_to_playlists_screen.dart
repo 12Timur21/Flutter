@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:memory_box/blocks/playlist_builder/playlist_builder_bloc.dart';
 import 'package:memory_box/models/playlist_model.dart';
 import 'package:memory_box/models/tale_model.dart';
 import 'package:memory_box/repositories/database_service.dart';
 import 'package:memory_box/resources/app_coloros.dart';
 import 'package:memory_box/screens/playlist_screen/create_playlist_screen.dart';
-import 'package:memory_box/screens/playlist_screen/widgets/appBars/selection_appbar.dart';
-import 'package:memory_box/screens/playlist_screen/widgets/tiles/playlist_tile.dart';
 import 'package:memory_box/screens/playlist_screen/widgets/tiles/select_playtlist_tile.dart';
 import 'package:memory_box/widgets/backgoundPattern.dart';
 
@@ -83,13 +82,60 @@ class _AddTaleToPlaylistsState extends State<AddTaleToPlaylists> {
             child: Scaffold(
               resizeToAvoidBottomInset: false,
               backgroundColor: Colors.transparent,
-              appBar: SelectionAppBar(
-                addTalesToPlaylist: _addTalesToPlaylist,
-                createNewPlaylist: () {
-                  _createNewPlaylist(
-                    context: context,
-                  );
-                },
+              appBar: AppBar(
+                primary: true,
+                toolbarHeight: 70,
+                backgroundColor: Colors.transparent,
+                centerTitle: true,
+                leading: Container(
+                  margin: const EdgeInsets.only(left: 6),
+                  child: IconButton(
+                    icon: SvgPicture.asset(
+                      'assets/icons/Plus.svg',
+                    ),
+                    onPressed: () {
+                      _createNewPlaylist(
+                        context: context,
+                      );
+                    },
+                  ),
+                ),
+                title: Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: const TextSpan(
+                      text: 'Подборки',
+                      style: TextStyle(
+                        fontFamily: 'TTNorms',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 36,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+                actions: [
+                  Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.only(
+                      top: 15,
+                      right: 15,
+                    ),
+                    child: TextButton(
+                      onPressed: _addTalesToPlaylist,
+                      child: const Text(
+                        'Добавить',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: 'TTNorms',
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                elevation: 0,
               ),
               body: Container(
                 margin: const EdgeInsets.only(
